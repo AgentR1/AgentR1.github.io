@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claw-R1 — Agentic RL 新训练范式</title>
+  <meta name="description" content="Claw-R1 是中国科大认知智能全国重点实验室提出的强化学习训练框架，将真实 Agent Runtime 与 RLVR 深度结合，为 Agentic AI 提供新一代训练基础设施。" />
+  <style>
+    /* ── Reset ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── Base ──────────────────────────────────────── */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee;
+      border: 1px solid #e0e0de;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #c0392b;
+    }
+
+    /* ── Container ─────────────────────────────────── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Sticky nav ────────────────────────────────── */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+
+    /* ── Hero header ───────────────────────────────── */
+    header {
+      background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 60px 0 48px;
+      text-align: center;
+    }
+    .logo-wrap img {
+      height: 90px;
+      max-width: 100%;
+      object-fit: contain;
+    }
+    header h1 {
+      margin-top: 28px;
+      font-size: 1.95rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: #111;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin-top: 14px;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .affiliation {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Buttons ───────────────────────────────────── */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+      text-decoration: none;
+      opacity: 1;
+    }
+    .btn-primary { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .btn-primary:hover { background: #a93226; border-color: #a93226; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── Section base ──────────────────────────────── */
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 46px;
+    }
+    section.alt { background: #fff; }
+    h2.section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 32px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* Divider between sections */
+    section + section { border-top: 1px solid #e8e8e8; }
+
+    /* ── TL;DR banner ──────────────────────────────── */
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.02rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: #c0392b; }
+
+    /* ── Table ─────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid #e4e4e4; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    th:first-child { border-radius: 0; }
+    td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+    tr:nth-child(even) td { background: #fdf9f9; }
+    tr:last-child td { border-bottom: none; }
+    .tag-current {
+      display: inline-block;
+      background: #c0392b;
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ── Cards ─────────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+      margin-bottom: 24px;
+    }
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon { font-size: 1.65rem; margin-bottom: 10px; line-height: 1; }
+    .card h4 { font-size: 0.93rem; font-weight: 700; margin-bottom: 7px; color: #111; }
+    .card p { font-size: 0.87rem; color: #555; margin: 0; line-height: 1.65; }
+    .card.center { text-align: center; }
+
+    /* ── Pillar list ───────────────────────────────── */
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text { flex: 1; }
+    .pillar-text strong { display: block; font-size: 0.95rem; margin-bottom: 3px; }
+    .pillar-text span { font-size: 0.88rem; color: #555; }
+
+    /* ── Figure ────────────────────────────────────── */
+    figure { margin: 28px 0; text-align: center; }
+    figure img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09);
+    }
+    figcaption { margin-top: 10px; font-size: 0.84rem; color: #777; }
+
+    /* ── Feature bullet list ───────────────────────── */
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: #c0392b;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    /* ── Citation box ──────────────────────────────── */
+    .citation-box {
+      background: #f5f5f3;
+      border: 1px solid #e0e0de;
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.82rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    /* ── Reference list ────────────────────────────── */
+    .ref-list {
+      list-style: none;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ref-list li {
+      font-size: 0.9rem;
+      color: #444;
+      padding-left: 36px;
+      position: relative;
+      line-height: 1.65;
+    }
+    .ref-list li::before {
+      content: "[" attr(data-num) "]";
+      position: absolute;
+      left: 0;
+      color: #c0392b;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    /* ── Closing quote ─────────────────────────────── */
+    .closing-quote {
+      text-align: center;
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: #c0392b;
+      margin: 22px 0;
+      padding: 18px 24px;
+      background: #fff8f7;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    /* ── Footer ────────────────────────────────────── */
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    /* ── Responsive ────────────────────────────────── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.45rem; }
+      .logo-wrap img { height: 72px; }
+      section { padding: 48px 0; }
+      .card-grid-2,
+      .card-grid-3 { grid-template-columns: 1fr; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="container">
+    <div class="logo-wrap">
+      <img src="assets/logo.jpeg" alt="CLAW-R1 Logo" />
+    </div>
+    <h1>OpenClaw 之后，<span class="highlight">Agentic RL</span> 有了新训练范式</h1>
+    <p class="subtitle">
+      Claw-R1：将真实 Agent Runtime 与 RLVR 训练深度结合，<br>
+      为下一代 Agentic AI 提供完整的强化学习训练基础设施。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/AgentR1/Claw-R1" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+            -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+            .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+            -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+            1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub (Claw-R1)
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+            -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+            .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+            -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+            1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        Agent-R1
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/OpenClaw/OpenClaw" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+            -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+            .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+            -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+            1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        OpenClaw
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ STICKY NAV ═══════════════════ -->
+<nav class="nav-bar">
+  <div class="container">
+    <a href="#intro">简介</a>
+    <a href="#background">项目背景</a>
+    <a href="#framework">Claw-R1 框架</a>
+    <a href="#importance">为什么重要</a>
+    <a href="#summary">总结</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ INTRO ═══════════════════ -->
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      大模型强化学习正迈入第三阶段——<strong>Runtime RL</strong>。Claw-R1 将
+      <strong>OpenClaw</strong>（真实 Agent 运行时）与 <strong>RLVR 训练循环</strong>深度结合，
+      实现「边服务边训练」的闭环系统，以真实环境反馈为奖励，让模型真正学会在现实中行动。
+    </div>
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      近年来，大模型技术的发展正在推动 AI 从「回答问题」逐渐迈向「执行任务」。
+      在 Agentic AI 的世界里，大模型不再只是文本生成器，而是通过调用工具、环境交互、
+      多步推理来执行复杂任务的智能体。
+    </p>
+    <p>
+      然而，当 Agent 能够在真实环境中运行时，一个新的问题随之出现：
+      <strong>我们应该如何训练这样的 Agent？</strong>
+    </p>
+    <p>
+      中国科大认知智能全国重点实验室提出的 <strong>Claw-R1</strong> 项目，
+      正是针对这一问题提出的全新强化学习训练框架。它尝试将前沿的 Agent Runtime（如 OpenClaw）
+      与强化学习训练框架深度结合，为 Agentic AI 提供全新的训练基础设施。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ BACKGROUND ═══════════════════ -->
+<section id="background">
+  <div class="container">
+    <h2 class="section-title">项目背景</h2>
+
+    <h3 class="sub-title">大模型强化学习的三次范式演进</h3>
+    <p>大模型强化学习正经历一次重要转变：从<strong>人类偏好学习（RLHF）</strong>，
+    到<strong>任务结果学习（RLVR）</strong>，再到<strong>环境交互学习（Runtime RL）</strong>。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>阶段</th>
+            <th>目标</th>
+            <th>奖励来源</th>
+            <th>代表工作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>RLHF</strong></td>
+            <td>生成更符合人类偏好的文本</td>
+            <td>Human preference</td>
+            <td>InstructGPT</td>
+          </tr>
+          <tr>
+            <td><strong>RLVR</strong></td>
+            <td>完成可验证任务</td>
+            <td>Verifiable reward</td>
+            <td>VERL、Agent-R1</td>
+          </tr>
+          <tr>
+            <td><strong>Runtime RL</strong> <span class="tag-current">本项目</span></td>
+            <td>在真实环境中行动</td>
+            <td>Environment feedback</td>
+            <td><strong>Claw-R1</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:#666; font-size:.91rem; margin-top: 10px;">
+      总趋势：<strong>AI 的奖励来源正在越来越接近真实世界。</strong>
+    </p>
+
+    <h3 class="sub-title">Agentic RL 的困境：RLVR 的关键缺口</h3>
+    <p>
+      尽管 RLVR 已能支持多轮交互学习，但仍存在一个关键问题：
+      <strong>Agent 运行环境并不真实。</strong>
+    </p>
+    <p>目前大多数 RLVR 框架依赖研究导向的模拟环境：</p>
+    <ul class="feature-list">
+      <li>Coding benchmark（代码生成评测）</li>
+      <li>Reasoning tasks（数学推理、逻辑推断）</li>
+      <li>Synthetic environment（人工构造的任务沙盒）</li>
+    </ul>
+    <p style="margin-top:14px;">
+      这些都是特定任务的训练场，而非真实的 Agent Runtime。
+      模型从未真正运行在现实工具系统中，导致在真实 Agent 系统中出现
+      工具调用混乱、规划能力不足、长任务不稳定等问题。
+    </p>
+
+    <h3 class="sub-title">OpenClaw：Agent Runtime 的新基础设施</h3>
+    <p>
+      OpenClaw 是一款开源的个人 AI Agent 操作系统（MIT 协议，TypeScript 实现，本地优先原则）。
+      自发布以来，<strong>8 周内获得超过 236,000 个 GitHub Star</strong>，
+      成为开源历史上增长最快的项目之一。
+    </p>
+    <p>
+      其核心架构采用 Hub-and-Spoke 设计：15+ 主流消息平台通过统一 Gateway 接入，
+      驱动中央的 Pi Agent Runtime 执行任务。Lane Queue 机制通过串行执行消除并发竞态条件，
+      三层混合记忆系统则为 Agent 提供稳定的上下文管理能力，
+      使 OpenClaw 成为第一个可在真实消息环境中自主、持续运行的 Agent 平台。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ FRAMEWORK ═══════════════════ -->
+<section id="framework" class="alt">
+  <div class="container">
+    <h2 class="section-title">Claw-R1 框架</h2>
+    <p>
+      Claw-R1（OpenClaw-RL）构建了一个完整的 <strong>Agent Runtime + RLVR Training Loop</strong> 系统。
+      整体系统分为三个核心部分：
+    </p>
+
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>Agent Runtime</strong>
+          <span>OpenClaw 提供的真实运行环境，Agent 在此调用工具、与用户交互、执行多步任务。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>Interaction Data Pool</strong>
+          <span>收集 Agent 在真实环境中的交互轨迹，作为强化学习训练数据来源。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>RLVR Training Engine</strong>
+          <span>基于真实轨迹数据，对模型进行强化学习更新，形成闭环训练。</span>
+        </div>
+      </li>
+    </ul>
+
+    <figure>
+      <img src="assets/framework.png" alt="Claw-R1 Framework Architecture" />
+      <figcaption>图 1：Claw-R1 整体架构图。左侧为 Service Machine（如 OpenClaw），中间为 Agent Runtime 与 Middleware 层，右侧为 RL Training Engine。</figcaption>
+    </figure>
+
+    <h3 class="sub-title">框架核心特色</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h4>训练与 Rollout 异步</h4>
+        <p>Rollout Engine（生成）与 Training Engine（训练）异步运行，互不阻塞，数据流入 DataPool 后自动拉取批次更新模型。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔌</div>
+        <h4>Agent 与训练彻底解耦</h4>
+        <p>OpenClaw 在本地机器提供服务，模型训练在高性能服务器上独立进行。无需预置数据集，边服务边训练。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h4>零代码侵入</h4>
+        <p>OpenClaw 只需将 <code>base_url</code> 指向 Claw-R1 的 Gateway，框架自动采集交互数据并训练，无需修改 Agent 逻辑。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>白盒 / 黑盒双模式</h4>
+        <p>通过 OpenAI 兼容接口，支持白盒离线、黑盒离线、黑盒在线服务三种运行模式，适配多种部署场景。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ WHY IT MATTERS ═══════════════════ -->
+<section id="importance">
+  <div class="container">
+    <h2 class="section-title">为什么 Claw-R1 很重要</h2>
+    <p>
+      Claw-R1 的意义在于：它为 <strong>Agent Runtime 时代的强化学习训练</strong>
+      提供了此前从未有过的基础设施。
+    </p>
+    <div class="card-grid-2">
+      <div class="card" style="border-left: 4px solid #2980b9;">
+        <div class="card-icon">🌊</div>
+        <h4>OpenClaw 解决了什么</h4>
+        <p>Agent 的<strong>运行环境问题</strong>——让 Agent 能在真实消息平台中持续、自主地执行任务。</p>
+      </div>
+      <div class="card" style="border-left: 4px solid #c0392b;">
+        <div class="card-icon">🏋️</div>
+        <h4>Claw-R1 解决了什么</h4>
+        <p>Agent 的<strong>训练框架问题</strong>——让模型能以真实环境反馈为奖励信号进行强化学习。</p>
+      </div>
+    </div>
+    <p>
+      两者结合，正是大模型强化学习第三阶段的核心体现：
+      <strong>Runtime RL —— 以真实环境反馈为奖励，让模型学会在现实中行动。</strong>
+    </p>
+    <p>
+      在这种范式下，AI 不再只是学习生成文本，也不再只是完成孤立的可验证任务，而是学习
+      <strong>如何在真实 Agent Runtime 中持续、稳定地完成复杂任务。</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ SUMMARY ═══════════════════ -->
+<section id="summary" class="alt">
+  <div class="container">
+    <h2 class="section-title">总结</h2>
+    <p>随着 Agent 技术的发展，大模型系统正逐渐演化为：</p>
+    <div class="closing-quote">「推理 + 工具 + 环境 + 学习」的闭环系统</div>
+    <div class="card-grid-3">
+      <div class="card center">
+        <div class="card-icon">🏃</div>
+        <h4>Agent Runtime</h4>
+        <p>提供<strong>执行环境</strong></p>
+      </div>
+      <div class="card center">
+        <div class="card-icon">🧠</div>
+        <h4>RLVR</h4>
+        <p>提供<strong>学习机制</strong></p>
+      </div>
+      <div class="card center">
+        <div class="card-icon">🔧</div>
+        <h4>Claw-R1</h4>
+        <p>提供<strong>训练基础设施</strong></p>
+      </div>
+    </div>
+    <p style="margin-top: 24px;">
+      这些技术的结合，很可能将成为下一代 Agentic AI 系统的基础架构。
+      而 Claw-R1，正是这一方向上的一次重要探索。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ CITATION ═══════════════════ -->
+<section id="citation">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+    <p>如果本项目对您的研究有所帮助，请考虑引用：</p>
+    <div class="citation-box">@misc{clawr1_2025,
+  title     = {Claw-R1: Bridging Agent Runtime and RLVR for Agentic Reinforcement Learning},
+  author    = {AgentR1 Team, USTC},
+  year      = {2025},
+  url       = {https://github.com/AgentR1/Claw-R1}
+}</div>
+
+    <h2 class="section-title" style="margin-top: 48px;">参考文献</h2>
+    <ul class="ref-list">
+      <li data-num="1">
+        <strong>Agent-R1</strong>: Claw-R1 基于 Agent-R1 构建。中国科大认知全重实验室多轮交互强化学习训练框架。
+        <a href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">github.com/0russwest0/Agent-R1</a>
+      </li>
+      <li data-num="2">
+        <strong>MiniMax Forge</strong>: 感谢 MiniMax Forge 在 Middleware 架构设计上的启发。
+        <a href="https://www.minimax.io/news/forge-scalable-agent-rl-framework-and-algorithm" target="_blank" rel="noopener">minimax.io/news/forge-scalable-agent-rl-framework-and-algorithm</a>
+      </li>
+      <li data-num="3">
+        <strong>rLLM</strong>: 感谢 rLLM 在语言 Agent 强化学习框架设计上的开创性工作。
+        <a href="https://github.com/rllm-org/rllm" target="_blank" rel="noopener">github.com/rllm-org/rllm</a>
+      </li>
+      <li data-num="4">
+        <strong>OpenClaw</strong>: 感谢 OpenClaw 在个人 AI 助手领域的卓越工作，其现代 Agent 范式启发了本项目的愿景。
+        <a href="https://github.com/OpenClaw/OpenClaw" target="_blank" rel="noopener">github.com/OpenClaw/OpenClaw</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2025 Claw-R1 Team &middot; USTC Cognitive Intelligence Lab &middot;
+      <a href="https://github.com/AgentR1/Claw-R1" target="_blank" rel="noopener">GitHub</a>
+    </p>
+    <p style="font-size: 0.78rem; color: #555; margin-top: 6px;">
+      Built for the Agentic AI community
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
