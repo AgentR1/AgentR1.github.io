@@ -460,6 +460,7 @@
     <a href="#intro">简介</a>
     <a href="#background">项目背景</a>
     <a href="#framework">Claw-R1 框架</a>
+    <a href="#design">核心设计</a>
     <a href="#importance">为什么重要</a>
     <a href="#summary">总结</a>
     <a href="#citation">引用</a>
@@ -631,6 +632,221 @@
         <p>通过 OpenAI 兼容接口，支持白盒离线、黑盒离线、黑盒在线服务三种运行模式，适配多种部署场景。</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CORE DESIGN ═══════════════════ -->
+<section id="design">
+  <div class="container">
+    <h2 class="section-title">核心设计解读</h2>
+    <p>
+      Claw-R1 的差异化竞争力来自三点设计的组合，三者共同构成一个完整的闭环，缺一不可。
+    </p>
+
+    <h3 class="sub-title">一、base_url 即接入：最低侵入的黑盒集成</h3>
+    <p>
+      现有 Agentic RL 框架在接入 Agent 时，普遍需要修改源码或依赖特定 SDK，
+      对生产级 Agent 系统（如 OpenClaw、AutoGen、CrewAI）而言侵入成本极高。
+      Claw-R1 通过<strong>网络层代理</strong>彻底解决这一问题：
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>方案</th>
+            <th>代表框架</th>
+            <th>侵入方式</th>
+            <th>代价</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>修改 Agent 源码</td>
+            <td>verl、RL-Factory</td>
+            <td>在 Agent 代码中嵌入 Rollout 接口</td>
+            <td>维护成本高，黑盒 Agent 无法用</td>
+          </tr>
+          <tr>
+            <td>Python 类包装</td>
+            <td>OpenRLHF</td>
+            <td>继承 <code>AgentInstanceBase</code> 重写执行逻辑</td>
+            <td>需理解框架 API，不通用</td>
+          </tr>
+          <tr>
+            <td>SDK Hook 拦截</td>
+            <td>Agent Lightning、ART</td>
+            <td>替换 LangChain / OpenAI SDK 的 HTTP 层</td>
+            <td>依赖特定 SDK，换框架即失效</td>
+          </tr>
+          <tr>
+            <td><strong>替换 base_url</strong> <span class="tag-current">Claw-R1</span></td>
+            <td><strong>Claw-R1</strong></td>
+            <td><strong>将 LLM 调用重定向到 Gateway</strong></td>
+            <td><strong>零改动，任何 HTTP 调用均适用</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Gateway Server 是标准 FastAPI HTTP 服务，实现完整的 OpenAI 兼容代理。
+      对 Agent 而言，它只是调用了一个"稍慢一点的 OpenAI API"，并不知道每次对话已被送入训练流水线。
+      <strong>实际接入只需一行配置：</strong>
+    </p>
+    <div class="citation-box"># 改之前
+client = OpenAI(base_url="https://api.openai.com/v1")
+
+# 改之后（黑盒模式：base_url 含 trajectory_uid、prompt_uid）
+client = OpenAI(base_url="http://gateway:8000/{traj_uid}/{prompt_uid}")</div>
+    <p>
+      对 OpenClaw 而言，只需在配置文件中把 <code>LLM_API_BASE</code> 从 OpenAI 地址改为 Gateway 地址即可。
+      与 SDK Hook 相比，网络层代理不依赖任何语言或 SDK，
+      OpenClaw（TypeScript 实现）、运行在独立容器中的 Agent、使用自定义 HTTP 客户端的 Agent 均可零改动接入。
+    </p>
+
+    <h3 class="sub-title">二、Middleware Layer：解耦服务与训练的关键</h3>
+    <p>
+      传统 RLVR 训练采用同步循环（生成轨迹 → 计算奖励 → 更新权重 → 再生成），
+      在生产环境中会导致 Rollout 阻塞训练、训练阻塞服务、真实数据浪费等根本性问题。
+      Claw-R1 的 <strong>Middleware Layer（Gateway + DataPool）</strong>
+      是 Agent Side 与 Training Side 之间的唯一桥梁：
+    </p>
+    <div class="citation-box">┌─────────────────────────────────────────────────────┐
+│         Agent Side（白盒 AgentFlow / 黑盒 Agent）       │
+│  用户请求 → Agent → Gateway（HTTP）→ 模型推理 → 用户响应 │
+│                          ↓                           │
+│              [Gateway 异步提交 Step 到 DataPool]       │
+└──────────────────────────┬──────────────────────────┘
+                           │  异步，无阻塞
+┌──────────────────────────▼──────────────────────────┐
+│                Training Side（独立运行）               │
+│  RayAgentTrainer ← [DataPool.fetch_batch()] ← Reward │
+│        ↓                                             │
+│  模型权重更新 → 直接管理 Rollout Engine 生命周期         │
+└─────────────────────────────────────────────────────┘</div>
+
+    <p>DataPool（Ray Actor）具备四大特性：</p>
+    <ul class="feature-list">
+      <li><strong>写入异步</strong>：Gateway 记录 LLM 调用后立即返回，不等待 DataPool 确认</li>
+      <li><strong>读取异步</strong>：Training Engine 按自己节奏拉取批次，不依赖 Rollout 时序</li>
+      <li><strong>持久化</strong>：服务中断重启后历史轨迹不丢失</li>
+      <li><strong>混采支持</strong>：可同时消费最新轨迹（on-policy）和历史轨迹（off-policy）</li>
+    </ul>
+
+    <p style="margin-top: 20px;">与 rLLM DataPool 的核心区别：</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>rLLM DataPool</th>
+            <th>Claw-R1 DataPool</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>写入来源</td>
+            <td>批量 Rollout Engine（离线生成）</td>
+            <td>真实用户请求（在线服务）</td>
+          </tr>
+          <tr>
+            <td>数据性质</td>
+            <td>预设任务的合成轨迹</td>
+            <td>用户真实交互轨迹</td>
+          </tr>
+          <tr>
+            <td>服务状态</td>
+            <td>训练时 Agent 不对外服务</td>
+            <td>训练时 Agent 持续服务</td>
+          </tr>
+          <tr>
+            <td>奖励计算</td>
+            <td>任务结果奖励（Verifiable）</td>
+            <td>过程奖励 + 环境反馈</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:#666; font-size:.91rem; margin-top:10px;">
+      rLLM 的 DataPool 是为加速批量训练的缓冲；Claw-R1 的 DataPool 是为了<strong>让 Production 服务本身成为训练数据源</strong>。
+    </p>
+
+    <h3 class="sub-title">三、Production Agent 场景：部署即训练</h3>
+    <p>
+      几乎所有 Agentic RL 框架都隐含「训练阶段 ≠ 部署阶段」的假设，这在生产 Agent 场景中有根本性局限：
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>问题</th><th>表现</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>分布偏移</strong></td>
+            <td>训练数据是合成任务，真实用户请求分布不同，导致部署后能力退化</td>
+          </tr>
+          <tr>
+            <td><strong>冷启动</strong></td>
+            <td>新部署模型不了解用户习惯、工具、工作流，需要大量"磨合期"</td>
+          </tr>
+          <tr>
+            <td><strong>长尾任务</strong></td>
+            <td>benchmark 只覆盖常见任务，真实用户的长尾需求无法通过离线训练覆盖</td>
+          </tr>
+          <tr>
+            <td><strong>环境漂移</strong></td>
+            <td>工具 API 更新、用户行为变化，静态模型无法自适应</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top: 20px;">
+      Claw-R1 的核心场景是<strong>个人 Agent 的持续自我进化</strong>：
+      以 OpenClaw 个人助理为例，用户每天通过 Slack / 微信 / 邮件与 OpenClaw 交互，
+      轨迹经 Gateway 采集 → DataPool → Reward Model 评分 → Training Engine 更新权重，
+      让 Agent <strong>越用越"懂"这个用户</strong>。这要求系统具备三项传统 RL 框架不具备的能力：
+    </p>
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>服务不中断</strong>
+          <span>Trainer 直接管理 Rollout Engine 生命周期，Gateway 作为纯代理持续响应，权重更新对服务透明。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>数据不预设</strong>
+          <span>训练数据完全来自用户真实交互，随服务自动积累，无需任何数据工程。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>奖励来自真实环境</strong>
+          <span>Reward Model 将用户满意度信号、任务完成度等"软奖励"转化为可训练的过程奖励，填补可验证任务到真实对话任务之间的奖励工程空白。</span>
+        </div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">四、三点结合：正向飞轮</h3>
+    <p>三个设计不是独立功能的叠加，而是一个互锁的<strong>正向飞轮</strong>：</p>
+    <div class="citation-box">base_url 即接入 → Production Agent 真实部署 → 产生真实用户请求
+        ↓
+Middleware Layer 异步采集轨迹，不阻塞服务
+        ↓
+RayAgentTrainer 持续消费 DataPool，更新模型权重
+        ↓
+更好的 Agent → 更高质量轨迹 → DataPool 质量提升
+        ↓（回到起点，形成正向飞轮）</div>
+    <p style="color:#666; font-size:.91rem; margin-top:14px;">
+      缺少 base_url 即接入 → 黑盒 Agent 无法零成本集成，"真实场景"不成立；
+      缺少 Middleware Layer → Agent Side 与 Training Side 耦合，退化为传统 RLVR；
+      缺少 Production 定位 → 失去从真实用户交互中持续学习这一核心价值主张。
+    </p>
   </div>
 </section>
 
