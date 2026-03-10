@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Runtime 框架 — Science-Star</title>
+  <meta name="description" content="Science-Star：中国科大认知智能全国重点实验室提出的开源科学 AI Agent 平台，支持 HLE、GAIA 等基准，集成丰富工具集，支持单/多智能体架构。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5; color: #1a1a1a; line-height: 1.8; font-size: 16px;
+    }
+    a { color: #2471a3; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee; border: 1px solid #e0e0de; border-radius: 4px;
+      padding: 2px 6px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em; color: #2471a3;
+    }
+    .container { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Sticky nav ─────────────────────────────── */
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .nav-bar .container {
+      display: flex; align-items: center; overflow-x: auto;
+      scrollbar-width: none; gap: 0; padding-top: 0; padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0; padding: 13px 18px;
+      font-size: 0.87rem; font-weight: 500; color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s; white-space: nowrap;
+    }
+    .nav-bar a:hover { color: #2471a3; border-bottom-color: #2471a3; text-decoration: none; }
+    .nav-home { font-weight: 700; color: #2471a3 !important; border-right: 1px solid #e8e8e8; }
+
+    /* ── Header ─────────────────────────────────── */
+    header {
+      background: linear-gradient(160deg, #ffffff 55%, #eef4ff 100%);
+      border-bottom: 1px solid #dce8f8;
+      padding: 64px 0 48px; text-align: center;
+    }
+    .cat-badge {
+      display: inline-block; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #2471a3; background: #eef4ff;
+      border: 1px solid #b8d4f5; border-radius: 20px;
+      padding: 4px 14px; margin-bottom: 16px;
+    }
+    header h1 { font-size: 2rem; font-weight: 800; color: #111; line-height: 1.3; }
+    header h1 .hl { color: #2471a3; }
+    .subtitle {
+      margin-top: 14px; font-size: 1rem; color: #555;
+      max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7;
+    }
+    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; }
+    .btn-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 7px; font-size: 0.88rem; font-weight: 600;
+      border: 1.5px solid transparent; cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s; text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); text-decoration: none; }
+    .btn-primary { background: #2471a3; color: #fff; border-color: #2471a3; }
+    .btn-primary:hover { background: #1a5c87; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── Section ────────────────────────────────── */
+    section { padding: 64px 0; scroll-margin-top: 46px; }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.4rem; font-weight: 700; color: #111;
+      margin-bottom: 22px; padding-bottom: 10px;
+      border-bottom: 3px solid #2471a3; display: inline-block;
+    }
+    h3.sub-title { font-size: 1.05rem; font-weight: 700; color: #222; margin: 28px 0 10px; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── TL;DR ──────────────────────────────────── */
+    .tldr {
+      background: #f0f6fc; border-left: 4px solid #2471a3;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px; font-size: 1rem; color: #222;
+      margin-bottom: 32px; line-height: 1.75;
+    }
+    .tldr strong { color: #2471a3; }
+
+    /* ── Cards ──────────────────────────────────── */
+    .card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-top: 22px;
+    }
+    .card-grid-2 { grid-template-columns: 1fr 1fr; }
+    .card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 10px;
+      padding: 20px 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+    .card .card-icon { font-size: 1.55rem; margin-bottom: 9px; line-height: 1; }
+    .card h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 6px; color: #111; }
+    .card p { font-size: 0.86rem; color: #555; margin: 0; line-height: 1.6; }
+
+    /* ── Pillar list ─────────────────────────────── */
+    .pillar-list { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .pillar-list li {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 9px;
+      padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+      background: #2471a3; color: #fff; font-weight: 700; font-size: 0.88rem;
+      display: flex; align-items: center; justify-content: center; margin-top: 2px;
+    }
+    .pillar-text { flex: 1; }
+    .pillar-text strong { display: block; font-size: 0.95rem; margin-bottom: 3px; }
+    .pillar-text span { font-size: 0.88rem; color: #555; }
+
+    /* ── Feature list ───────────────────────────── */
+    .feature-list { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 9px; }
+    .feature-list li { padding-left: 20px; position: relative; font-size: 0.95rem; color: #333; }
+    .feature-list li::before { content: "▸"; color: #2471a3; position: absolute; left: 0; top: 1px; }
+
+    /* ── Stat row ───────────────────────────────── */
+    .stat-row { display: flex; gap: 18px; margin: 24px 0; flex-wrap: wrap; }
+    .stat-box {
+      flex: 1; min-width: 130px; background: #fff;
+      border: 1px solid #e6e6e6; border-radius: 10px;
+      padding: 18px 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-box .stat-num { font-size: 1.9rem; font-weight: 800; color: #2471a3; line-height: 1.1; }
+    .stat-box .stat-label { font-size: 0.82rem; color: #666; margin-top: 5px; }
+
+    /* ── Figure ─────────────────────────────────── */
+    figure { margin: 28px 0; text-align: center; }
+    figure img { max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 20px rgba(0,0,0,0.09); }
+    figcaption { margin-top: 10px; font-size: 0.84rem; color: #777; }
+
+    /* ── Citation box ───────────────────────────── */
+    .citation-box {
+      background: #f5f5f3; border: 1px solid #e0e0de; border-radius: 8px;
+      padding: 18px 20px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.82rem; color: #333; white-space: pre-wrap; word-break: break-all;
+      margin-top: 14px; line-height: 1.7;
+    }
+
+    /* ── Footer ─────────────────────────────────── */
+    footer { background: #1c1c1c; color: #999; text-align: center; padding: 28px 24px; font-size: 0.84rem; }
+    footer a { color: #e87b6e; }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 48px 0; }
+      .card-grid-2 { grid-template-columns: 1fr; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="container">
+    <div class="cat-badge">Agent Runtime Framework</div>
+    <h1>🌟 <span class="hl">Science-Star</span></h1>
+    <p class="subtitle">
+      开源科学 AI Agent 平台——构建、扩展、实验，一个平台，零摩擦。<br>
+      基于 ReAct 引擎，覆盖 HLE & GAIA 基准，集成丰富工具集。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/Melmaphother/Science-Star" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="btn btn-secondary" href="../">← 返回主页</a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ STICKY NAV ═══════════════════ -->
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">AgentR1</a>
+    <a href="#intro">简介</a>
+    <a href="#features">核心功能</a>
+    <a href="#architecture">系统架构</a>
+    <a href="#benchmarks">基准支持</a>
+    <a href="#toolbox">工具集</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ INTRO ═══════════════════ -->
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      Science-Star 是一个开源科学 AI Agent 平台，基于 <strong>ReAct</strong> 引擎（Planning + Action + Memory + Reflection），
+      内置 <strong>HLE</strong>（Humanity's Last Exam）和 <strong>GAIA</strong> 基准，
+      覆盖搜索、爬取、PDF 解析、浏览器、RAG 等丰富工具集，
+      支持单/多智能体灵活切换，并提供端到端可视化分析工具。
+    </div>
+
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      科学研究对 AI Agent 的需求与通用任务有本质不同——它需要 Agent 能够检索最新文献、解析复杂 PDF、分析实验数据、编写代码验证假设，并在多个数据源之间进行深度推理。
+    </p>
+    <p>
+      Science-Star 正是为此而生：一个面向科学研究场景的开源 Agent 运行时平台。无论是研究员希望快速评测 Agent 性能，还是开发者需要构建领域 Agent，Science-Star 都能提供即用的完整解决方案。
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">2</div>
+        <div class="stat-label">权威基准<br>HLE · GAIA</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">7+</div>
+        <div class="stat-label">内置工具<br>搜索/爬取/PDF/RAG</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2</div>
+        <div class="stat-label">运行模式<br>单/多智能体</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">✓</div>
+        <div class="stat-label">端到端可视化<br>Streamlit 仪表盘</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FEATURES ═══════════════════ -->
+<section id="features">
+  <div class="container">
+    <h2 class="section-title">核心功能</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔧</div>
+        <h4>丰富工具集</h4>
+        <p>搜索（SerpAPI, Tavily, DuckDuckGo, Wayback）、爬取（Jina, crawl4ai）、PDF 解析、浏览器操作、视频/音频检查、RAG 检索。通过统一接口轻松扩展自定义工具。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h4>多 Agent 架构</h4>
+        <p>内置 CodeAgent + 搜索 Agent 的协作模式。通过单一配置文件即可在单 Agent 与多 Agent 之间切换，模块化设计使核心逻辑不受架构变化影响。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>一键基准评测</h4>
+        <p>HLE 和 GAIA 基准开箱即用，配备完整的数据加载器和评分脚本。Streamlit 可视化仪表盘支持数据集浏览和结果对比分析。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h4>高度可配置</h4>
+        <p>一个配置文件控制模型选择、工具组合、Agent 架构、基准数据集等所有参数。支持灵活替换数据加载器、模型后端和工具组合。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ARCHITECTURE ═══════════════════ -->
+<section id="architecture" class="alt">
+  <div class="container">
+    <h2 class="section-title">系统架构</h2>
+    <p>
+      Science-Star 基于 <strong>RICO 框架</strong>（Reflection + Intelligence + Cognition + Optimization），
+      将 ReAct 的思考—行动循环与 Planning、Memory、Reflection 模块深度整合：
+    </p>
+
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">P</div>
+        <div class="pillar-text">
+          <strong>Planning — 任务规划</strong>
+          <span>在执行前对复杂任务进行分解，生成结构化的执行计划，指导后续行动序列。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">A</div>
+        <div class="pillar-text">
+          <strong>Action — 工具执行</strong>
+          <span>调用搜索、爬取、PDF 解析、代码执行等工具，从外部环境获取信息并执行操作。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">M</div>
+        <div class="pillar-text">
+          <strong>Memory — 上下文管理</strong>
+          <span>维护跨轮次的工作记忆，管理检索到的文献、计算结果、中间推理过程，避免信息丢失。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">R</div>
+        <div class="pillar-text">
+          <strong>Reflection — 自我反思</strong>
+          <span>在每轮行动后评估结果质量，识别错误或信息缺口，调整后续策略，提升长任务稳定性。</span>
+        </div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">多 Agent 协作模式</h3>
+    <div class="card-grid card-grid-2" style="margin-top: 20px;">
+      <div class="card" style="border-left: 4px solid #2471a3;">
+        <h4>单 Agent 模式</h4>
+        <p>单一 Agent 独立完成所有推理、检索、执行步骤。适合任务相对简单、上下文窗口充足的场景。通过配置一键启用。</p>
+      </div>
+      <div class="card" style="border-left: 4px solid #1e8449;">
+        <h4>多 Agent 模式（2026.02 新增）</h4>
+        <p>CodeAgent 负责代码生成与执行，搜索 Agent 负责信息检索与文献整合。两类 Agent 协作完成需要跨域能力的复杂科学推理任务。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ BENCHMARKS ═══════════════════ -->
+<section id="benchmarks">
+  <div class="container">
+    <h2 class="section-title">基准支持</h2>
+    <div class="card-grid card-grid-2" style="margin-top: 20px;">
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h4>HLE（Humanity's Last Exam）</h4>
+        <p>人类最难考试基准，覆盖数学、物理、化学、生物、历史等多学科极难题目，专为测试 AI 的深层科学推理能力而设计。Science-Star 基于 o4-mini 在小规模 HLE 子集上实现了领先结果。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h4>GAIA</h4>
+        <p>通用 AI Agent 基准，评测 Agent 在真实世界多步任务中的能力——包括网页浏览、文件处理、工具使用等。Science-Star 内置完整的 GAIA 加载器、评分脚本和可视化仪表盘。</p>
+      </div>
+    </div>
+    <p style="margin-top: 18px; color: #666; font-size: 0.92rem;">
+      <strong>Roadmap：</strong>更多基准（OpenAI SimpleQA、SciCode 等）正在接入中。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ TOOLBOX ═══════════════════ -->
+<section id="toolbox" class="alt">
+  <div class="container">
+    <h2 class="section-title">工具集详情</h2>
+    <ul class="feature-list">
+      <li><strong>搜索工具</strong>：SerpAPI、Tavily、DuckDuckGo（免费）、Wayback Machine（历史页面）</li>
+      <li><strong>爬取工具</strong>：Jina（快速提取正文）、crawl4ai（复杂结构页面）</li>
+      <li><strong>文档解析</strong>：PDF 解析器（提取文本、表格、公式）</li>
+      <li><strong>浏览器工具</strong>：程序化浏览器操作，支持动态页面交互</li>
+      <li><strong>检查器</strong>：文档/音频/视觉内容检查与分析</li>
+      <li><strong>RAG 检索</strong>：向量检索器，支持自定义知识库构建</li>
+      <li><strong>代码执行</strong>：Python 代码沙盒，用于数据分析与计算验证</li>
+    </ul>
+    <p style="margin-top: 16px;">
+      所有工具通过统一接口暴露，只需实现 <code>execute()</code> 方法即可将自定义工具注册到 Agent 工具池中。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ CITATION ═══════════════════ -->
+<section id="citation">
+  <div class="container">
+    <h2 class="section-title">团队</h2>
+    <p><strong>学生贡献者</strong>：Daoyu Wang、Qingchuan Li、Tian Gao、Shuo Yu、Xiaoyu Tao、Ze Guo</p>
+    <p style="margin-top: 8px;"><strong>指导教师</strong>：Qi Liu、Mingyue Cheng</p>
+    <p style="margin-top: 8px;"><strong>机构</strong>：中国科学技术大学 · 认知智能全国重点实验室</p>
+
+    <h2 class="section-title" style="margin-top: 48px;">引用</h2>
+    <div class="citation-box">@misc{science-star-2025,
+  title={Science-Star: Your Scientific AI Agents},
+  author={Wang, Daoyu and Li, Qingchuan and Gao, Tian and Yu, Shuo and Tao, Xiaoyu and Guo, Ze},
+  year={2025},
+  howpublished={\url{https://github.com/Melmaphother/Science-Star}},
+  note={GitHub repository}
+}</div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <p>&copy; 2025–2026 Science-Star Team · USTC Cognitive Intelligence Lab</p>
+    <p style="font-size:0.78rem;color:#555;margin-top:6px;">
+      <a href="../">← 返回主页</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

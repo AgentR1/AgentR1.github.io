@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic RAG — CRAG · PruningRAG · CRAG Tech Report</title>
+  <meta name="description" content="中国科大认知智能全国重点实验室在 Agentic RAG 方向的系列成果：KDD Cup 2024 CRAG 银牌、PruningRAG（CIKM 2025）、CRAG 技术报告（FCS 期刊）。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5; color: #1a1a1a; line-height: 1.8; font-size: 16px;
+    }
+    a { color: #7d3c98; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee; border: 1px solid #e0e0de; border-radius: 4px;
+      padding: 2px 6px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em; color: #7d3c98;
+    }
+    .container { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Sticky nav ─────────────────────────────── */
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .nav-bar .container {
+      display: flex; align-items: center; overflow-x: auto;
+      scrollbar-width: none; gap: 0; padding-top: 0; padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0; padding: 13px 18px;
+      font-size: 0.87rem; font-weight: 500; color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s; white-space: nowrap;
+    }
+    .nav-bar a:hover { color: #7d3c98; border-bottom-color: #7d3c98; text-decoration: none; }
+    .nav-home { font-weight: 700; color: #7d3c98 !important; border-right: 1px solid #e8e8e8; }
+
+    /* ── Header ─────────────────────────────────── */
+    header {
+      background: linear-gradient(160deg, #ffffff 55%, #f5eef8 100%);
+      border-bottom: 1px solid #e8d5f0;
+      padding: 64px 0 48px; text-align: center;
+    }
+    .cat-badge {
+      display: inline-block; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #7d3c98; background: #f5eef8;
+      border: 1px solid #d2b4de; border-radius: 20px;
+      padding: 4px 14px; margin-bottom: 16px;
+    }
+    header h1 { font-size: 2rem; font-weight: 800; color: #111; line-height: 1.3; }
+    header h1 .hl { color: #7d3c98; }
+    .subtitle {
+      margin-top: 14px; font-size: 1rem; color: #555;
+      max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7;
+    }
+    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; }
+    .btn-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 7px; font-size: 0.88rem; font-weight: 600;
+      border: 1.5px solid transparent; cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s; text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); text-decoration: none; }
+    .btn-primary { background: #7d3c98; color: #fff; border-color: #7d3c98; }
+    .btn-primary:hover { background: #6c3483; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── Section ────────────────────────────────── */
+    section { padding: 64px 0; scroll-margin-top: 46px; }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.4rem; font-weight: 700; color: #111;
+      margin-bottom: 22px; padding-bottom: 10px;
+      border-bottom: 3px solid #7d3c98; display: inline-block;
+    }
+    h3.sub-title { font-size: 1.05rem; font-weight: 700; color: #222; margin: 28px 0 10px; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── TL;DR ──────────────────────────────────── */
+    .tldr {
+      background: #fdf5ff; border-left: 4px solid #7d3c98;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px; font-size: 1rem; color: #222;
+      margin-bottom: 32px; line-height: 1.75;
+    }
+    .tldr strong { color: #7d3c98; }
+
+    /* ── Award banner ───────────────────────────── */
+    .award-banner {
+      background: linear-gradient(135deg, #f5eef8 0%, #fff5e6 100%);
+      border: 1.5px solid #d2b4de; border-radius: 12px;
+      padding: 24px 28px; margin-bottom: 28px; text-align: center;
+    }
+    .award-banner .award-icon { font-size: 3rem; line-height: 1; margin-bottom: 10px; }
+    .award-banner h3 { font-size: 1.25rem; font-weight: 800; color: #111; margin-bottom: 6px; }
+    .award-banner p { font-size: 0.95rem; color: #555; margin: 0; }
+
+    /* ── Paper cards ────────────────────────────── */
+    .paper-card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 14px;
+      padding: 36px 32px; box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+      transition: transform .22s, box-shadow .22s; margin-bottom: 28px;
+    }
+    .paper-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.09); }
+    .paper-card:last-child { margin-bottom: 0; }
+    .paper-number {
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: 4px; padding: 3px 10px; margin-bottom: 14px;
+    }
+    .pn-crag { background: #f5eef8; color: #7d3c98; border: 1px solid #d2b4de; }
+    .pn-pruning { background: #eef4ff; color: #2471a3; border: 1px solid #b8d4f5; }
+    .pn-report { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+    .paper-card h3 { font-size: 1.2rem; font-weight: 800; color: #111; line-height: 1.4; margin-bottom: 8px; }
+    .paper-authors { font-size: 0.88rem; color: #777; margin-bottom: 12px; line-height: 1.6; }
+    .paper-abstract { font-size: 0.93rem; color: #444; line-height: 1.75; margin-bottom: 18px; }
+    .paper-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+    .paper-tag {
+      display: inline-block; font-size: 0.78rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 4px;
+      background: #f5f5f3; color: #555; border: 1px solid #e0e0de;
+    }
+    .paper-tag-hl { background: #f5eef8; color: #7d3c98; border-color: #d2b4de; font-weight: 700; }
+    .paper-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .paper-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 16px; border-radius: 7px; font-size: 0.84rem; font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .16s, box-shadow .16s; text-decoration: none;
+    }
+    .paper-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); text-decoration: none; }
+    .pb-purple { background: #7d3c98; color: #fff; border-color: #7d3c98; }
+    .pb-purple:hover { background: #6c3483; }
+    .pb-blue   { background: #2471a3; color: #fff; border-color: #2471a3; }
+    .pb-blue:hover   { background: #1a5c87; }
+    .pb-green  { background: #1e8449; color: #fff; border-color: #1e8449; }
+    .pb-green:hover  { background: #196f3d; }
+    .pb-out    { background: #fff; color: #333; border-color: #d0d0d0; }
+    .pb-out:hover    { background: #f5f5f5; border-color: #aaa; }
+
+    /* ── Cards ──────────────────────────────────── */
+    .card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-top: 22px;
+    }
+    .card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 10px;
+      padding: 20px 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+    .card .card-icon { font-size: 1.55rem; margin-bottom: 9px; line-height: 1; }
+    .card h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 6px; color: #111; }
+    .card p { font-size: 0.86rem; color: #555; margin: 0; line-height: 1.6; }
+
+    /* ── Feature list ───────────────────────────── */
+    .feature-list { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 9px; }
+    .feature-list li { padding-left: 20px; position: relative; font-size: 0.95rem; color: #333; }
+    .feature-list li::before { content: "▸"; color: #7d3c98; position: absolute; left: 0; top: 1px; }
+
+    /* ── Citation box ───────────────────────────── */
+    .citation-box {
+      background: #f5f5f3; border: 1px solid #e0e0de; border-radius: 8px;
+      padding: 16px 18px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.8rem; color: #333; white-space: pre-wrap; word-break: break-all;
+      margin-top: 12px; line-height: 1.65;
+    }
+
+    /* ── Table ──────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid #e4e4e4; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th { background: #7d3c98; color: #fff; padding: 11px 16px; text-align: left; font-weight: 600; }
+    td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+    tr:nth-child(even) td { background: #fdf9ff; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── Footer ─────────────────────────────────── */
+    footer { background: #1c1c1c; color: #999; text-align: center; padding: 28px 24px; font-size: 0.84rem; }
+    footer a { color: #e87b6e; }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 48px 0; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      .paper-card { padding: 28px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="container">
+    <div class="cat-badge">Agentic RAG</div>
+    <h1><span class="hl">Agentic RAG</span> 研究</h1>
+    <p class="subtitle">
+      检索增强生成方向的系列工作：<br>
+      KDD Cup 竞赛银牌 · 知识剪枝 · 技术报告
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/USTC-RAG-X/CRAG-in-KDD-Cup2024" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="btn btn-secondary" href="../">← 返回主页</a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ STICKY NAV ═══════════════════ -->
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">AgentR1</a>
+    <a href="#overview">概览</a>
+    <a href="#kdd-cup">KDD Cup 2024</a>
+    <a href="#pruningrag">PruningRAG</a>
+    <a href="#tech-report">技术报告</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<section id="overview" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>研究方向：</strong>
+      本方向聚焦检索增强生成（RAG）系统的设计与优化。团队在
+      <strong>KDD Cup 2024 CRAG 竞赛</strong>中取得 Task 2&3 银牌（第二名），
+      并在此基础上提出 <strong>PruningRAG</strong>（多源知识剪枝方法，中稿 CIKM 2025），
+      以及竞赛技术报告（中稿 <strong>FCS 期刊</strong>）。
+    </div>
+
+    <div class="award-banner">
+      <div class="award-icon">🥈</div>
+      <h3>KDD Cup 2024 · Meta CRAG Benchmark</h3>
+      <p>Task 2（知识图谱 + 网页增强）& Task 3（端到端 RAG）双赛道银牌 · 第二名</p>
+    </div>
+
+    <h2 class="section-title">系列工作概览</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <h4>CRAG 竞赛方案</h4>
+        <p>KDD Cup 2024 银牌解决方案，覆盖 Domain Router、动态检索、适应性 Few-Shot CoT 等完整系统。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✂️</div>
+        <h4>PruningRAG</h4>
+        <p>多源知识剪枝 RAG 基准与方法研究，CIKM 2025 录用。arXiv 2409.13694</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📝</div>
+        <h4>CRAG 技术报告</h4>
+        <p>竞赛完整技术报告，FCS 期刊录用。arXiv 2409.15337</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ KDD CUP ═══════════════════ -->
+<section id="kdd-cup">
+  <div class="container">
+    <h2 class="section-title">CRAG-in-KDD-Cup2024</h2>
+    <div class="paper-card">
+      <span class="paper-number pn-crag">🥈 KDD Cup 2024 · Task 2&3 银牌</span>
+      <h3>Meta KDD Cup '24 CRAG：银牌解决方案（Task 2 & Task 3）</h3>
+      <p class="paper-authors">
+        Jie Ouyang &nbsp;·&nbsp; Yucong Luo &nbsp;·&nbsp; Mingyue Cheng &nbsp;·&nbsp;
+        Daoyu Wang &nbsp;·&nbsp; Shuo Yu &nbsp;·&nbsp; Qi Liu &nbsp;·&nbsp; Enhong Chen
+        <br><em>中国科学技术大学 · 认知智能全国重点实验室</em>
+      </p>
+      <div class="paper-meta">
+        <span class="paper-tag paper-tag-hl">🥈 银牌 · 第二名</span>
+        <span class="paper-tag">Task 2：KG + 网页增强</span>
+        <span class="paper-tag">Task 3：端到端 RAG</span>
+        <span class="paper-tag">KDD Cup 2024</span>
+        <span class="paper-tag">Meta CRAG Benchmark</span>
+      </div>
+
+      <p class="paper-abstract">
+        Meta KDD Cup 2024 CRAG（Comprehensive RAG Benchmark）是 Meta 发布的全面 RAG 评测竞赛，包含三项任务：Task 1（基于 5 个网页的摘要检索），Task 2（知识图谱 + 网页多源增强），Task 3（50 个网页 + Mock API 的端到端 RAG）。本团队在 Task 2 和 Task 3 均取得银牌（第二名）。
+      </p>
+
+      <h3 class="sub-title" style="margin-top: 20px;">系统方案</h3>
+      <p class="paper-abstract">方案核心分为检索和生成两个阶段，均引入路由机制处理多样化查询：</p>
+
+      <div class="card-grid" style="margin-top: 16px; margin-bottom: 20px;">
+        <div class="card">
+          <div class="card-icon">🔀</div>
+          <h4>双路由器设计</h4>
+          <p>基于 BGE-M3 训练的领域路由器（5 类）和动态性路由器（4 类），精准分配不同类型问题的处理策略。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌐</div>
+          <h4>Web 检索管道</h4>
+          <p>HTML 解析 → BM25 预排序（Task 3）→ BGE-M3 向量检索 → BGE-M3-v2 重排序，最终选取 Top-5 文本块。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔌</div>
+          <h4>Mock API 提取器</h4>
+          <p>Llama3-70B NER → 实体匹配 → 时间信息提取 → API 规则选择 → JSON 转 Markdown，结构化 API 数据与网页信息深度融合。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💬</div>
+          <h4>自适应 Few-Shot CoT</h4>
+          <p>按领域动态选择数据源（电影/音乐用 Web + API，体育/金融仅用 API），结合链式推理提示生成高质量答案。</p>
+        </div>
+      </div>
+
+      <div class="paper-links">
+        <a class="paper-btn pb-purple" href="https://github.com/USTC-RAG-X/CRAG-in-KDD-Cup2024" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub
+        </a>
+        <a class="paper-btn pb-out" href="https://arxiv.org/abs/2409.15337" target="_blank" rel="noopener">技术报告 arXiv</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PRUNINGRAG ═══════════════════ -->
+<section id="pruningrag" class="alt">
+  <div class="container">
+    <h2 class="section-title">PruningRAG <span style="font-size:1rem;font-weight:500;color:#2471a3;margin-left:8px;">CIKM 2025</span></h2>
+    <div class="paper-card" style="background:#f9fbff;border-color:#b8d4f5;">
+      <span class="paper-number pn-pruning">PruningRAG · CIKM 2025 · arXiv 2409.13694</span>
+      <h3>Multi-Source Knowledge Pruning for Retrieval-Augmented Generation: A Benchmark and Empirical Study</h3>
+      <p class="paper-authors">
+        Shuo Yu &nbsp;·&nbsp; Mingyue Cheng &nbsp;·&nbsp; Qi Liu &nbsp;·&nbsp;
+        Daoyu Wang &nbsp;·&nbsp; Jiqian Yang &nbsp;·&nbsp; Jie Ouyang &nbsp;·&nbsp;
+        Yucong Luo &nbsp;·&nbsp; Chenyi Lei &nbsp;·&nbsp; Enhong Chen
+        <br><em>中国科学技术大学 · 认知智能全国重点实验室</em>
+      </p>
+      <div class="paper-meta">
+        <span class="paper-tag paper-tag-hl" style="background:#eef4ff;color:#2471a3;border-color:#b8d4f5;">CIKM 2025</span>
+        <span class="paper-tag">检索增强生成</span>
+        <span class="paper-tag">知识剪枝</span>
+        <span class="paper-tag">多源检索</span>
+        <span class="paper-tag">基准评测</span>
+      </div>
+      <p class="paper-abstract">
+        RAG 系统从多个异构数据源（网页、知识图谱、数据库、文档库）检索信息时，往往引入大量冗余、矛盾或低质量的知识片段。如何对这些多源知识进行高效剪枝，保留最有价值的内容传入生成模块，是提升 RAG 系统性能的关键环节。
+      </p>
+      <p class="paper-abstract">
+        本文提出了一个系统性的<strong>多源知识剪枝基准</strong>，覆盖 Web 检索、API 数据、知识图谱等多种来源，并通过大量实证研究（Empirical Study）分析不同剪枝策略（基于相关性评分、跨源去重、来源权重学习等）在不同任务和数据源组合下的效果差异。研究为 RAG 系统的剪枝模块设计提供了实践指导。本文被 CIKM 2025 录用。
+      </p>
+      <div class="paper-links">
+        <a class="paper-btn pb-blue" href="https://arxiv.org/abs/2409.13694" target="_blank" rel="noopener">arXiv 2409.13694</a>
+        <a class="paper-btn pb-out" href="../">← 返回主页</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ TECH REPORT ═══════════════════ -->
+<section id="tech-report">
+  <div class="container">
+    <h2 class="section-title">CRAG 技术报告 <span style="font-size:1rem;font-weight:500;color:#1e8449;margin-left:8px;">FCS 期刊</span></h2>
+    <div class="paper-card" style="background:#f9fff9;border-color:#a9dfbf;">
+      <span class="paper-number pn-report">技术报告 · FCS 期刊 · arXiv 2409.15337</span>
+      <h3>Revisiting the Solution of Meta KDD Cup 2024: CRAG</h3>
+      <p class="paper-authors">
+        Jie Ouyang &nbsp;·&nbsp; Yucong Luo &nbsp;·&nbsp; Mingyue Cheng &nbsp;·&nbsp;
+        Daoyu Wang &nbsp;·&nbsp; Shuo Yu &nbsp;·&nbsp; Qi Liu &nbsp;·&nbsp; Enhong Chen
+        <br><em>中国科学技术大学 · 认知智能全国重点实验室</em>
+      </p>
+      <div class="paper-meta">
+        <span class="paper-tag paper-tag-hl" style="background:#eafaf1;color:#1e8449;border-color:#a9dfbf;">FCS 期刊</span>
+        <span class="paper-tag">Frontiers of Computer Science</span>
+        <span class="paper-tag">竞赛技术报告</span>
+        <span class="paper-tag">RAG 系统</span>
+        <span class="paper-tag">KDD Cup 2024</span>
+      </div>
+      <p class="paper-abstract">
+        本文是对 Meta KDD Cup 2024 CRAG 竞赛解决方案的全面技术报告，系统性地阐述了团队在 Task 2（知识图谱 + 网页多源增强 QA）和 Task 3（端到端 RAG，含 50 个网页 + Mock API）上取得银牌的完整方案设计思路、技术选型依据、关键实验结论与经验总结。
+      </p>
+      <p class="paper-abstract">
+        报告详细分析了 CRAG 竞赛的独特挑战：大规模噪声信息过滤（Task 3 单问题 50 个网页）、结构化 API 数据与非结构化网页信息的融合、跨领域动态问题的处理策略差异。在此基础上，对路由器设计、检索管道、生成策略的选择进行了深入复盘。本文已被 <strong>Frontiers of Computer Science（FCS）</strong>期刊录用。
+      </p>
+      <div class="paper-links">
+        <a class="paper-btn pb-green" href="https://arxiv.org/abs/2409.15337" target="_blank" rel="noopener">arXiv 2409.15337</a>
+        <a class="paper-btn pb-purple" href="https://github.com/USTC-RAG-X/CRAG-in-KDD-Cup2024" target="_blank" rel="noopener">GitHub</a>
+        <a class="paper-btn pb-out" href="../">← 返回主页</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CITATION ═══════════════════ -->
+<section id="citation" class="alt">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+
+    <h3 class="sub-title">CRAG 技术报告 / KDD Cup 方案</h3>
+    <div class="citation-box">@article{ouyang2024revisiting,
+  title={Revisiting the Solution of Meta KDD Cup 2024: CRAG},
+  author={Ouyang, Jie and Luo, Yucong and Cheng, Mingyue and Wang, Daoyu and Yu, Shuo and Liu, Qi and Chen, Enhong},
+  journal={Frontiers of Computer Science},
+  eprint={arXiv:2409.15337},
+  year={2024}
+}</div>
+
+    <h3 class="sub-title">PruningRAG</h3>
+    <div class="citation-box">@inproceedings{yu2025pruningrag,
+  title={Multi-Source Knowledge Pruning for Retrieval-Augmented Generation: A Benchmark and Empirical Study},
+  author={Yu, Shuo and Cheng, Mingyue and Liu, Qi and Wang, Daoyu and Yang, Jiqian and Ouyang, Jie and Luo, Yucong and Lei, Chenyi and Chen, Enhong},
+  booktitle={Proceedings of the 34th ACM International Conference on Information and Knowledge Management (CIKM)},
+  year={2025},
+  eprint={arXiv:2409.13694}
+}</div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <p>&copy; 2024–2026 AgentR1 Team · USTC Cognitive Intelligence Lab</p>
+    <p style="font-size:0.78rem;color:#555;margin-top:6px;">
+      <a href="../">← 返回主页</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

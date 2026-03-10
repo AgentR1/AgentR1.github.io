@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AgentR1 — USTC Cognitive Intelligence Lab</title>
-  <meta name="description" content="中国科大认知智能全国重点实验室开源项目主页，包括 Agent-R1 和 Claw-R1 两个面向 Agentic RL 的研究项目。" />
+  <meta name="description" content="中国科大认知智能全国重点实验室开源项目主页，涵盖 Agent 训练框架、Agent 运行时、Agent 应用、Agentic RAG 四大研究方向。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -24,7 +24,7 @@
     a:hover { text-decoration: underline; }
 
     .container {
-      max-width: 860px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 0 24px;
     }
@@ -60,7 +60,7 @@
       margin-top: 16px;
       font-size: 1.05rem;
       color: #555;
-      max-width: 540px;
+      max-width: 580px;
       margin-left: auto;
       margin-right: auto;
       line-height: 1.7;
@@ -126,8 +126,10 @@
       margin-bottom: 16px;
       align-self: flex-start;
     }
-    .tag-agent { background: #fff0ee; color: #c0392b; border: 1px solid #f5c6c2; }
-    .tag-claw  { background: #eef4ff; color: #2471a3; border: 1px solid #b8d4f5; }
+    .tag-training { background: #fff0ee; color: #c0392b; border: 1px solid #f5c6c2; }
+    .tag-runtime  { background: #eef4ff; color: #2471a3; border: 1px solid #b8d4f5; }
+    .tag-apps     { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+    .tag-rag      { background: #f5eef8; color: #7d3c98; border: 1px solid #d2b4de; }
 
     .project-card h3 {
       font-size: 1.3rem;
@@ -179,13 +181,16 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       text-decoration: none;
     }
-    .btn-enter-agent { background: #c0392b; color: #fff; border-color: #c0392b; }
-    .btn-enter-agent:hover { background: #a93226; border-color: #a93226; }
-    .btn-enter-claw  { background: #2471a3; color: #fff; border-color: #2471a3; }
-    .btn-enter-claw:hover  { background: #1a5c87; border-color: #1a5c87; }
+    .btn-enter-training { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .btn-enter-training:hover { background: #a93226; border-color: #a93226; }
+    .btn-enter-runtime  { background: #2471a3; color: #fff; border-color: #2471a3; }
+    .btn-enter-runtime:hover  { background: #1a5c87; border-color: #1a5c87; }
+    .btn-enter-apps     { background: #1e8449; color: #fff; border-color: #1e8449; }
+    .btn-enter-apps:hover     { background: #196f3d; border-color: #196f3d; }
+    .btn-enter-rag      { background: #7d3c98; color: #fff; border-color: #7d3c98; }
+    .btn-enter-rag:hover      { background: #6c3483; border-color: #6c3483; }
     .btn-outline { background: #fff; color: #333; border-color: #d0d0d0; }
     .btn-outline:hover { background: #f5f5f5; border-color: #aaa; }
-    .card-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
     /* ── Divider ────────────────────────────────────── */
     .divider {
@@ -232,9 +237,9 @@
 <header>
   <div class="container">
     <div class="site-label">AgentR1 · USTC</div>
-    <h1><span class="highlight">Agentic RL</span> 研究项目</h1>
+    <h1><span class="highlight">Agentic AI</span> 研究项目</h1>
     <p class="header-subtitle">
-      中国科大认知智能全国重点实验室在 LLM Agent 强化学习方向的开源研究成果
+      中国科大认知智能全国重点实验室在 LLM Agent 训练、运行时、应用与 RAG 方向的开源研究成果
     </p>
     <p class="affiliation">State Key Laboratory of Cognitive Intelligence · University of Science and Technology of China</p>
   </div>
@@ -245,89 +250,124 @@
   <div class="container">
 
     <div class="section-intro">
-      <h2>开源项目</h2>
-      <p>选择一个项目查看详细介绍</p>
+      <h2>研究方向</h2>
+      <p>选择一个方向查看详细介绍</p>
     </div>
 
     <div class="project-grid">
 
-      <!-- Agent-R1 -->
+      <!-- Agent Training Framework -->
       <div class="project-card">
-        <span class="card-tag tag-agent">Training Framework</span>
-        <h3>Agent-R1</h3>
+        <span class="card-tag tag-training">Agent Training Framework</span>
+        <h3>Agent 训练框架</h3>
         <p class="card-desc">
-          面向 LLM Agent 的端到端强化学习训练框架。
-          将 MDP 框架系统性延伸至多轮工具调用场景，
-          通过 Action Mask 与过程奖励实现精确信用分配，
-          在多跳问答任务上比 RAG 基线高出约 3 倍。
+          面向 LLM Agent 的强化学习训练基础设施。Agent-R1 将 MDP 框架延伸至多轮工具调用场景，构建端到端 RL 训练框架；Claw-R1 进一步将真实 Agent Runtime 与 RLVR 深度结合，实现「部署即训练」的新范式。
         </p>
         <div class="card-meta">
           <div class="meta-row">
             <span class="meta-icon">🎯</span>
-            <span>端到端 RL 训练 · Multi-turn Tool Calling · Process Rewards</span>
+            <span>Agent-R1 · Claw-R1 · 端到端 RL · Process Rewards</span>
           </div>
           <div class="meta-row">
             <span class="meta-icon">🔧</span>
-            <span>PPO / GRPO / REINFORCE++ · 多模态支持</span>
+            <span>PPO / GRPO / REINFORCE++ · Runtime RL · 零代码侵入</span>
           </div>
           <div class="meta-row">
             <span class="meta-icon">📄</span>
-            <span>技术报告：arXiv 2511.14460</span>
+            <span>arXiv 2511.14460 · Claw-R1 项目</span>
           </div>
         </div>
         <div class="card-links">
-          <a class="card-btn btn-enter-agent" href="agent-r1/">查看主页 →</a>
-          <a class="card-btn btn-outline" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">
-            <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
-                0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
-                -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
-                .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
-                -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
-                1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
-                1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
-                1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          <a class="card-btn btn-enter-training" href="agent-training/">查看主页 →</a>
+          <a class="card-btn btn-outline" href="agent-r1/">Agent-R1 详情</a>
+          <a class="card-btn btn-outline" href="claw-r1/">Claw-R1 详情</a>
+        </div>
+      </div>
+
+      <!-- Agent Runtime Framework -->
+      <div class="project-card">
+        <span class="card-tag tag-runtime">Agent Runtime Framework</span>
+        <h3>Agent 运行时框架</h3>
+        <p class="card-desc">
+          为科学研究 Agent 提供统一运行平台。Science-Star 基于 ReAct 引擎（Planning + Action + Memory + Reflection），集成 HLE、GAIA 等权威基准，覆盖搜索、爬取、PDF 解析、RAG 等丰富工具集，支持单/多智能体灵活配置。
+        </p>
+        <div class="card-meta">
+          <div class="meta-row">
+            <span class="meta-icon">🌟</span>
+            <span>Science-Star · 科学 AI Agent · ReAct 引擎</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-icon">🔬</span>
+            <span>HLE · GAIA · 多 Agent 架构 · 可视化分析</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-icon">🛠️</span>
+            <span>搜索 · 爬取 · PDF · 浏览器 · RAG 工具集</span>
+          </div>
+        </div>
+        <div class="card-links">
+          <a class="card-btn btn-enter-runtime" href="agent-runtime/">查看主页 →</a>
+          <a class="card-btn btn-outline" href="https://github.com/Melmaphother/Science-Star" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
             </svg>
             GitHub
           </a>
         </div>
       </div>
 
-      <!-- Claw-R1 -->
+      <!-- Agent 应用 -->
       <div class="project-card">
-        <span class="card-tag tag-claw">Runtime RL</span>
-        <h3>Claw-R1</h3>
+        <span class="card-tag tag-apps">Agent Applications</span>
+        <h3>Agent 应用</h3>
         <p class="card-desc">
-          将真实 Agent Runtime（OpenClaw）与 RLVR 训练深度结合的新一代训练基础设施。
-          通过 base_url 即接入的零侵入方式，让生产级 Agent
-          在持续提供服务的同时进行强化学习训练，实现「部署即训练」。
+          将 Agentic 方法落地于实际应用场景的三项研究工作：Cast-R1 探索时间序列预测中的工具增强顺序决策；TableMind++ 构建不确定性感知的表格推理 Programmatic Agent；PaperScout 实现面向学术文献检索的自主 Agent。
         </p>
         <div class="card-meta">
           <div class="meta-row">
-            <span class="meta-icon">⚡</span>
-            <span>Runtime RL · 边服务边训练 · 零代码侵入</span>
+            <span class="meta-icon">📈</span>
+            <span>Cast-R1 · 时间序列预测 · 工具增强 RL</span>
           </div>
           <div class="meta-row">
-            <span class="meta-icon">🔌</span>
-            <span>OpenClaw + RLVR · Middleware Layer · DataPool</span>
+            <span class="meta-icon">📊</span>
+            <span>TableMind++ · 表格推理 · Programmatic Agent</span>
           </div>
           <div class="meta-row">
-            <span class="meta-icon">🏗️</span>
-            <span>基于 Agent-R1 构建</span>
+            <span class="meta-icon">📚</span>
+            <span>PaperScout · 学术文献检索 · 序列级策略优化</span>
           </div>
         </div>
         <div class="card-links">
-          <a class="card-btn btn-enter-claw" href="claw-r1/">查看主页 →</a>
-          <a class="card-btn btn-outline" href="https://github.com/AgentR1/Claw-R1" target="_blank" rel="noopener">
-            <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
-                0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
-                -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
-                .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
-                -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
-                1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
-                1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
-                1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          <a class="card-btn btn-enter-apps" href="agent-apps/">查看主页 →</a>
+        </div>
+      </div>
+
+      <!-- Agentic RAG -->
+      <div class="project-card">
+        <span class="card-tag tag-rag">Agentic RAG</span>
+        <h3>Agentic RAG</h3>
+        <p class="card-desc">
+          在检索增强生成（RAG）方向上的系列工作：在 KDD Cup 2024 CRAG 竞赛中获得银牌（Task 2&3 第二名）；提出 Multi-Source Knowledge Pruning 方法（中稿 CIKM 2025）；发布竞赛技术报告（中稿 FCS 期刊）。
+        </p>
+        <div class="card-meta">
+          <div class="meta-row">
+            <span class="meta-icon">🥈</span>
+            <span>KDD Cup 2024 CRAG 银牌 · Task 2&3 第二名</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-icon">✂️</span>
+            <span>PruningRAG · 多源知识剪枝 · CIKM 2025</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-icon">📝</span>
+            <span>CRAG 技术报告 · FCS 期刊 · arXiv 2409.15337</span>
+          </div>
+        </div>
+        <div class="card-links">
+          <a class="card-btn btn-enter-rag" href="agentic-rag/">查看主页 →</a>
+          <a class="card-btn btn-outline" href="https://github.com/USTC-RAG-X/CRAG-in-KDD-Cup2024" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
             </svg>
             GitHub
           </a>
@@ -342,10 +382,11 @@
       <h2>团队</h2>
       <p>
         Jie Ouyang &nbsp;·&nbsp; Ruiran Yan &nbsp;·&nbsp; Yucong Luo &nbsp;·&nbsp;
-        Zirui Liu &nbsp;·&nbsp; Shuo Yu &nbsp;·&nbsp; Daoyu Wang &nbsp;·&nbsp; Yang Li
+        Zirui Liu &nbsp;·&nbsp; Shuo Yu &nbsp;·&nbsp; Daoyu Wang &nbsp;·&nbsp;
+        Tingyue Pan &nbsp;·&nbsp; Xiaoyu Tao &nbsp;·&nbsp; Qingchuan Li &nbsp;·&nbsp; Yang Li
       </p>
       <p style="margin-top: 6px;">
-        指导教师：<strong>Qi Liu</strong> &nbsp;·&nbsp; <strong>Mingyue Cheng</strong>
+        指导教师：<strong>Qi Liu</strong> &nbsp;·&nbsp; <strong>Mingyue Cheng</strong> &nbsp;·&nbsp; <strong>Enhong Chen</strong>
       </p>
     </div>
 
@@ -356,7 +397,7 @@
 <footer>
   <div class="container">
     <p>
-      &copy; 2025 AgentR1 Team &middot; USTC Cognitive Intelligence Lab
+      &copy; 2025–2026 AgentR1 Team &middot; USTC Cognitive Intelligence Lab
     </p>
   </div>
 </footer>
