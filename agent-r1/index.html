@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent-R1 — End-to-End RL for LLM Agents</title>
+  <meta name="description" content="Agent-R1 是中国科大认知智能全国重点实验室提出的面向 LLM Agent 的端到端强化学习训练框架，将 MDP 框架延伸至多轮工具调用场景，显著超越 RAG 基线。" />
+  <style>
+    /* ── Reset ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── Base ──────────────────────────────────────── */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee;
+      border: 1px solid #e0e0de;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #c0392b;
+    }
+
+    /* ── Container ─────────────────────────────────── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Sticky nav ────────────────────────────────── */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    /* ── Hero header ───────────────────────────────── */
+    header {
+      background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 60px 0 48px;
+      text-align: center;
+    }
+    header h1 {
+      margin-top: 12px;
+      font-size: 1.95rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: #111;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin-top: 14px;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .affiliation {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+    .authors {
+      margin-top: 8px;
+      font-size: 0.87rem;
+      color: #777;
+    }
+
+    /* ── Buttons ───────────────────────────────────── */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+      text-decoration: none;
+      opacity: 1;
+    }
+    .btn-primary { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .btn-primary:hover { background: #a93226; border-color: #a93226; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── Section base ──────────────────────────────── */
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 46px;
+    }
+    section.alt { background: #fff; }
+    h2.section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 32px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    section + section { border-top: 1px solid #e8e8e8; }
+
+    /* ── TL;DR banner ──────────────────────────────── */
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.02rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: #c0392b; }
+
+    /* ── Table ─────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid #e4e4e4; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+    tr:nth-child(even) td { background: #fdf9f9; }
+    tr:last-child td { border-bottom: none; }
+    .tag-best {
+      display: inline-block;
+      background: #c0392b;
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .bold-result { font-weight: 700; color: #111; }
+    .underline-result { text-decoration: underline; color: #333; }
+
+    /* ── Cards ─────────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon { font-size: 1.65rem; margin-bottom: 10px; line-height: 1; }
+    .card h4 { font-size: 0.93rem; font-weight: 700; margin-bottom: 7px; color: #111; }
+    .card p { font-size: 0.87rem; color: #555; margin: 0; line-height: 1.65; }
+
+    /* ── Pillar list ───────────────────────────────── */
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text { flex: 1; }
+    .pillar-text strong { display: block; font-size: 0.95rem; margin-bottom: 3px; }
+    .pillar-text span { font-size: 0.88rem; color: #555; }
+
+    /* ── Figure ────────────────────────────────────── */
+    figure { margin: 28px 0; text-align: center; }
+    figure img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09);
+    }
+    figcaption { margin-top: 10px; font-size: 0.84rem; color: #777; }
+
+    /* ── Feature bullet list ───────────────────────── */
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: #c0392b;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    /* ── MDP compare grid ──────────────────────────── */
+    .mdp-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr 1fr;
+      gap: 0;
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e4e4e4;
+      font-size: 0.9rem;
+    }
+    .mdp-grid .hd {
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      padding: 11px 14px;
+    }
+    .mdp-grid .cell {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      line-height: 1.6;
+    }
+    .mdp-grid .label {
+      font-weight: 700;
+      background: #fdf9f9;
+      color: #333;
+      border-right: 1px solid #f0f0f0;
+    }
+    .mdp-grid .agent-cell {
+      background: #fff;
+    }
+    .mdp-grid .llm-cell {
+      background: #fafafa;
+      border-right: 1px solid #f0f0f0;
+    }
+    .mdp-grid .last-row .cell { border-bottom: none; }
+
+    /* ── Citation box ──────────────────────────────── */
+    .citation-box {
+      background: #f5f5f3;
+      border: 1px solid #e0e0de;
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.82rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    /* ── Stat row ───────────────────────────────────── */
+    .stat-row {
+      display: flex;
+      gap: 20px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 140px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-box .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.1;
+    }
+    .stat-box .stat-label {
+      font-size: 0.83rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    /* ── Footer ────────────────────────────────────── */
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    /* ── Responsive ────────────────────────────────── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.45rem; }
+      section { padding: 48px 0; }
+      .card-grid-2 { grid-template-columns: 1fr; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.25rem; }
+      .mdp-grid { grid-template-columns: 100px 1fr 1fr; font-size: 0.82rem; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="container">
+    <h1>Agent-R1：<span class="highlight">端到端强化学习</span>训练 LLM Agent</h1>
+    <p class="subtitle">
+      将 MDP 框架系统性延伸至多轮工具调用场景，<br>
+      构建模块化、易扩展的 Agent 强化学习训练框架。
+    </p>
+    <p class="authors">
+      Mingyue Cheng &middot; Jie Ouyang &middot; Shuo Yu &middot; Ruiran Yan &middot; Yucong Luo &middot; Zirui Liu &middot; Daoyu Wang &middot; Qi Liu &middot; Enhong Chen
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+            -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+            .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+            -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+            1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="btn btn-secondary" href="https://arxiv.org/abs/2511.14460" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Technical Report
+      </a>
+      <a class="btn btn-secondary" href="../" rel="noopener">
+        ← 返回主页
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ STICKY NAV ═══════════════════ -->
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">AgentR1</a>
+    <a href="#intro">简介</a>
+    <a href="#problem">核心问题</a>
+    <a href="#mdp">MDP 框架</a>
+    <a href="#framework">训练框架</a>
+    <a href="#results">实验结果</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ INTRO ═══════════════════ -->
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      Agent-R1 将 <strong>MDP 框架系统性延伸</strong>到 LLM Agent 的多轮工具调用场景，
+      构建了一套模块化、易扩展的端到端强化学习训练框架，
+      在多跳问答基准上，<strong>最优 RL 算法比 RAG 基线高出约 3 倍</strong>（EM 0.39 vs 0.13）。
+    </div>
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      大语言模型（LLM）越来越多地被用于构建能与环境主动交互的 Agent——通过工具调用、多步推理解决复杂问题。
+      强化学习（RL）被认为是训练此类 Agent 的关键技术，但其有效应用仍处于早期阶段，
+      面临<strong>多轮交互不稳定、奖励信号设计复杂、泛化能力受限</strong>等独特挑战。
+    </p>
+    <p>
+      Agent-R1 从概念与实践两个维度系统性地回应了这些挑战：
+      一方面，对 RL 方法论在 LLM Agent 场景下的应用进行梳理与澄清；
+      另一方面，提供一个<strong>灵活、易用的端到端训练框架</strong>，开发者只需定义工具和奖励函数即可快速迁移到新场景。
+    </p>
+
+    <figure>
+      <img src="assets/agent.png" alt="Workflow vs Agentic Workflow vs Autonomous Agent" />
+      <figcaption>图 1：Workflow、Agentic Workflow 与自主 Agent 的对比。Agent-R1 训练完全自主、无预设工作流的 Agent，通过端到端行动—反馈循环与环境交互。</figcaption>
+    </figure>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">~3×</div>
+        <div class="stat-label">优于 RAG 基线<br>（平均 EM）</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">5</div>
+        <div class="stat-label">支持 RL 算法<br>PPO / GRPO / REINFORCE++ 等</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">3</div>
+        <div class="stat-label">评测基准<br>HotpotQA / 2Wiki / Musique</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">✓</div>
+        <div class="stat-label">多模态支持<br>VLM + 多模态 RL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CORE PROBLEM ═══════════════════ -->
+<section id="problem">
+  <div class="container">
+    <h2 class="section-title">核心问题</h2>
+    <p>
+      将 RL 应用于 LLM Agent 训练时，Agent 场景的独特性带来了与静态任务截然不同的挑战：
+    </p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>多轮序列决策</h4>
+        <p>Agent 需要在多轮交互中保持记忆、做出连贯决策，而非单次生成文本。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎲</div>
+        <h4>随机环境反馈</h4>
+        <p>工具调用的返回结果具有不确定性，状态转移不再是确定性的，训练更难收敛。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏷️</div>
+        <h4>奖励信号稀疏</h4>
+        <p>任务结果奖励只在最终步给出，难以为中间工具调用提供有效的学习信号。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧩</div>
+        <h4>框架缺口</h4>
+        <p>现有 RLVR 框架多面向静态任务，缺乏对多轮工具交互、过程奖励的系统支持。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ MDP FRAMEWORK ═══════════════════ -->
+<section id="mdp" class="alt">
+  <div class="container">
+    <h2 class="section-title">MDP 框架扩展</h2>
+    <p>
+      Agent-R1 将标准 MDP 框架系统性延伸到 LLM Agent 场景，
+      明确刻画了多轮交互、工具调用、过程奖励等核心差异：
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>MDP 组件</th>
+            <th>静态 LLM</th>
+            <th>LLM Agent（Agent-R1）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>状态空间 S</strong></td>
+            <td>当前文本序列（prompt + 已生成 tokens）</td>
+            <td>完整多轮交互历史，包含每轮的 Agent 输出与环境反馈</td>
+          </tr>
+          <tr>
+            <td><strong>动作空间 A</strong></td>
+            <td>从词表中选择下一个 token</td>
+            <td>token 生成，特定序列可触发外部工具调用</td>
+          </tr>
+          <tr>
+            <td><strong>状态转移 P</strong></td>
+            <td>确定性：拼接 token 即得下一状态</td>
+            <td>混合：文本生成确定，工具调用引入随机环境反馈</td>
+          </tr>
+          <tr>
+            <td><strong>奖励函数 R</strong></td>
+            <td>稀疏：仅在生成结束时给出结果奖励</td>
+            <td>密集：结果奖励 + 中间步骤过程奖励（工具调用有效性）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top: 16px;">
+      这一框架扩展是 Agent-R1 的理论基础——只有精确建模 Agent 与环境的交互机制，
+      才能设计出真正适配多轮工具调用场景的 RL 训练方法。
+    </p>
+
+    <h3 class="sub-title">过程奖励（Process Rewards）</h3>
+    <p>
+      在 Agent 场景中，除任务最终结果奖励 <code>r_f</code> 外，
+      Agent-R1 还为每次工具调用分配<strong>过程奖励 <code>r_p</code></strong>，
+      对成功执行中间步骤给予即时正向反馈，大幅缓解奖励稀疏问题。
+    </p>
+    <div class="card-grid-2" style="margin-top: 16px;">
+      <div class="card" style="border-left: 4px solid #e67e22;">
+        <h4>结果奖励 r_f</h4>
+        <p>在终止状态给出，衡量最终任务完成质量，如答案的 Exact Match 得分。</p>
+      </div>
+      <div class="card" style="border-left: 4px solid #c0392b;">
+        <h4>过程奖励 r_p</h4>
+        <p>在每次有效工具调用后给出，衡量中间步骤的执行效果，提供更密集的学习信号。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FRAMEWORK ═══════════════════ -->
+<section id="framework">
+  <div class="container">
+    <h2 class="section-title">Agent-R1 训练框架</h2>
+    <p>
+      Agent-R1 将传统单轮 RL 训练框架扩展为支持<strong>多轮交互 Rollout</strong> 的完整系统，
+      核心由 <code>Tool</code> 与 <code>ToolEnv</code> 两个模块构成。
+    </p>
+
+    <figure>
+      <img src="assets/framework.png" alt="Agent-R1 Framework" />
+      <figcaption>图 2：Agent-R1 训练轨迹示意图。Agent 在 Rollout 阶段进行多轮推理与工具调用，接收环境反馈，最终用完整轨迹进行 RL 更新。</figcaption>
+    </figure>
+
+    <h3 class="sub-title">两大核心模块</h3>
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>Tool — 原子动作执行器</strong>
+          <span>封装单一能力（API 调用、代码执行、数据库查询等），执行后返回原始结果。标准化接口遵循 JSON Schema 规范，包含名称、描述、参数结构，Agent 可自动识别并调用。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>ToolEnv — 环境状态管理器</strong>
+          <span>负责解析 Agent 输出中的工具调用请求、协调工具执行、更新环境状态、计算奖励信号，并将新状态返回给 Agent。是多轮 RL 循环的核心驱动模块。</span>
+        </div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">关键训练机制</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🎭</div>
+        <h4>Action Mask</h4>
+        <p>精确区分 Agent 生成内容与环境反馈，确保策略梯度损失只计算在 Agent 实际决策的 token 上，避免向 prompt 或环境输出反向传播错误梯度。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📐</div>
+        <h4>Advantage Alignment</h4>
+        <p>优势值计算同时融合过程奖励与结果奖励，并与 Action Mask 对齐，确保每一步的信用分配精确对应 Agent 的实际决策行为。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔧</div>
+        <h4>多算法支持</h4>
+        <p>框架原生支持 PPO、GRPO、REINFORCE++、REINFORCE++Baseline 和 RLOO，可灵活切换评估不同 RL 算法在 Agent 场景下的表现。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖼️</div>
+        <h4>多模态支持</h4>
+        <p>与视觉语言模型（VLM）无缝集成，支持同时处理文本与视觉输入的多模态 Agent 训练场景。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ RESULTS ═══════════════════ -->
+<section id="results" class="alt">
+  <div class="container">
+    <h2 class="section-title">实验结果</h2>
+    <p>
+      在多跳问答（Multi-hop QA）任务上进行验证，Agent 使用 wikisearch 工具查询维基百科（~3600 万段落）来回答需要多步推理的问题。
+    </p>
+
+    <h3 class="sub-title">实验设置</h3>
+    <ul class="feature-list">
+      <li><strong>模型</strong>：Qwen2.5-3B-Instruct，NousToolEnv 函数调用格式</li>
+      <li><strong>训练集</strong>：51,200 条样本，均衡采样自 HotpotQA 与 2WikiMultihopQA</li>
+      <li><strong>评测基准</strong>：HotpotQA、2WikiMultihopQA（域内），Musique（域外）</li>
+      <li><strong>评测指标</strong>：Exact Match（EM）</li>
+      <li><strong>奖励</strong>：格式奖励 + 答案 EM 奖励，错误格式给予惩罚</li>
+    </ul>
+
+    <h3 class="sub-title" style="margin-top: 28px;">主要结果</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>方法</th>
+            <th>HotpotQA†</th>
+            <th>2WikiMultihopQA†</th>
+            <th>Musique*</th>
+            <th>平均</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Base Tool Call</td>
+            <td>0.1372</td>
+            <td>0.0891</td>
+            <td>0.0277</td>
+            <td>0.0847</td>
+          </tr>
+          <tr>
+            <td>Naive RAG</td>
+            <td>0.1916</td>
+            <td>0.1792</td>
+            <td>0.0277</td>
+            <td>0.1328</td>
+          </tr>
+          <tr>
+            <td>PPO</td>
+            <td>0.4136</td>
+            <td>0.5468</td>
+            <td>0.1552</td>
+            <td>0.3719</td>
+          </tr>
+          <tr>
+            <td><strong>GRPO</strong> <span class="tag-best">最优</span></td>
+            <td class="bold-result">0.4405</td>
+            <td class="bold-result">0.5741</td>
+            <td>0.1485</td>
+            <td class="bold-result">0.3877</td>
+          </tr>
+          <tr>
+            <td>REINFORCE++</td>
+            <td>0.3768</td>
+            <td>0.4796</td>
+            <td>0.1336</td>
+            <td>0.3300</td>
+          </tr>
+          <tr>
+            <td>REINFORCE++Baseline</td>
+            <td>0.3966</td>
+            <td>0.5406</td>
+            <td>0.1485</td>
+            <td>0.3619</td>
+          </tr>
+          <tr>
+            <td>RLOO</td>
+            <td>0.4089</td>
+            <td>0.5641</td>
+            <td>0.1419</td>
+            <td>0.3716</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:#666; font-size:.88rem; margin-top: 8px;">† 域内数据集；* 域外数据集</p>
+
+    <p style="margin-top: 18px;">
+      所有 RL 训练方法均<strong>大幅超越基线</strong>：最弱的 RL 算法（REINFORCE++，平均 EM 0.33）
+      仍比 Naive RAG（0.13）高出约 2.5 倍。GRPO 综合表现最优，
+      PPO 在域外 Musique 数据集上表现突出，展现了良好的泛化能力。
+    </p>
+
+    <h3 class="sub-title">消融实验：Action Mask 的重要性</h3>
+    <p>
+      消融实验证明 <strong>Action Mask</strong>（用于损失计算与优势对齐）
+      是 Agent-R1 框架中最关键的设计之一。
+      去掉 loss mask 或 advantage mask 均会导致性能显著下降，
+      说明精确的信用分配对多轮 Agent 训练至关重要。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ CITATION ═══════════════════ -->
+<section id="citation">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+    <p>如果本项目对您的研究有所帮助，请考虑引用：</p>
+    <div class="citation-box">@misc{Agent-R1,
+  author       = {Jie Ouyang, Ruiran Yan, Yucong Luo, Mingyue Cheng, Qi Liu,
+                  Zirui Liu, Shuo Yu, Daoyu Wang},
+  title        = {Training Powerful LLM Agents with End-to-End Reinforcement Learning},
+  year         = {2025},
+  organization = {GitHub},
+  url          = {https://github.com/0russwest0/Agent-R1},
+}</div>
+
+    <h2 class="section-title" style="margin-top: 48px;">致谢</h2>
+    <p>
+      感谢 <a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener">DeepSeek-R1</a>
+      提供的模型与启发性思路；感谢
+      <a href="https://github.com/volcengine/verl" target="_blank" rel="noopener">veRL</a>
+      团队提供的强大训练基础设施；感谢
+      <a href="https://github.com/ZihanWang314/ragen" target="_blank" rel="noopener">RAGEN</a>
+      团队的开创性探索对本项目早期方向的深刻影响。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2025 Agent-R1 Team &middot; USTC Cognitive Intelligence Lab &middot;
+      <a href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">GitHub</a>
+    </p>
+    <p style="font-size: 0.78rem; color: #555; margin-top: 6px;">
+      Built for the Agentic RL community
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

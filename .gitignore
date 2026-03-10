@@ -1,0 +1,6 @@
+# Local PDF copies (do not upload)
+*.pdf
+
+# Local project clones (do not upload)
+Agent-R1/
+Claw-R1/
