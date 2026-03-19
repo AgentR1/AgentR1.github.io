@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TabClaw — 本地对话式表格分析 AI Agent</title>
+  <meta name="description" content="TabClaw：面向表格数据的本地对话式 AI Agent，无需 SQL、无需编程，支持多表并行分析、执行计划展示、跨会话记忆与技能自动蒸馏。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5; color: #1a1a1a; line-height: 1.8; font-size: 16px;
+    }
+    a { color: #d35400; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee; border: 1px solid #e0e0de; border-radius: 4px;
+      padding: 2px 6px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em; color: #d35400;
+    }
+    .container { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Sticky nav ─────────────────────────────── */
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .nav-bar .container {
+      display: flex; align-items: center; overflow-x: auto;
+      scrollbar-width: none; gap: 0; padding-top: 0; padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0; padding: 13px 18px;
+      font-size: 0.87rem; font-weight: 500; color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s; white-space: nowrap;
+    }
+    .nav-bar a:hover { color: #d35400; border-bottom-color: #d35400; text-decoration: none; }
+    .nav-home { font-weight: 700; color: #d35400 !important; border-right: 1px solid #e8e8e8; }
+
+    /* ── Header ─────────────────────────────────── */
+    header {
+      background: linear-gradient(160deg, #ffffff 55%, #fef3e2 100%);
+      border-bottom: 1px solid #f5cba7;
+      padding: 64px 0 48px; text-align: center;
+    }
+    .cat-badge {
+      display: inline-block; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #d35400; background: #fef3e2;
+      border: 1px solid #f5cba7; border-radius: 20px;
+      padding: 4px 14px; margin-bottom: 16px;
+    }
+    header h1 { font-size: 2rem; font-weight: 800; color: #111; line-height: 1.3; }
+    header h1 .hl { color: #d35400; }
+    .subtitle {
+      margin-top: 14px; font-size: 1rem; color: #555;
+      max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7;
+    }
+    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; }
+    .btn-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 7px; font-size: 0.88rem; font-weight: 600;
+      border: 1.5px solid transparent; cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s; text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); text-decoration: none; }
+    .btn-primary { background: #d35400; color: #fff; border-color: #d35400; }
+    .btn-primary:hover { background: #b94600; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+
+    /* ── Section ────────────────────────────────── */
+    section { padding: 64px 0; scroll-margin-top: 46px; }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.4rem; font-weight: 700; color: #111;
+      margin-bottom: 22px; padding-bottom: 10px;
+      border-bottom: 3px solid #d35400; display: inline-block;
+    }
+    h3.sub-title { font-size: 1.05rem; font-weight: 700; color: #222; margin: 28px 0 10px; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── TL;DR ──────────────────────────────────── */
+    .tldr {
+      background: #fef9f0; border-left: 4px solid #d35400;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px; font-size: 1rem; color: #222;
+      margin-bottom: 32px; line-height: 1.75;
+    }
+    .tldr strong { color: #d35400; }
+
+    /* ── Feature cards ──────────────────────────── */
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px;
+    }
+    .feature-card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+      padding: 22px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+    .feature-icon { font-size: 1.8rem; margin-bottom: 10px; line-height: 1; }
+    .feature-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: #111; }
+    .feature-card p { font-size: 0.88rem; color: #555; margin: 0; line-height: 1.65; }
+
+    /* ── Code block ─────────────────────────────── */
+    .code-block {
+      background: #1e1e1e; border-radius: 10px; padding: 20px 24px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85rem; color: #d4d4d4; white-space: pre; overflow-x: auto;
+      line-height: 1.7; margin-top: 14px;
+    }
+    .code-block .cmd { color: #9cdcfe; }
+    .code-block .comment { color: #6a9955; }
+
+    /* ── Architecture diagram placeholder ──────── */
+    .arch-box {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+      padding: 32px; text-align: center; margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .arch-layer {
+      background: #fef3e2; border: 1.5px solid #f5cba7; border-radius: 8px;
+      padding: 12px 24px; margin: 10px auto; max-width: 560px;
+      font-size: 0.92rem; font-weight: 600; color: #d35400;
+    }
+    .arch-arrow { color: #bbb; font-size: 1.2rem; margin: 4px 0; display: block; }
+
+    /* ── Citation box ───────────────────────────── */
+    .citation-box {
+      background: #f5f5f3; border: 1px solid #e0e0de; border-radius: 8px;
+      padding: 16px 18px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.8rem; color: #333; white-space: pre-wrap; word-break: break-all;
+      margin-top: 12px; line-height: 1.65;
+    }
+
+    /* ── Team table ─────────────────────────────── */
+    .team-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .team-table th, .team-table td {
+      padding: 10px 14px; border: 1px solid #e6e6e6; font-size: 0.9rem; text-align: left;
+    }
+    .team-table th { background: #fef3e2; color: #d35400; font-weight: 700; }
+    .team-table tr:hover td { background: #fffaf5; }
+
+    /* ── Pill links ─────────────────────────────── */
+    .pill-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 7px; font-size: 0.84rem; font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .16s, box-shadow .16s; text-decoration: none;
+    }
+    .pill:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); text-decoration: none; }
+    .pill-orange { background: #d35400; color: #fff; border-color: #d35400; }
+    .pill-orange:hover { background: #b94600; }
+    .pill-out { background: #fff; color: #333; border-color: #d0d0d0; }
+    .pill-out:hover { background: #f5f5f5; border-color: #aaa; }
+
+    /* ── Footer ─────────────────────────────────── */
+    footer { background: #1c1c1c; color: #999; text-align: center; padding: 28px 24px; font-size: 0.84rem; }
+    footer a { color: #e87b6e; }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 48px 0; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="container">
+    <div class="cat-badge">Agent Tool · Table Analysis</div>
+    <h1><span class="hl">TabClaw</span></h1>
+    <p class="subtitle">
+      本地对话式表格分析 AI Agent<br>
+      无需 SQL · 无需编程 · 对话即可完成复杂分析
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/fishsure/TabClaw" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:14px;height:14px">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="btn btn-secondary" href="../TabClaw/site/" target="_blank" rel="noopener">完整文档</a>
+      <a class="btn btn-secondary" href="../">← 返回主页</a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ STICKY NAV ═══════════════════ -->
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">AgentR1</a>
+    <a href="#overview">概览</a>
+    <a href="#features">核心特性</a>
+    <a href="#architecture">架构</a>
+    <a href="#quickstart">快速上手</a>
+    <a href="#team">团队</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<section id="overview" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>一句话介绍：</strong>
+      TabClaw 是一个运行在本地的对话式表格分析 AI Agent——上传 CSV 或 Excel，用自然语言描述需求，它就会展示执行计划、派遣专属 Agent 并行处理多张表、记住你的分析偏好，还能把每次交互蒸馏成可复用技能，越用越聪明。
+      <strong>全程无需 SQL、无需代码、无需云端。</strong>
+    </div>
+
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      数据分析的门槛长期阻碍非技术用户充分挖掘表格数据的价值。TabClaw 以 <strong>LLM Agent</strong> 为核心引擎，将自然语言对话与结构化表格操作打通：用户只需描述目标，Agent 自动选择合适的工具（数值计算、统计分析、可视化等），制定并展示分步执行计划，获得用户确认后再执行，并在执行完成后进行自检。
+    </p>
+    <p>
+      当用户上传多张表时，TabClaw 为每张表各自派遣一个专属 Agent 并行运行，由聚合器综合各 Agent 的发现，并以 <strong>[CONSENSUS]</strong> / <strong>[UNCERTAIN]</strong> 标注结论的可信度。跨会话的持久记忆与自动技能蒸馏机制，使系统随使用时间的推移持续成长。
+    </p>
+    <p>
+      TabClaw 兼容任意 OpenAI 兼容端点（OpenAI、DeepSeek、SiliconFlow、Ollama 等），支持完全本地化部署，数据无需上传云端。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ FEATURES ═══════════════════ -->
+<section id="features">
+  <div class="container">
+    <h2 class="section-title">核心特性</h2>
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <h4>行动前展示计划</h4>
+        <p>执行前生成分步计划并展示给用户，支持重排、修改、追加步骤，确认后才执行，执行完成后自动自检。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h4>多表并行 Agent</h4>
+        <p>多张表各自派遣专属 Agent 并行分析，聚合器综合所有发现并标注 [CONSENSUS] / [UNCERTAIN]。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h4>技能自动蒸馏</h4>
+        <p>完成非平凡任务（≥3 次工具调用）后，自动将交互过程蒸馏为可复用技能，下次遇到类似需求直接调用。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <h4>跨会话持久记忆</h4>
+        <p>自动提取用户偏好与领域知识，注入后续会话。随时从侧边栏查看、编辑或清除记忆内容。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">❓</div>
+        <h4>不确定时主动提问</h4>
+        <p>需求模糊时提供简洁的澄清选项再执行；需求明确时直接通过，无多余延迟，无静默错误假设。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔧</div>
+        <h4>完全可扩展</h4>
+        <p>支持以 Prompt 模板或 Python 代码模式自定义技能，结合自动蒸馏机制，逐步构建个人专属工具库。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ARCHITECTURE ═══════════════════ -->
+<section id="architecture" class="alt">
+  <div class="container">
+    <h2 class="section-title">系统架构</h2>
+    <p>
+      TabClaw 的核心是一个 <strong>ReAct 流式循环</strong>：Thought → Action → Observation 反复迭代，直至任务完成。计划执行阶段通过上下文链接保证多步一致性。代码执行采用三层沙箱（AST 静态检查 → 受限 globals → 超时熔断），在安全性与灵活性之间取得平衡。
+    </p>
+
+    <div class="arch-box">
+      <div class="arch-layer">用户界面（Gradio Web UI）</div>
+      <span class="arch-arrow">↕</span>
+      <div class="arch-layer">ReAct 流式引擎（Thought · Action · Observation）</div>
+      <span class="arch-arrow">↕</span>
+      <div class="arch-layer" style="background:#fff0ee;border-color:#f5c6c2;color:#c0392b;">
+        Plan Mode &nbsp;·&nbsp; asyncio 多 Agent 协调 &nbsp;·&nbsp; Intent 澄清
+      </div>
+      <span class="arch-arrow">↕</span>
+      <div class="arch-layer" style="background:#eef4ff;border-color:#b8d4f5;color:#2471a3;">
+        三层代码沙箱 &nbsp;·&nbsp; 工具集（统计 · 可视化 · 文件读写）
+      </div>
+      <span class="arch-arrow">↕</span>
+      <div class="arch-layer" style="background:#eafaf1;border-color:#a9dfbf;color:#1e8449;">
+        技能蒸馏 &nbsp;·&nbsp; 持久记忆 &nbsp;·&nbsp; 自定义技能库
+      </div>
+    </div>
+
+    <p style="margin-top: 20px;">
+      完整的技术细节——包括 asyncio 多 Agent 协调机制、技能蒸馏流水线的实现方式，以及三层沙箱的具体设计——请参阅完整文档的架构章节。
+    </p>
+    <div class="pill-links">
+      <a class="pill pill-out" href="../TabClaw/site/architecture/" target="_blank" rel="noopener">Architecture 文档 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ QUICK START ═══════════════════ -->
+<section id="quickstart">
+  <div class="container">
+    <h2 class="section-title">快速上手</h2>
+    <p>克隆仓库、配置 API Key，运行即可：</p>
+    <div class="code-block"><span class="cmd">git clone</span> https://github.com/fishsure/TabClaw.git
+<span class="cmd">cd</span> TabClaw
+
+<span class="cmd">cp</span> setting.txt.example setting.txt
+<span class="comment"># 在 setting.txt 中填入 API_KEY 和 BASE_URL</span>
+
+<span class="cmd">pip install</span> -r requirements.txt
+<span class="cmd">bash</span> run.sh</div>
+    <p style="margin-top: 16px;">
+      浏览器打开 <strong><code>http://localhost:8000</code></strong> 即可开始使用。
+    </p>
+    <p>
+      <strong>支持的 LLM 提供商：</strong>任何 OpenAI 兼容端点均可接入，包括 OpenAI、DeepSeek、SiliconFlow、Ollama（完全本地）等。详见
+      <a href="../TabClaw/site/configuration/" target="_blank" rel="noopener">Configuration 文档</a>。
+    </p>
+    <div class="pill-links">
+      <a class="pill pill-orange" href="https://github.com/fishsure/TabClaw" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="pill pill-out" href="../TabClaw/site/" target="_blank" rel="noopener">完整文档</a>
+      <a class="pill pill-out" href="../TabClaw/site/features/" target="_blank" rel="noopener">Features</a>
+      <a class="pill pill-out" href="../TabClaw/site/skills/" target="_blank" rel="noopener">Skills Reference</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ TEAM ═══════════════════ -->
+<section id="team" class="alt">
+  <div class="container">
+    <h2 class="section-title">团队</h2>
+    <p>TabClaw 由<strong>中国科学技术大学认知智能全国重点实验室</strong>团队构建。</p>
+    <table class="team-table">
+      <thead>
+        <tr><th>角色</th><th>成员</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>核心开发</td>
+          <td>Shuo Yu &nbsp;·&nbsp; Daoyu Wang &nbsp;·&nbsp; Qingchuan Li</td>
+        </tr>
+        <tr>
+          <td>指导教师</td>
+          <td>Mingyue Cheng &nbsp;·&nbsp; Qi Liu</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ RELATED ═══════════════════ -->
+<section id="related">
+  <div class="container">
+    <h2 class="section-title">相关项目</h2>
+    <p>
+      TabClaw 与同组的 <strong>TableMind++</strong>（不确定性感知 Programmatic Agent 表格推理，arXiv 2603.07528）在表格分析领域形成互补——前者侧重交互式工具体验，后者聚焦推理可靠性研究。
+    </p>
+    <p>
+      TabClaw 基于 <strong>Claw-R1</strong> 的 Middleware 架构理念构建，Claw-R1 是同团队面向通用 Agent 的 Agentic RL 训练框架。
+    </p>
+    <div class="pill-links">
+      <a class="pill pill-out" href="../agent-apps/">Agent 应用研究</a>
+      <a class="pill pill-out" href="../claw-r1/">Claw-R1</a>
+      <a class="pill pill-out" href="../">← 返回主页</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CITATION ═══════════════════ -->
+<section id="citation" class="alt">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+    <div class="citation-box">@misc{tabclaw2026,
+  title        = {TabClaw: A Local AI Agent for Conversational Table Analysis},
+  author       = {Yu, Shuo and Wang, Daoyu and Li, Qingchuan and Cheng, Mingyue and Liu, Qi},
+  year         = {2026},
+  howpublished = {\url{https://github.com/fishsure/TabClaw}}
+}</div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <p>&copy; 2025–2026 AgentR1 Team · USTC Cognitive Intelligence Lab</p>
+    <p style="font-size:0.78rem;color:#555;margin-top:6px;">
+      <a href="../">← 返回主页</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
