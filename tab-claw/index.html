@@ -166,6 +166,33 @@
     .pill-out { background: #fff; color: #333; border-color: #d0d0d0; }
     .pill-out:hover { background: #f5f5f5; border-color: #aaa; }
 
+    /* ── Images ─────────────────────────────────── */
+    .header-logo {
+      width: 260px; max-width: 80%; margin-bottom: 20px;
+    }
+    .demo-img {
+      width: 100%; border-radius: 12px; border: 1px solid #e6e6e6;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.10); margin-top: 28px; display: block;
+    }
+    .arch-img {
+      width: 100%; border-radius: 12px; margin-top: 20px; display: block;
+    }
+    .showcase { margin-top: 48px; display: flex; flex-direction: column; gap: 56px; }
+    .showcase-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+    }
+    .showcase-row.reverse { direction: rtl; }
+    .showcase-row.reverse > * { direction: ltr; }
+    .showcase-text h4 { font-size: 1.1rem; font-weight: 700; color: #111; margin-bottom: 10px; }
+    .showcase-text p { font-size: 0.93rem; color: #555; line-height: 1.75; margin: 0; }
+    .showcase-img {
+      width: 100%; border-radius: 10px; border: 1px solid #e0e0de;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+    }
+    @media (max-width: 700px) {
+      .showcase-row, .showcase-row.reverse { grid-template-columns: 1fr; direction: ltr; }
+    }
+
     /* ── Footer ─────────────────────────────────── */
     footer { background: #1c1c1c; color: #999; text-align: center; padding: 28px 24px; font-size: 0.84rem; }
     footer a { color: #e87b6e; }
@@ -184,6 +211,7 @@
 <!-- ═══════════════════ HEADER ═══════════════════ -->
 <header>
   <div class="container">
+    <img src="assets/logo_rmbg.png" alt="TabClaw" class="header-logo" />
     <div class="cat-badge">Agent Tool · Table Analysis</div>
     <h1><span class="hl">TabClaw</span></h1>
     <p class="subtitle">
@@ -236,6 +264,7 @@
     <p>
       TabClaw 兼容任意 OpenAI 兼容端点（OpenAI、DeepSeek、SiliconFlow、Ollama 等），支持完全本地化部署，数据无需上传云端。
     </p>
+    <img src="assets/TabClaw_demo.png" alt="TabClaw UI 界面" class="demo-img" />
   </div>
 </section>
 
@@ -281,11 +310,53 @@
         <p>支持以 Prompt 模板或 Python 代码模式自定义技能，结合自动蒸馏机制，逐步构建个人专属工具库。</p>
       </div>
 
-    </div>
+    </div><!-- end feature-grid -->
+
+    <div class="showcase">
+
+      <div class="showcase-row">
+        <div class="showcase-text">
+          <h4>🗺️ 行动前展示计划</h4>
+          <p>执行前生成分步执行计划并展示给用户——可重排步骤顺序、修改描述、追加新步骤。确认后才真正运行，结束后自动自检，全程透明可控。</p>
+        </div>
+        <img src="assets/plan.png" alt="Plan Mode" class="showcase-img" />
+      </div>
+
+      <div class="showcase-row reverse">
+        <div class="showcase-text">
+          <h4>🤖 多表并行 Agent</h4>
+          <p>上传多张表并提出比较性问题，TabClaw 为每张表各自派遣一名专属分析 Agent 并行运行。聚合器综合所有结论，以 <strong>[CONSENSUS]</strong> 标注各方一致的发现，以 <strong>[UNCERTAIN]</strong> 标注存在分歧的地方。</p>
+        </div>
+        <img src="assets/para.png" alt="Multi-Agent Parallel Analysis" class="showcase-img" />
+      </div>
+
+      <div class="showcase-row">
+        <div class="showcase-text">
+          <h4>🧠 技能自动蒸馏</h4>
+          <p>完成非平凡任务（≥3 次工具调用）后，TabClaw 自动将本次交互模式蒸馏成一个可复用的自定义技能。下次遇到类似需求，直接调用该技能，无需重新推理，越用越快。</p>
+        </div>
+        <img src="assets/skill.png" alt="Skill Distillation" class="showcase-img" />
+      </div>
+
+      <div class="showcase-row reverse">
+        <div class="showcase-text">
+          <h4>❓ 不确定时主动提问</h4>
+          <p>当请求存在多种合理解读时，TabClaw 暂停并给出一组简洁的澄清选项，选择后再执行。需求明确时则直接通过，不引入额外延迟，无静默错误假设。</p>
+        </div>
+        <img src="assets/clarify.png" alt="Intent Clarification" class="showcase-img" />
+      </div>
+
+      <div class="showcase-row">
+        <div class="showcase-text">
+          <h4>💾 跨会话持久记忆</h4>
+          <p>TabClaw 自动提取你的分析偏好、常用指标与领域术语，在每次新会话开始前注入上下文。可随时从侧边栏查看、编辑或清除记忆内容，完全透明可控。</p>
+        </div>
+        <img src="assets/Memory.png" alt="Persistent Memory" class="showcase-img" />
+      </div>
+
+    </div><!-- end showcase -->
   </div>
 </section>
-
-<!-- ═══════════════════ ARCHITECTURE ═══════════════════ -->
 <section id="architecture" class="alt">
   <div class="container">
     <h2 class="section-title">系统架构</h2>
@@ -293,23 +364,7 @@
       TabClaw 的核心是一个 <strong>ReAct 流式循环</strong>：Thought → Action → Observation 反复迭代，直至任务完成。计划执行阶段通过上下文链接保证多步一致性。代码执行采用三层沙箱（AST 静态检查 → 受限 globals → 超时熔断），在安全性与灵活性之间取得平衡。
     </p>
 
-    <div class="arch-box">
-      <div class="arch-layer">用户界面（Gradio Web UI）</div>
-      <span class="arch-arrow">↕</span>
-      <div class="arch-layer">ReAct 流式引擎（Thought · Action · Observation）</div>
-      <span class="arch-arrow">↕</span>
-      <div class="arch-layer" style="background:#fff0ee;border-color:#f5c6c2;color:#c0392b;">
-        Plan Mode &nbsp;·&nbsp; asyncio 多 Agent 协调 &nbsp;·&nbsp; Intent 澄清
-      </div>
-      <span class="arch-arrow">↕</span>
-      <div class="arch-layer" style="background:#eef4ff;border-color:#b8d4f5;color:#2471a3;">
-        三层代码沙箱 &nbsp;·&nbsp; 工具集（统计 · 可视化 · 文件读写）
-      </div>
-      <span class="arch-arrow">↕</span>
-      <div class="arch-layer" style="background:#eafaf1;border-color:#a9dfbf;color:#1e8449;">
-        技能蒸馏 &nbsp;·&nbsp; 持久记忆 &nbsp;·&nbsp; 自定义技能库
-      </div>
-    </div>
+    <img src="assets/TabClaw_framework.png" alt="TabClaw System Architecture" class="arch-img" />
 
     <p style="margin-top: 20px;">
       完整的技术细节——包括 asyncio 多 Agent 协调机制、技能蒸馏流水线的实现方式，以及三层沙箱的具体设计——请参阅完整文档的架构章节。
