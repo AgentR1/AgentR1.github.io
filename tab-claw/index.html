@@ -174,6 +174,13 @@
       width: 100%; border-radius: 12px; border: 1px solid #e6e6e6;
       box-shadow: 0 6px 28px rgba(0,0,0,0.10); margin-top: 28px; display: block;
     }
+    #demo { scroll-margin-top: 56px; }
+    .demo-video-wrap { margin-top: 12px; }
+    .demo-video {
+      width: 100%; border-radius: 12px; border: 1px solid #e6e6e6;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.10); display: block;
+      background: #111;
+    }
     .arch-img {
       width: 100%; border-radius: 12px; margin-top: 20px; display: block;
     }
@@ -236,6 +243,7 @@
   <div class="container">
     <a href="../" class="nav-home">AgentR1</a>
     <a href="#overview">概览</a>
+    <a href="#demo">演示</a>
     <a href="#features">核心特性</a>
     <a href="#architecture">架构</a>
     <a href="#quickstart">快速上手</a>
@@ -263,6 +271,19 @@
     <p>
       TabClaw 兼容任意 OpenAI 兼容端点（OpenAI、DeepSeek、SiliconFlow、Ollama 等），支持本地化部署。
     </p>
+    <h3 class="sub-title" id="demo">演示视频</h3>
+    <div class="demo-video-wrap">
+      <video
+        class="demo-video"
+        controls
+        playsinline
+        preload="metadata"
+        poster="assets/TabClaw_demo.png"
+      >
+        <source src="assets/TabClaw.mp4" type="video/mp4" />
+        您的浏览器不支持视频播放，请查看下方界面截图。
+      </video>
+    </div>
     <img src="assets/TabClaw_demo.png" alt="TabClaw UI 界面" class="demo-img" />
   </div>
 </section>
