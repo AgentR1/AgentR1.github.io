@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent Runtime 框架 — Science-Star</title>
-  <meta name="description" content="Science-Star：中国科大认知智能全国重点实验室提出的开源科学 AI Agent 平台，支持 HLE、GAIA 等基准，集成丰富工具集，支持单/多智能体架构。" />
+  <title>Agent 推理框架 — Science-Star · Mind2Report</title>
+  <meta name="description" content="Agent 推理框架：Science-Star（科学 AI Agent 平台，HLE/GAIA）与 Mind2Report（认知式深度调研与商业报告合成，QRC-Eval）。中国科大认知智能全国重点实验室。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -100,6 +100,51 @@
     }
     .tldr strong { color: #2471a3; }
 
+    /* ── Project showcase (same pattern as agent-training) ─ */
+    .project-showcase {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 32px;
+    }
+    .showcase-card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 14px;
+      padding: 32px 28px; box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+      transition: transform .22s, box-shadow .22s; display: flex; flex-direction: column;
+    }
+    .showcase-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
+    .sc-badge {
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: 4px; padding: 3px 10px; margin-bottom: 14px; align-self: flex-start;
+    }
+    .sc-badge-ss   { background: #eef4ff; color: #2471a3; border: 1px solid #b8d4f5; }
+    .sc-badge-m2   { background: #e8f4f8; color: #1a5276; border: 1px solid #a8c9d8; }
+    .showcase-card h3 { font-size: 1.35rem; font-weight: 800; color: #111; margin-bottom: 12px; }
+    .showcase-card .sc-desc { font-size: 0.92rem; color: #555; line-height: 1.7; flex: 1; margin-bottom: 20px; }
+    .sc-meta { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
+    .sc-meta-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.84rem; color: #555; }
+    .sc-meta-icon { font-size: 0.93rem; flex-shrink: 0; margin-top: 2px; }
+    .sc-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .sc-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 14px; border-radius: 7px;
+      font-size: 0.83rem; font-weight: 600;
+      border: 1.5px solid transparent; transition: transform .16s, box-shadow .16s;
+      text-decoration: none;
+    }
+    .sc-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); text-decoration: none; }
+    .sc-btn-ss    { background: #2471a3; color: #fff; border-color: #2471a3; }
+    .sc-btn-ss:hover { background: #1a5c87; }
+    .sc-btn-m2    { background: #1a5276; color: #fff; border-color: #1a5276; }
+    .sc-btn-m2:hover { background: #154360; }
+    .sc-btn-out   { background: #fff; color: #333; border-color: #d0d0d0; }
+    .sc-btn-out:hover { background: #f5f5f5; border-color: #aaa; }
+
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid #e4e4e4; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th { background: #2471a3; color: #fff; padding: 11px 16px; text-align: left; font-weight: 600; }
+    td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    tr:last-child td { border-bottom: none; }
+
     /* ── Cards ──────────────────────────────────── */
     .card-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -169,6 +214,7 @@
       header h1 { font-size: 1.5rem; }
       section { padding: 48px 0; }
       .card-grid-2 { grid-template-columns: 1fr; }
+      .project-showcase { grid-template-columns: 1fr; }
       .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
     }
   </style>
@@ -179,20 +225,16 @@
 <header>
   <div class="container">
     <div class="cat-badge">Agent Runtime Framework</div>
-    <h1>🌟 <span class="hl">Science-Star</span></h1>
+    <h1>Agent <span class="hl">推理框架</span></h1>
     <p class="subtitle">
-      开源科学 AI Agent 平台——构建、扩展、实验，一个平台，零摩擦。<br>
-      基于 ReAct 引擎，覆盖 HLE & GAIA 基准，集成丰富工具集。
+      从科学任务推理到商业深度调研，<br>
+      两款开源推理 Agent 的系统性探索与落地。
     </p>
     <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
     <div class="btn-row">
-      <a class="btn btn-primary" href="https://github.com/Melmaphother/Science-Star" target="_blank" rel="noopener">
-        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-        </svg>
-        GitHub
-      </a>
       <a class="btn btn-secondary" href="../">← 返回主页</a>
+      <a class="btn btn-primary" href="#science-star">Science-Star 详情</a>
+      <a class="btn btn-secondary" href="../mind2report/">Mind2Report 详情</a>
     </div>
   </div>
 </header>
@@ -200,60 +242,114 @@
 <!-- ═══════════════════ STICKY NAV ═══════════════════ -->
 <nav class="nav-bar">
   <div class="container">
-    <a href="../" class="nav-home">AgentR1</a>
-    <a href="#intro">简介</a>
-    <a href="#features">核心功能</a>
-    <a href="#architecture">系统架构</a>
-    <a href="#benchmarks">基准支持</a>
-    <a href="#toolbox">工具集</a>
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#overview">概览</a>
+    <a href="#science-star">Science-Star</a>
+    <a href="#mind2report">Mind2Report</a>
+    <a href="#comparison">对比</a>
+    <a href="#roadmap">演进</a>
     <a href="#citation">引用</a>
   </div>
 </nav>
 
-<!-- ═══════════════════ INTRO ═══════════════════ -->
-<section id="intro" class="alt">
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<section id="overview" class="alt">
   <div class="container">
     <div class="tldr">
-      <strong>TL;DR：</strong>
-      Science-Star 是一个开源科学 AI Agent 平台，基于 <strong>ReAct</strong> 引擎（Planning + Action + Memory + Reflection），
-      内置 <strong>HLE</strong>（Humanity's Last Exam）和 <strong>GAIA</strong> 基准，
-      覆盖搜索、爬取、PDF 解析、浏览器、RAG 等丰富工具集，
-      支持单/多智能体灵活切换，并提供端到端可视化分析工具。
+      <strong>研究方向：</strong>
+      本方向聚焦 LLM Agent 的<strong>推理与运行</strong>基础设施。
+      <strong>Science-Star</strong> 提供面向科学研究的 ReAct 平台与 HLE、GAIA 等权威基准；
+      <strong>Mind2Report</strong> 以无训练 Agent 工作流完成认知式深度调研与专家级商业报告合成，配套 <strong>QRC-Eval</strong> 评测。
     </div>
 
-    <h2 class="section-title">项目简介</h2>
+    <h2 class="section-title">方向概览</h2>
     <p>
-      科学研究对 AI Agent 的需求与通用任务有本质不同——它需要 Agent 能够检索最新文献、解析复杂 PDF、分析实验数据、编写代码验证假设，并在多个数据源之间进行深度推理。
-    </p>
-    <p>
-      Science-Star 正是为此而生：一个面向科学研究场景的开源 Agent 运行时平台。无论是研究员希望快速评测 Agent 性能，还是开发者需要构建领域 Agent，Science-Star 都能提供即用的完整解决方案。
+      推理型 Agent 既需要可复现的评测环境与工具链（科学场景），也需要面向开放网络的长程认知与报告能力（商业决策场景）。
+      中国科大认知智能全国重点实验室的工作覆盖这两条互补路线：前者以 Science-Star 支撑研究与基准实验，后者以 Mind2Report 探索 Deep Research 的报告质量边界。
     </p>
 
     <div class="stat-row">
       <div class="stat-box">
         <div class="stat-num">2</div>
-        <div class="stat-label">权威基准<br>HLE · GAIA</div>
+        <div class="stat-label">权威基准<br>HLE · GAIA（Science-Star）</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">200</div>
+        <div class="stat-label">QRC-Eval<br>真实商业任务（Mind2Report）</div>
       </div>
       <div class="stat-box">
         <div class="stat-num">7+</div>
-        <div class="stat-label">内置工具<br>搜索/爬取/PDF/RAG</div>
+        <div class="stat-label">内置工具<br>搜索 / 爬取 / PDF / RAG</div>
       </div>
       <div class="stat-box">
         <div class="stat-num">2</div>
-        <div class="stat-label">运行模式<br>单/多智能体</div>
+        <div class="stat-label">运行形态<br>科学平台 · 报告合成</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-num">✓</div>
-        <div class="stat-label">端到端可视化<br>Streamlit 仪表盘</div>
+    </div>
+
+    <div class="project-showcase">
+
+      <div class="showcase-card">
+        <span class="sc-badge sc-badge-ss">Science-Star · GitHub</span>
+        <h3>Science-Star</h3>
+        <p class="sc-desc">
+          开源科学 AI Agent 平台：基于 ReAct 与 RICO，将 Planning、Action、Memory、Reflection 与丰富工具集整合；内置 HLE、GAIA 与 Streamlit 可视化，支持单/多智能体协作，便于扩展自定义工具与评测流程。
+        </p>
+        <div class="sc-meta">
+          <div class="sc-meta-row">
+            <span class="sc-meta-icon">🎯</span>
+            <span>ReAct · HLE · GAIA · CodeAgent + 搜索 Agent</span>
+          </div>
+          <div class="sc-meta-row">
+            <span class="sc-meta-icon">🔧</span>
+            <span>搜索 · 爬取 · PDF · 浏览器 · RAG · Python 沙盒</span>
+          </div>
+        </div>
+        <div class="sc-links">
+          <a class="sc-btn sc-btn-ss" href="#science-star">查看详情 →</a>
+          <a class="sc-btn sc-btn-out" href="https://github.com/Melmaphother/Science-Star" target="_blank" rel="noopener">GitHub</a>
+        </div>
       </div>
+
+      <div class="showcase-card">
+        <span class="sc-badge sc-badge-m2">Mind2Report · arXiv 2601.04879</span>
+        <h3>Mind2Report</h3>
+        <p class="sc-desc">
+          认知式深度调研 Agent：模拟商业分析师的意图澄清、网络检索与笔记式记忆、迭代成文与多维反思；在 QRC-Eval 上从质量、可靠性与覆盖度系统评估报告，适用于高利害商业决策场景。
+        </p>
+        <div class="sc-meta">
+          <div class="sc-meta-row">
+            <span class="sc-meta-icon">📊</span>
+            <span>Training-free · 动态记忆 · 意图驱动提纲 · 反思</span>
+          </div>
+          <div class="sc-meta-row">
+            <span class="sc-meta-icon">📝</span>
+            <span>QRC-Eval · 专家级商业报告 · Apache 2.0</span>
+          </div>
+        </div>
+        <div class="sc-links">
+          <a class="sc-btn sc-btn-m2" href="../mind2report/">查看详情 →</a>
+          <a class="sc-btn sc-btn-out" href="https://github.com/Melmaphother/Mind2Report" target="_blank" rel="noopener">GitHub</a>
+          <a class="sc-btn sc-btn-out" href="https://arxiv.org/abs/2601.04879" target="_blank" rel="noopener">arXiv</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════ FEATURES ═══════════════════ -->
-<section id="features">
+<!-- ═══════════════════ SCIENCE-STAR ═══════════════════ -->
+<section id="science-star">
   <div class="container">
-    <h2 class="section-title">核心功能</h2>
+    <h2 class="section-title">Science-Star：开源科学 AI Agent 平台</h2>
+    <p>
+      科学研究对 AI Agent 的需求与通用任务有本质不同——它需要 Agent 能够检索最新文献、解析复杂 PDF、分析实验数据、编写代码验证假设，并在多个数据源之间进行深度推理。
+    </p>
+    <p>
+      Science-Star 正是为此而生：一个面向科学研究场景的开源 Agent 运行平台。无论是研究员希望快速评测 Agent 性能，还是开发者需要构建领域 Agent，Science-Star 都能提供即用的完整解决方案。
+    </p>
+
+    <h3 class="sub-title" style="margin-top: 28px;">核心功能</h3>
     <div class="card-grid">
       <div class="card">
         <div class="card-icon">🔧</div>
@@ -276,13 +372,8 @@
         <p>一个配置文件控制模型选择、工具组合、Agent 架构、基准数据集等所有参数。支持灵活替换数据加载器、模型后端和工具组合。</p>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ═══════════════════ ARCHITECTURE ═══════════════════ -->
-<section id="architecture" class="alt">
-  <div class="container">
-    <h2 class="section-title">系统架构</h2>
+    <h3 class="sub-title">系统架构</h3>
     <p>
       Science-Star 基于 <strong>RICO 框架</strong>（Reflection + Intelligence + Cognition + Optimization），
       将 ReAct 的思考—行动循环与 Planning、Memory、Reflection 模块深度整合：
@@ -330,13 +421,8 @@
         <p>CodeAgent 负责代码生成与执行，搜索 Agent 负责信息检索与文献整合。两类 Agent 协作完成需要跨域能力的复杂科学推理任务。</p>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ═══════════════════ BENCHMARKS ═══════════════════ -->
-<section id="benchmarks">
-  <div class="container">
-    <h2 class="section-title">基准支持</h2>
+    <h3 class="sub-title">基准支持</h3>
     <div class="card-grid card-grid-2" style="margin-top: 20px;">
       <div class="card">
         <div class="card-icon">🧠</div>
@@ -352,13 +438,8 @@
     <p style="margin-top: 18px; color: #666; font-size: 0.92rem;">
       <strong>Roadmap：</strong>更多基准（OpenAI SimpleQA、SciCode 等）正在接入中。
     </p>
-  </div>
-</section>
 
-<!-- ═══════════════════ TOOLBOX ═══════════════════ -->
-<section id="toolbox" class="alt">
-  <div class="container">
-    <h2 class="section-title">工具集详情</h2>
+    <h3 class="sub-title">工具集详情</h3>
     <ul class="feature-list">
       <li><strong>搜索工具</strong>：SerpAPI、Tavily、DuckDuckGo（免费）、Wayback Machine（历史页面）</li>
       <li><strong>爬取工具</strong>：Jina（快速提取正文）、crawl4ai（复杂结构页面）</li>
@@ -371,6 +452,98 @@
     <p style="margin-top: 16px;">
       所有工具通过统一接口暴露，只需实现 <code>execute()</code> 方法即可将自定义工具注册到 Agent 工具池中。
     </p>
+    <p style="margin-top: 24px;">
+      <a class="btn btn-primary" href="https://github.com/Melmaphother/Science-Star" target="_blank" rel="noopener" style="display:inline-flex;padding:9px 20px;font-size:0.88rem;font-weight:600;border-radius:7px;text-decoration:none;background:#2471a3;color:#fff;border:1.5px solid #2471a3;">Science-Star GitHub →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ MIND2REPORT ═══════════════════ -->
+<section id="mind2report" class="alt">
+  <div class="container">
+    <h2 class="section-title">Mind2Report：认知式深度调研</h2>
+    <p>
+      Mind2Report 面向<strong>专家级商业报告合成</strong>：从细粒度意图探询出发，在开放网络中自适应检索与蒸馏，将知识写入动态记忆结构，经迭代综合与多维反思输出可引用、可决策的长篇报告。
+    </p>
+    <p>
+      框架为 <strong>training-free</strong> 的 Agent 工作流，可与通用推理 LLM 配合；配套 <strong>QRC-Eval</strong>（200 个真实商业任务）从质量、可靠性与覆盖度进行系统评估。完整介绍、复现与 BibTeX 见独立主页。
+    </p>
+    <div class="card-grid" style="margin-top: 20px;">
+      <div class="card">
+        <div class="card-icon">🧭</div>
+        <h4>意图与提纲</h4>
+        <p>意图澄清、提纲检索与章节树生成，兼顾领域概览与具体推理方向。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>记忆增强检索</h4>
+        <p>递归研究循环、查询扩展与失败重试，知识合并与引用匹配。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✨</div>
+        <h4>多维反思</h4>
+        <p>从检索效率、信息完整、来源时效与观点多元等维度自检与改进。</p>
+      </div>
+    </div>
+    <p style="margin-top: 24px;">
+      <a class="btn btn-primary" href="../mind2report/" style="display:inline-flex;padding:9px 20px;font-size:0.88rem;font-weight:600;border-radius:7px;text-decoration:none;background:#1a5276;color:#fff;border:1.5px solid #1a5276;">查看 Mind2Report 完整介绍 →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ COMPARISON ═══════════════════ -->
+<section id="comparison">
+  <div class="container">
+    <h2 class="section-title">两项目对比</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>维度</th><th>Science-Star</th><th>Mind2Report</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>定位</strong></td>
+            <td>科学任务推理与基准评测平台</td>
+            <td>商业深度调研与报告合成 Agent</td>
+          </tr>
+          <tr>
+            <td><strong>典型场景</strong></td>
+            <td>文献/数据/代码驱动的科研问答与 GAIA 类任务</td>
+            <td>开放网络信息下的长篇商业决策报告</td>
+          </tr>
+          <tr>
+            <td><strong>评测</strong></td>
+            <td>HLE、GAIA 等 Agent 基准</td>
+            <td>QRC-Eval（质量 · 可靠性 · 覆盖度）</td>
+          </tr>
+          <tr>
+            <td><strong>工程形态</strong></td>
+            <td>可配置工具池、单/多智能体、Streamlit 仪表盘</td>
+            <td>无训练工作流、动态记忆与反思管线</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ROADMAP ═══════════════════ -->
+<section id="roadmap" class="alt">
+  <div class="container">
+    <h2 class="section-title">演进路线</h2>
+    <p>本方向的两个项目共同覆盖「可复现科学推理」与「开放域报告合成」两条互补路线：</p>
+    <div class="card-grid" style="margin-top: 28px;">
+      <div class="card" style="border-left: 4px solid #2471a3;">
+        <div class="card-icon">1️⃣</div>
+        <h4>Science-Star：科学推理与评测基础设施</h4>
+        <p>以 ReAct/RICO 与权威基准为核心，沉淀工具链与多智能体协作模式，服务科研侧可扩展评测与可视化分析。</p>
+      </div>
+      <div class="card" style="border-left: 4px solid #1a5276;">
+        <div class="card-icon">2️⃣</div>
+        <h4>Mind2Report：走向决策级 Deep Research</h4>
+        <p>在噪声网络环境下强化长程记忆与反思，以 QRC-Eval 牵引报告质量，支撑高利害商业分析场景。</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -378,11 +551,14 @@
 <section id="citation">
   <div class="container">
     <h2 class="section-title">团队</h2>
-    <p><strong>学生贡献者</strong>：Daoyu Wang、Qingchuan Li、Tian Gao、Shuo Yu、Xiaoyu Tao、Ze Guo</p>
+    <p><strong>Science-Star 学生贡献者</strong>：Daoyu Wang、Qingchuan Li、Tian Gao、Shuo Yu、Xiaoyu Tao、Ze Guo</p>
     <p style="margin-top: 8px;"><strong>指导教师</strong>：Mingyue Cheng、Qi Liu</p>
     <p style="margin-top: 8px;"><strong>机构</strong>：中国科学技术大学 · 认知智能全国重点实验室</p>
+    <p style="margin-top: 14px; font-size: 0.92rem; color: #666;">
+      同方向项目 <strong>Mind2Report</strong> 的作者与引用请参阅 <a href="../mind2report/#citation">Mind2Report 主页 · 引用</a>。
+    </p>
 
-    <h2 class="section-title" style="margin-top: 48px;">引用</h2>
+    <h2 class="section-title" style="margin-top: 48px;">引用（Science-Star）</h2>
     <div class="citation-box">@misc{science-star-2025,
   title={Science-Star: Your Scientific AI Agents},
   author={Wang, Daoyu and Li, Qingchuan and Gao, Tian and Yu, Shuo and Tao, Xiaoyu and Guo, Ze},
@@ -396,7 +572,7 @@
 <!-- ═══════════════════ FOOTER ═══════════════════ -->
 <footer>
   <div class="container">
-    <p>&copy; 2025–2026 Science-Star Team · USTC Cognitive Intelligence Lab</p>
+    <p>&copy; 2025–2026 Agent 推理框架（Science-Star · Mind2Report）· AGI Group · State Key Laboratory of Cognitive Intelligence, USTC</p>
     <p style="font-size:0.78rem;color:#555;margin-top:6px;">
       <a href="../">← 返回主页</a>
     </p>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mind2Report — 认知式深度调研 Agent</title>
+  <meta name="description" content="Mind2Report：面向专家级商业报告合成的认知式深度调研 Agent，动态记忆与多维反思，配套 QRC-Eval 评测。中国科大认知智能全国重点实验室。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5; color: #1a1a1a; line-height: 1.8; font-size: 16px;
+    }
+    a { color: #1a5276; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee; border: 1px solid #e0e0de; border-radius: 4px;
+      padding: 2px 6px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em; color: #1a5276;
+    }
+    .container { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .nav-bar .container {
+      display: flex; align-items: center; overflow-x: auto;
+      scrollbar-width: none; gap: 0; padding-top: 0; padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0; padding: 13px 18px;
+      font-size: 0.87rem; font-weight: 500; color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s; white-space: nowrap;
+    }
+    .nav-bar a:hover { color: #1a5276; border-bottom-color: #1a5276; text-decoration: none; }
+    .nav-home { font-weight: 700; color: #1a5276 !important; border-right: 1px solid #e8e8e8; }
+
+    header {
+      background: linear-gradient(160deg, #ffffff 55%, #eef6fa 100%);
+      border-bottom: 1px solid #cfe0ea;
+      padding: 64px 0 48px; text-align: center;
+    }
+    .cat-badge {
+      display: inline-block; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #1a5276; background: #e8f4f8;
+      border: 1px solid #a8c9d8; border-radius: 20px;
+      padding: 4px 14px; margin-bottom: 16px;
+    }
+    header h1 { font-size: 1.85rem; font-weight: 800; color: #111; line-height: 1.35; }
+    header h1 .hl { color: #1a5276; }
+    .subtitle {
+      margin-top: 14px; font-size: 1rem; color: #555;
+      max-width: 640px; margin-left: auto; margin-right: auto; line-height: 1.75;
+    }
+    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; }
+    .btn-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 7px; font-size: 0.88rem; font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .18s, box-shadow .18s, background .18s; text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); text-decoration: none; }
+    .btn-primary { background: #1a5276; color: #fff; border-color: #1a5276; }
+    .btn-primary:hover { background: #154360; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    section { padding: 56px 0; scroll-margin-top: 46px; }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.35rem; font-weight: 700; color: #111;
+      margin-bottom: 20px; padding-bottom: 10px;
+      border-bottom: 3px solid #1a5276; display: inline-block;
+    }
+    h3.sub-title { font-size: 1.05rem; font-weight: 700; color: #222; margin: 24px 0 12px; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: #e8f4f8; border-left: 4px solid #1a5276;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px; font-size: 1rem; color: #222;
+      margin-bottom: 28px; line-height: 1.75;
+    }
+    .tldr strong { color: #1a5276; }
+
+    .card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px; margin-top: 18px;
+    }
+    .card {
+      background: #f7f7f5; border: 1px solid #e6e6e6; border-radius: 10px;
+      padding: 18px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #111; }
+    .card p { font-size: 0.86rem; color: #555; margin: 0; line-height: 1.6; }
+
+    figure { margin: 28px 0; text-align: center; }
+    figure img { max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 20px rgba(0,0,0,0.09); }
+    figcaption { margin-top: 10px; font-size: 0.84rem; color: #777; }
+
+    .feature-list { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .feature-list li { padding-left: 20px; position: relative; font-size: 0.95rem; color: #333; }
+    .feature-list li::before { content: "▸"; color: #1a5276; position: absolute; left: 0; top: 1px; }
+
+    .citation-box {
+      background: #f5f5f3; border: 1px solid #e0e0de; border-radius: 8px;
+      padding: 18px 20px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.82rem; color: #333; white-space: pre-wrap; word-break: break-all;
+      margin-top: 14px; line-height: 1.7;
+    }
+
+    footer { background: #1c1c1c; color: #999; text-align: center; padding: 28px 24px; font-size: 0.84rem; }
+    footer a { color: #e87b6e; }
+
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.45rem; }
+      section { padding: 44px 0; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="cat-badge">Agent 推理框架 · Mind2Report</div>
+    <h1>📊 <span class="hl">Mind2Report</span></h1>
+    <p class="subtitle">
+      认知式深度调研 Agent，面向<strong>专家级商业报告合成</strong>：细粒度意图探询、网络检索与动态记忆、迭代式报告撰写与多维反思。<br>
+      无训练（training-free）的 Agent 工作流，配套 <strong>QRC-Eval</strong> 评测（200 个真实商业任务）。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+    <div class="btn-row">
+      <a class="btn btn-secondary" href="../">← 返回主页</a>
+      <a class="btn btn-primary" href="../agent-runtime/">Agent 推理框架</a>
+      <a class="btn btn-secondary" href="../agent-runtime/#science-star">Science-Star 详情</a>
+    </div>
+    <div class="btn-row" style="margin-top: 10px;">
+      <a class="btn btn-primary" href="https://arxiv.org/abs/2601.04879" target="_blank" rel="noopener">论文 arXiv</a>
+      <a class="btn btn-secondary" href="https://github.com/Melmaphother/Mind2Report" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#intro">简介</a>
+    <a href="#framework">框架</a>
+    <a href="#evaluation">评测</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      从海量嘈杂网页中合成<strong>高质量、可依赖、覆盖充分</strong>的商业决策级报告。Mind2Report 模拟商业分析师的认知流程：意图澄清 → 检索与笔记式记忆 → 迭代成文，并引入多维反思保证检索效率、信息完整、来源时效与观点多元。
+    </div>
+
+    <h2 class="section-title">研究动机</h2>
+    <p>
+      商业决策依赖对公开信息的系统梳理，但网页内容噪声大、广告与低质信息混杂。现有 Deep Research 类 Agent 虽有进展，报告在质量、可靠性与覆盖度上仍不足。Mind2Report 将通用 LLM 与<strong>动态记忆</strong>结合，支撑长程认知过程，无需额外训练即可运行。
+    </p>
+  </div>
+</section>
+
+<section id="framework">
+  <div class="container">
+    <h2 class="section-title">框架概览</h2>
+    <p>整体管线包含三个核心模块：</p>
+    <div class="card-grid">
+      <div class="card">
+        <h4>意图驱动的提纲构建</h4>
+        <p>意图澄清、提纲检索与领域知识聚合，生成带摘要与具体思考方向的章节树。</p>
+      </div>
+      <div class="card">
+        <h4>记忆增强的自适应检索</h4>
+        <p>递归研究循环：信息蒸馏、查询扩展与重试、将知识写入动态章节树记忆，再迭代综合与引用对齐。</p>
+      </div>
+      <div class="card">
+        <h4>多维反思</h4>
+        <p>从检索步效、信息完整性、来源新鲜度与观点多样性等维度评估研究质量，提升终稿专业度与可引用性。</p>
+      </div>
+    </div>
+
+    <figure>
+      <img src="https://raw.githubusercontent.com/Melmaphother/Mind2Report/main/assets/framework.png" width="95%" alt="Mind2Report 框架示意图" loading="lazy" />
+      <figcaption>Mind2Report 整体框架（图源官方仓库）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="evaluation" class="alt">
+  <div class="container">
+    <h2 class="section-title">QRC-Eval 评测</h2>
+    <p>
+      构建包含 <strong>200</strong> 个真实世界商业任务的 <strong>QRC-Eval</strong>，从<strong>质量</strong>（相关性、结构）、<strong>可靠性</strong>（幻觉、时效、一致性）与<strong>覆盖度</strong>（广度与深度）进行系统评估。
+    </p>
+    <h3 class="sub-title">主要结论（论文报告）</h3>
+    <p>
+      在多项指标上相对包括商业级 Deep Research 系统在内的强基线取得领先表现；详见论文实验章节与仓库复现说明。
+    </p>
+  </div>
+</section>
+
+<section id="citation">
+  <div class="container">
+    <h2 class="section-title">团队与引用</h2>
+    <p>
+      <strong>作者</strong>：Mingyue Cheng、Daoyu Wang、Qi Liu、Shuo Yu、Xiaoyu Tao、Yuqian Wang、Chengzhong Chu、Yu Duan、Mingkang Long、Enhong Chen 等。
+    </p>
+    <p style="margin-top: 10px;"><strong>机构</strong>：中国科学技术大学 · 认知智能全国重点实验室</p>
+    <p style="margin-top: 14px; font-size: 0.92rem; color: #666;">
+      同方向项目 <strong>Science-Star</strong> 请参阅 <a href="../agent-runtime/">Agent 推理框架 · Science-Star</a>。
+    </p>
+
+    <h3 class="sub-title">BibTeX</h3>
+    <div class="citation-box">@misc{cheng2026mind2report,
+      title={Mind2Report: A Cognitive Deep Research Agent for Expert-Level Commercial Report Synthesis},
+      author={Mingyue Cheng and Daoyu Wang and Qi Liu and Shuo Yu and Xiaoyu Tao and Yuqian Wang and Chengzhong Chu and Yu Duan and Mingkang Long and Enhong Chen},
+      year={2026},
+      eprint={2601.04879},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2601.04879},
+}</div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025–2026 Mind2Report · Agent 推理框架 · AGI Group · State Key Laboratory of Cognitive Intelligence, USTC</p>
+    <p style="font-size:0.78rem;color:#555;margin-top:6px;">
+      <a href="../agent-runtime/">推理框架总览</a>
+      &nbsp;·&nbsp;
+      <a href="../">主页</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
