@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent 应用 — Cast-R1 · TableMind++ · PaperScout</title>
-  <meta name="description" content="中国科大认知智能全国重点实验室在 Agent 应用领域的三项研究：时间序列预测（Cast-R1）、表格推理（TableMind++）、学术文献检索（PaperScout）。" />
+  <title>Agent 应用 — Cast-R1 · TableMind++ · PaperScout · AnomaMind</title>
+  <meta name="description" content="中国科大认知智能全国重点实验室在 Agent 应用领域的四项研究：时间序列预测（Cast-R1）、表格推理（TableMind++）、学术文献检索（PaperScout）、时间序列异常检测（AnomaMind）。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -115,6 +115,7 @@
     .pn-1 { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
     .pn-2 { background: #eef4ff; color: #2471a3; border: 1px solid #b8d4f5; }
     .pn-3 { background: #fff0ee; color: #c0392b; border: 1px solid #f5c6c2; }
+    .pn-4 { background: #f5eef8; color: #7d3c98; border: 1px solid #d2b4de; }
     .paper-card h3 { font-size: 1.2rem; font-weight: 800; color: #111; line-height: 1.4; margin-bottom: 8px; }
     .paper-authors { font-size: 0.88rem; color: #777; margin-bottom: 12px; line-height: 1.6; }
     .paper-abstract { font-size: 0.93rem; color: #444; line-height: 1.75; margin-bottom: 18px; }
@@ -185,8 +186,8 @@
     <div class="cat-badge">Agent Applications</div>
     <h1>Agent <span class="hl">应用</span>研究</h1>
     <p class="subtitle">
-      将 Agentic 方法落地于实际场景的三项研究：<br>
-      时间序列预测 · 表格推理 · 学术文献检索
+      将 Agentic 方法落地于实际场景的四项研究：<br>
+      时间序列预测 · 表格推理 · 学术文献检索 · 时间序列异常检测
     </p>
     <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
     <div class="btn-row">
@@ -203,6 +204,7 @@
     <a href="#cast-r1">Cast-R1</a>
     <a href="#tablemind">TableMind++</a>
     <a href="#paperscout">PaperScout</a>
+    <a href="#anomamind">AnomaMind</a>
   </div>
 </nav>
 
@@ -214,11 +216,12 @@
       本方向将 Agentic RL 与工具增强方法应用于具体场景。
       <strong>Cast-R1</strong> 将 RL 引入时间序列预测的顺序决策；
       <strong>TableMind++</strong> 构建不确定性感知的表格推理 Agent；
-      <strong>PaperScout</strong> 实现面向学术文献检索的自主 Agent，并提出过程感知的序列级策略优化方法。
+      <strong>PaperScout</strong> 实现面向学术文献检索的自主 Agent，并提出过程感知的序列级策略优化方法；
+      <strong>AnomaMind</strong> 将时间序列异常检测重构为工具增强的顺序决策过程，融合自反思与强化学习。
     </div>
 
-    <h2 class="section-title">三项研究概览</h2>
-    <div class="card-grid">
+    <h2 class="section-title">四项研究概览</h2>
+    <div class="card-grid" style="grid-template-columns: repeat(2, 1fr);">
       <div class="card">
         <div class="card-icon">📈</div>
         <h4>Cast-R1</h4>
@@ -233,6 +236,11 @@
         <div class="card-icon">📚</div>
         <h4>PaperScout</h4>
         <p>学术论文检索自主 Agent，提出 PS-SPO 策略优化。arXiv 2601.10029</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h4>AnomaMind</h4>
+        <p>时间序列异常检测的 Agentic 框架，工具增强推理与自反思。arXiv 2602.13807</p>
       </div>
     </div>
   </div>
@@ -268,6 +276,16 @@
         <a class="paper-btn pb-out" href="../">← 返回主页</a>
       </div>
     </div>
+
+    <h2 class="section-title" style="margin-top: 48px;">引用</h2>
+    <div class="citation-box">@misc{tao2026castr1,
+  title={Cast-R1: Learning Tool-Augmented Sequential Decision Policies for Time Series Forecasting},
+  author={Tao, Xiaoyu and Cheng, Mingyue and Jiang, Chuang and Gao, Tian and Zhang, Huanjian and Liu, Yaguo},
+  year={2026},
+  eprint={2602.13802},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG}
+}</div>
   </div>
 </section>
 
@@ -302,6 +320,16 @@
         <a class="paper-btn pb-out" href="../">← 返回主页</a>
       </div>
     </div>
+
+    <h2 class="section-title" style="margin-top: 48px;">引用</h2>
+    <div class="citation-box">@misc{cheng2026tablemind,
+  title={TableMind++: An Uncertainty-Aware Programmatic Agent for Tool-Augmented Table Reasoning},
+  author={Cheng, Mingyue and Yu, Shuo and Jiang, Chuang and Tao, Xiaoyu and Mao, Qingyang and Ouyang, Jie and Liu, Qi and Chen, Enhong},
+  year={2026},
+  eprint={2603.07528},
+  archivePrefix={arXiv},
+  primaryClass={cs.AI}
+}</div>
   </div>
 </section>
 
@@ -338,26 +366,6 @@
     </div>
 
     <h2 class="section-title" style="margin-top: 48px;">引用</h2>
-    <h3 class="sub-title">Cast-R1</h3>
-    <div class="citation-box">@misc{tao2026castr1,
-  title={Cast-R1: Learning Tool-Augmented Sequential Decision Policies for Time Series Forecasting},
-  author={Tao, Xiaoyu and Cheng, Mingyue and Jiang, Chuang and Gao, Tian and Zhang, Huanjian and Liu, Yaguo},
-  year={2026},
-  eprint={2602.13802},
-  archivePrefix={arXiv},
-  primaryClass={cs.LG}
-}</div>
-
-    <h3 class="sub-title">TableMind++</h3>
-    <div class="citation-box">@misc{cheng2026tablemind,
-  title={TableMind++: An Uncertainty-Aware Programmatic Agent for Tool-Augmented Table Reasoning},
-  author={Cheng, Mingyue and Yu, Shuo and Jiang, Chuang and Tao, Xiaoyu and Mao, Qingyang and Ouyang, Jie and Liu, Qi and Chen, Enhong},
-  year={2026},
-  eprint={2603.07528},
-  archivePrefix={arXiv},
-  primaryClass={cs.AI}
-}</div>
-
     <h3 class="sub-title">PaperScout</h3>
     <div class="citation-box">@misc{pan2026paperscout,
   title={PaperScout: An Autonomous Agent for Academic Paper Search with Process-Aware Sequence-Level Policy Optimization},
@@ -369,6 +377,51 @@
 }</div>
   </div>
 </section>
+
+<!-- ═══════════════════ ANOMAMIND ═══════════════════ -->
+<section id="anomamind" class="alt">
+  <div class="container">
+    <h2 class="section-title">AnomaMind</h2>
+    <div class="paper-card" style="background:#fdf8ff;border-color:#d2b4de;">
+      <span class="paper-number pn-4">AnomaMind · arXiv 2602.13807</span>
+      <h3>AnomaMind: Agentic Time Series Anomaly Detection with Tool-Augmented Reasoning</h3>
+      <p class="paper-authors">
+        Xiaoyu Tao &nbsp;·&nbsp; Yuchong Wu &nbsp;·&nbsp; Mingyue Cheng &nbsp;·&nbsp;
+        Ze Guo &nbsp;·&nbsp; Tian Gao
+        <br><em>中国科学技术大学 · 认知智能全国重点实验室</em>
+      </p>
+      <div class="paper-meta">
+        <span class="paper-tag">时间序列异常检测</span>
+        <span class="paper-tag">工具增强推理</span>
+        <span class="paper-tag">顺序决策</span>
+        <span class="paper-tag">自反思机制</span>
+        <span class="paper-tag">强化学习</span>
+      </div>
+      <p class="paper-abstract">
+        时间序列异常检测在工业监控、金融风控等场景中至关重要，但传统判别式方法依赖静态特征提取，难以适应上下文依赖的多样异常模式。AnomaMind 将异常检测重构为顺序决策过程：Agent 通过多轮工具调用对可疑区间进行由粗到细的定位，并结合动态特征准备与多维证据推理做出诊断。
+      </p>
+      <p class="paper-abstract">
+        AnomaMind 的核心创新包括：<strong>粗到细定位</strong>策略精确识别异常区间；<strong>多轮工具交互</strong>实现自适应特征准备与动态分析；<strong>自反思机制</strong>允许 Agent 迭代修正检测决策；以及结合通用模型与强化学习的<strong>混合推理</strong>范式，实现任务专属的策略优化。
+      </p>
+      <div class="paper-links">
+        <a class="paper-btn" style="background:#7d3c98;color:#fff;border-color:#7d3c98;" href="https://arxiv.org/abs/2602.13807" target="_blank" rel="noopener">arXiv 2602.13807</a>
+        <a class="paper-btn pb-out" href="../">← 返回主页</a>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 48px;">引用</h2>
+    <h3 class="sub-title">AnomaMind</h3>
+    <div class="citation-box">@misc{tao2026anomamind,
+  title={AnomaMind: Agentic Time Series Anomaly Detection with Tool-Augmented Reasoning},
+  author={Tao, Xiaoyu and Wu, Yuchong and Cheng, Mingyue and Guo, Ze and Gao, Tian},
+  year={2026},
+  eprint={2602.13807},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG}
+}</div>
+  </div>
+</section>
+
 
 <!-- ═══════════════════ FOOTER ═══════════════════ -->
 <footer>
