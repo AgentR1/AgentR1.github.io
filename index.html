@@ -256,7 +256,7 @@
 <body>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header>
+<header id="hero-header">
   <div class="container">
     <p class="header-org">中国科学技术大学认知智能全国重点实验室AGI研究组</p>
     <h1><span class="highlight">Agentic AI</span> 研究方向工作介绍</h1>
@@ -482,6 +482,17 @@
     </p>
   </div>
 </footer>
+
+<script>
+  const heroHeader = document.getElementById('hero-header');
+
+  if (heroHeader) {
+    heroHeader.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    }, true);
+  }
+</script>
 
 </body>
 </html>
