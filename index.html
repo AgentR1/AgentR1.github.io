@@ -35,6 +35,18 @@
       border-bottom: 1px solid #e8e8e8;
       padding: 72px 0 56px;
       text-align: center;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    header:hover {
+      background: linear-gradient(160deg, #fffdfd 55%, #ffeceb 100%);
+    }
+    header:active {
+      transform: scale(0.997);
+    }
+    header:focus-visible {
+      outline: 3px solid rgba(192, 57, 43, 0.2);
+      outline-offset: -6px;
     }
     .header-org {
       font-size: 0.95rem;
@@ -256,7 +268,7 @@
 <body>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header id="hero-header">
+<header id="hero-header" role="button" tabindex="0" aria-label="点击刷新当前页面">
   <div class="container">
     <p class="header-org">中国科学技术大学认知智能全国重点实验室AGI研究组</p>
     <h1><span class="highlight">Agentic AI</span> 研究方向工作介绍</h1>
@@ -487,10 +499,17 @@
   const heroHeader = document.getElementById('hero-header');
 
   if (heroHeader) {
-    heroHeader.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-    }, true);
+    const refreshPage = () => {
+      window.location.reload();
+    };
+
+    heroHeader.addEventListener('click', refreshPage);
+    heroHeader.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        refreshPage();
+      }
+    });
   }
 </script>
 
