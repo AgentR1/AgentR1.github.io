@@ -129,6 +129,7 @@
     .accent-castclaw { background: linear-gradient(90deg, #0f766e, #14b8a6); }
     .accent-mechanism { background: linear-gradient(90deg, #2c3e50, #5d6d7e); }
     .accent-evaluation { background: linear-gradient(90deg, #8e44ad, #c039b3); }
+    .accent-rlalgo   { background: linear-gradient(90deg, #b9770e, #f39c12); }
 
     .project-card-wide {
       grid-column: span 2;
@@ -159,6 +160,7 @@
     .tag-castclaw { background: #e8fbf7; color: #0f766e; border: 1px solid #a9e2d9; }
     .tag-mechanism { background: #edf1f5; color: #2c3e50; border: 1px solid #c7d0da; }
     .tag-evaluation { background: #f8eefc; color: #8e44ad; border: 1px solid #dfc3ed; }
+    .tag-rlalgo   { background: #fef5e7; color: #b9770e; border: 1px solid #f8c471; }
 
     .project-card h3 {
       font-size: 1.25rem;
@@ -278,6 +280,8 @@
     .btn-enter-rag:hover      { background: #6c3483; border-color: #6c3483; }
     .btn-enter-tabclaw { background: #d35400; color: #fff; border-color: #d35400; }
     .btn-enter-tabclaw:hover { background: #b94600; border-color: #b94600; }
+    .btn-enter-rlalgo  { background: #b9770e; color: #fff; border-color: #b9770e; }
+    .btn-enter-rlalgo:hover  { background: #9c640c; border-color: #9c640c; }
     .btn-outline { background: #fff; color: #444; border-color: #d8d8d8; }
     .btn-outline:hover { background: #f5f5f5; border-color: #aaa; color: #222; }
     .btn-disabled {
@@ -392,6 +396,35 @@
         </div>
       </div>
 
+      <!-- Agentic RL Algorithms -->
+      <div class="project-card">
+        <div class="card-accent accent-rlalgo"></div>
+        <div class="card-body">
+          <span class="card-tag tag-rlalgo">Agentic RL Algorithms</span>
+          <h3>Agentic RL算法</h3>
+          <p class="card-desc">
+            重点关注交互轨迹表示、优势计算与信用分配、奖励机制设计，以及长程规划与交互执行中的优化难题。
+          </p>
+          <div class="card-meta">
+            <div class="meta-row">
+              <span class="meta-icon">🧮</span>
+              <span>多轮交互轨迹表示 · 时序决策建模 · 长轨迹优化</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🔁</span>
+              <span>优势计算 · 端到端信用分配 · 长程规划与交互执行</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🚀</span>
+              <span>奖励机制设计 · 过程奖励塑形 · 克服奖励稀疏难题</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-rlalgo" href="agent-r1/">查看主页 →</a>
+          </div>
+        </div>
+      </div>
+
       <!-- Agent Runtime Framework -->
       <div class="project-card">
         <div class="card-accent accent-runtime"></div>
@@ -481,7 +514,7 @@
         </div>
       </div>
 
-      <div class="project-card project-card-wide">
+      <div class="project-card">
         <div class="card-accent accent-evaluation"></div>
         <div class="card-body">
           <span class="card-tag tag-evaluation">Agentic Evaluation</span>
