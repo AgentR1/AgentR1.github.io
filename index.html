@@ -126,6 +126,7 @@
     .accent-rag      { background: linear-gradient(90deg, #7d3c98, #9b59b6); }
     .accent-apps     { background: linear-gradient(90deg, #1e8449, #27ae60); }
     .accent-tabclaw  { background: linear-gradient(90deg, #d35400, #e67e22); }
+    .accent-castclaw { background: linear-gradient(90deg, #0f766e, #14b8a6); }
     .accent-mechanism { background: linear-gradient(90deg, #2c3e50, #5d6d7e); }
     .accent-evaluation { background: linear-gradient(90deg, #8e44ad, #c039b3); }
 
@@ -155,6 +156,7 @@
     .tag-apps     { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
     .tag-rag      { background: #f5eef8; color: #7d3c98; border: 1px solid #d2b4de; }
     .tag-tabclaw  { background: #fef3e2; color: #d35400; border: 1px solid #f5cba7; }
+    .tag-castclaw { background: #e8fbf7; color: #0f766e; border: 1px solid #a9e2d9; }
     .tag-mechanism { background: #edf1f5; color: #2c3e50; border: 1px solid #c7d0da; }
     .tag-evaluation { background: #f8eefc; color: #8e44ad; border: 1px solid #dfc3ed; }
 
@@ -190,6 +192,57 @@
       border: 1px solid #f0f0ee;
     }
     .meta-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 1px; }
+    .app-domain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+      flex: 1;
+    }
+    .app-domain-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #d9eadf;
+      background: linear-gradient(180deg, #fbfefc 0%, #f3faf5 100%);
+    }
+    .app-domain-label {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #b7dbc3;
+      background: #eaf7ee;
+      color: #1e8449;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .app-domain-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .app-domain-icon {
+      flex-shrink: 0;
+      font-size: 1rem;
+      line-height: 1;
+      margin-top: 3px;
+    }
+    .app-domain-project {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #153b24;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+    .app-domain-desc {
+      font-size: 0.84rem;
+      color: #4f6056;
+      line-height: 1.75;
+    }
     .card-links {
       display: flex;
       gap: 8px;
@@ -283,6 +336,7 @@
       header h1 { font-size: 1.7rem; }
       .project-grid { grid-template-columns: 1fr; }
       .project-card-wide { grid-column: auto; }
+      .app-domain-grid { grid-template-columns: 1fr; }
       main { padding: 40px 0 60px; }
       .container { padding: 0 16px; }
       .team-grid { grid-template-columns: 1fr; }
@@ -369,6 +423,34 @@
         </div>
       </div>
 
+      <div class="project-card">
+        <div class="card-accent accent-mechanism"></div>
+        <div class="card-body">
+          <span class="card-tag tag-mechanism">Agent Mechanism Analysis</span>
+          <h3>Agent机理分析</h3>
+          <p class="card-desc">
+            围绕 LLM Agent 的行为形成机制、推理决策链路与能力涌现规律展开研究，关注训练、推理、工具使用与记忆反思之间的协同关系。
+          </p>
+          <div class="card-meta">
+            <div class="meta-row">
+              <span class="meta-icon">🧠</span>
+              <span>行为机理 · 多步推理路径 · 决策过程解析</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🔬</span>
+              <span>任务分解 · 工具调用 · 记忆与反思协同机制</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">📐</span>
+              <span>可解释性分析 · 诊断评测 · 能力边界研究</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <span class="card-btn btn-outline btn-disabled">内容建设中</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Agentic RAG -->
       <div class="project-card">
         <div class="card-accent accent-rag"></div>
@@ -399,65 +481,6 @@
         </div>
       </div>
 
-      <!-- Agent 应用 -->
-      <div class="project-card">
-        <div class="card-accent accent-apps"></div>
-        <div class="card-body">
-          <span class="card-tag tag-apps">Domain Application Research</span>
-          <h3>领域应用研究</h3>
-          <p class="card-desc">
-            探索时间序列分析、表格挖掘、科技文献挖掘等场景的 Agentic 应用。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">📈</span>
-              <span>Cast-R1 · 时间序列预测 · 工具增强 RL</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📊</span>
-              <span>TableMind++ · 表格推理 · Programmatic Agent</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📚</span>
-              <span>PaperScout · 学术文献检索 · 序列级策略优化</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-apps" href="agent-apps/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://github.com/Xiaoyu-Tao/Cast-R1-TS" target="_blank" rel="noopener">Cast-R1 GitHub</a>
-            <a class="card-btn btn-outline" href="https://github.com/lennendd/TableMind" target="_blank" rel="noopener">TableMind GitHub</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card project-card-wide">
-        <div class="card-accent accent-mechanism"></div>
-        <div class="card-body">
-          <span class="card-tag tag-mechanism">Agent Mechanism Analysis</span>
-          <h3>Agent机理分析</h3>
-          <p class="card-desc">
-            围绕 LLM Agent 的行为形成机制、推理决策链路与能力涌现规律展开研究，关注训练、推理、工具使用与记忆反思之间的协同关系。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🧠</span>
-              <span>行为机理 · 多步推理路径 · 决策过程解析</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔬</span>
-              <span>任务分解 · 工具调用 · 记忆与反思协同机制</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📐</span>
-              <span>可解释性分析 · 诊断评测 · 能力边界研究</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <span class="card-btn btn-outline btn-disabled">内容建设中</span>
-          </div>
-        </div>
-      </div>
-
       <div class="project-card project-card-wide">
         <div class="card-accent accent-evaluation"></div>
         <div class="card-body">
@@ -482,6 +505,57 @@
           </div>
           <div class="card-links">
             <span class="card-btn btn-outline btn-disabled">内容建设中</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent 应用 -->
+      <div class="project-card project-card-wide">
+        <div class="card-accent accent-apps"></div>
+        <div class="card-body">
+          <span class="card-tag tag-apps">Domain Application Research</span>
+          <h3>领域应用研究</h3>
+          <p class="card-desc">
+            探索时间序列分析、表格挖掘、科技文献挖掘等场景的 Agentic 应用。
+          </p>
+          <div class="app-domain-grid">
+            <div class="app-domain-card">
+              <span class="app-domain-label">时间序列分析</span>
+              <div class="app-domain-header">
+                <span class="app-domain-icon">📈</span>
+                <div>
+                  <div class="app-domain-project">Cast-R1</div>
+                  <p class="app-domain-desc">聚焦时间序列预测，结合工具增强强化学习提升复杂场景建模能力。</p>
+                </div>
+              </div>
+            </div>
+            <div class="app-domain-card">
+              <span class="app-domain-label">表格数据挖掘</span>
+              <div class="app-domain-header">
+                <span class="app-domain-icon">📊</span>
+                <div>
+                  <div class="app-domain-project">TableMind++</div>
+                  <p class="app-domain-desc">面向结构化表格推理与挖掘任务，探索 Programmatic Agent 的分析范式。</p>
+                </div>
+              </div>
+            </div>
+            <div class="app-domain-card">
+              <span class="app-domain-label">科技文献挖掘</span>
+              <div class="app-domain-header">
+                <span class="app-domain-icon">📚</span>
+                <div>
+                  <div class="app-domain-project">PaperScout</div>
+                  <p class="app-domain-desc">围绕学术文献检索与多步搜索，优化过程感知的序列级策略学习。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-apps" href="agent-apps/">查看主页 →</a>
+            <a class="card-btn btn-outline" href="https://github.com/Xiaoyu-Tao/Cast-R1-TS" target="_blank" rel="noopener">Cast-R1</a>
+            <a class="card-btn btn-outline" href="https://github.com/Xiaoyu-Tao/AnomaMind-TS" target="_blank" rel="noopener">AnomaMind</a>
+            <a class="card-btn btn-outline" href="https://github.com/lennendd/TableMind" target="_blank" rel="noopener">TableMind</a>
+            <a class="card-btn btn-outline" href="https://github.com/pty12345/PaperScout" target="_blank" rel="noopener">PaperScout</a>
           </div>
         </div>
       </div>
@@ -527,6 +601,35 @@
               </svg>
               GitHub
             </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CastClaw -->
+      <div class="project-card project-card-wide">
+        <div class="card-accent accent-castclaw"></div>
+        <div class="card-body">
+          <span class="card-tag tag-castclaw">OpenClaw Agent · Time Series Forecasting</span>
+          <h3>CastClaw</h3>
+          <p class="card-desc">
+            面向时间序列预测场景的 OpenClaw 智能体。围绕预测任务分解、时序工具调用与结果解释，探索将多步时序分析能力封装为可持续协作的 Agent 系统。
+          </p>
+          <div class="card-meta">
+            <div class="meta-row">
+              <span class="meta-icon">📈</span>
+              <span>时间序列预测 · 多步任务规划 · 工具增强推理</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🧰</span>
+              <span>OpenClaw Runtime · 数据准备 · 模型调用 · 预测分析</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🗂️</span>
+              <span>面向真实预测工作流的 Agent 应用系统</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <span class="card-btn btn-outline btn-disabled">内容建设中</span>
           </div>
         </div>
       </div>
