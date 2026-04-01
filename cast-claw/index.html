@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CastClaw — 人机协同时序预测 AI 智能体框架</title>
+  <meta name="description" content="CastClaw：面向时间序列预测的人机协同 AI 智能体框架，编排 Planner、Forecaster、Critic 三大智能体，支持 30+ 模型族、Agentic Workflow、技能生成与人机协作暂停机制。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5; color: #1a1a1a; line-height: 1.8; font-size: 16px;
+    }
+    a { color: #d35400; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee; border: 1px solid #e0e0de; border-radius: 4px;
+      padding: 2px 6px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em; color: #d35400;
+    }
+    .container { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Sticky nav ─────────────────────────────── */
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .nav-bar .container {
+      display: flex; align-items: center; overflow-x: auto;
+      scrollbar-width: none; gap: 0; padding-top: 0; padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0; padding: 13px 18px;
+      font-size: 0.87rem; font-weight: 500; color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s; white-space: nowrap;
+    }
+    .nav-bar a:hover { color: #d35400; border-bottom-color: #d35400; text-decoration: none; }
+    .nav-home { font-weight: 700; color: #d35400 !important; border-right: 1px solid #e8e8e8; }
+
+    /* ── Header ─────────────────────────────────── */
+    header {
+      background: linear-gradient(160deg, #ffffff 55%, #fef3e2 100%);
+      border-bottom: 1px solid #f5cba7;
+      padding: 64px 0 48px; text-align: center;
+    }
+    header h1 { font-size: 2rem; font-weight: 800; color: #111; line-height: 1.3; }
+    header h1 .hl { color: #d35400; }
+    .subtitle {
+      margin-top: 14px; font-size: 1rem; color: #555;
+      max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7;
+    }
+    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; }
+    .btn-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 7px; font-size: 0.88rem; font-weight: 600;
+      border: 1.5px solid transparent; cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s; text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); text-decoration: none; }
+    .btn-primary { background: #d35400; color: #fff; border-color: #d35400; }
+    .btn-primary:hover { background: #b94600; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+
+    /* ── Section ────────────────────────────────── */
+    section { padding: 64px 0; scroll-margin-top: 46px; }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.4rem; font-weight: 700; color: #111;
+      margin-bottom: 22px; padding-bottom: 10px;
+      border-bottom: 3px solid #d35400; display: inline-block;
+    }
+    h3.sub-title { font-size: 1.05rem; font-weight: 700; color: #222; margin: 28px 0 10px; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── TL;DR ──────────────────────────────────── */
+    .tldr {
+      background: #fef9f0; border-left: 4px solid #d35400;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px; font-size: 1rem; color: #222;
+      margin-bottom: 32px; line-height: 1.75;
+    }
+    .tldr strong { color: #d35400; }
+
+    /* ── Feature cards ──────────────────────────── */
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px;
+    }
+    .feature-card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+      padding: 22px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+    .feature-icon { font-size: 1.8rem; margin-bottom: 10px; line-height: 1; }
+    .feature-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: #111; }
+    .feature-card p { font-size: 0.88rem; color: #555; margin: 0; line-height: 1.65; }
+
+    /* ── Code block ─────────────────────────────── */
+    .code-block {
+      background: #1e1e1e; border-radius: 10px; padding: 20px 24px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85rem; color: #d4d4d4; white-space: pre; overflow-x: auto;
+      line-height: 1.7; margin-top: 14px;
+    }
+    .code-block .cmd { color: #9cdcfe; }
+    .code-block .comment { color: #6a9955; }
+    .code-block .str { color: #ce9178; }
+
+    /* ── Workflow stepper ───────────────────────── */
+    .workflow { margin-top: 28px; display: flex; flex-direction: column; gap: 0; }
+    .workflow-step {
+      display: flex; gap: 20px; position: relative; padding-bottom: 32px;
+    }
+    .workflow-step:last-child { padding-bottom: 0; }
+    .step-left { display: flex; flex-direction: column; align-items: center; }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #d35400; color: #fff; font-weight: 800; font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-line {
+      width: 2px; background: #f5cba7; flex: 1; margin-top: 6px;
+    }
+    .workflow-step:last-child .step-line { display: none; }
+    .step-body { padding-top: 6px; }
+    .step-body h4 { font-size: 1rem; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .step-body p { font-size: 0.9rem; color: #555; line-height: 1.7; margin: 0; }
+    .step-tag {
+      display: inline-block; font-size: 0.75rem; font-weight: 700;
+      background: #fef3e2; color: #d35400; border: 1px solid #f5cba7;
+      border-radius: 4px; padding: 1px 8px; margin-bottom: 6px;
+    }
+
+    /* ── Agent table ────────────────────────────── */
+    .agent-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px;
+    }
+    .agent-card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+      padding: 24px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border-top: 4px solid #d35400;
+    }
+    .agent-card .agent-icon { font-size: 2rem; margin-bottom: 10px; }
+    .agent-card h4 { font-size: 1rem; font-weight: 800; color: #111; margin-bottom: 4px; }
+    .agent-card .agent-shortcut {
+      font-size: 0.78rem; color: #d35400; font-weight: 600;
+      background: #fef3e2; border: 1px solid #f5cba7; border-radius: 4px;
+      padding: 2px 8px; display: inline-block; margin-bottom: 10px;
+    }
+    .agent-card p { font-size: 0.88rem; color: #555; line-height: 1.65; margin: 0; }
+
+    /* ── Highlight panels ───────────────────────── */
+    .highlight-stack { display: flex; flex-direction: column; gap: 22px; margin-top: 24px; }
+    .highlight-panel {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 14px;
+      padding: 24px 24px 26px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      scroll-margin-top: 52px;
+    }
+    .highlight-panel-agent { border-top: 4px solid #d35400; }
+    .highlight-panel-hitl { border-top: 4px solid #ca6f1e; }
+    .highlight-panel-skill { border-top: 4px solid #138d75; }
+    .highlight-head {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+    }
+    .highlight-index {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #d35400; color: #fff; font-size: 0.8rem; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .highlight-panel-hitl .highlight-index { background: #ca6f1e; }
+    .highlight-panel-skill .highlight-index { background: #138d75; }
+    .highlight-title {
+      font-size: 1.08rem; font-weight: 700; color: #111; margin: 0;
+    }
+    .highlight-panel > p { color: #555; }
+    .highlight-panel .agent-grid,
+    .highlight-panel .feature-grid,
+    .highlight-panel .pill-links { margin-top: 18px; }
+
+    /* ── Model pills ────────────────────────────── */
+    .model-group { margin-top: 20px; }
+    .model-group h4 { font-size: 0.95rem; font-weight: 700; color: #222; margin-bottom: 10px; }
+    .model-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .model-pill {
+      background: #fff; border: 1px solid #e0e0de; border-radius: 6px;
+      padding: 4px 12px; font-size: 0.82rem; color: #444; font-weight: 500;
+    }
+    .model-pill.highlight { background: #fef3e2; border-color: #f5cba7; color: #d35400; font-weight: 600; }
+
+    /* ── Toolbox groups ─────────────────────────── */
+    .toolbox-layout { display: flex; flex-direction: column; gap: 22px; margin-top: 22px; }
+    .toolbox-group {
+      border: 1px solid #e6e6e6; border-radius: 16px; padding: 22px 22px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .toolbox-group-shell {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfe 100%);
+      border-color: #d8e5ef;
+    }
+    .toolbox-group-analytics {
+      background: linear-gradient(180deg, #fffdf9 0%, #fff6ec 100%);
+      border-color: #f0d6b7;
+    }
+    .toolbox-group-head {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    }
+    .toolbox-group-index {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+      background: #2471a3;
+    }
+    .toolbox-group-analytics .toolbox-group-index { background: #ca6f1e; }
+    .toolbox-group-title {
+      margin: 0; font-size: 1.06rem; font-weight: 700; color: #111;
+    }
+    .toolbox-group-desc {
+      margin: 0 0 16px; font-size: 0.9rem; color: #555; line-height: 1.75;
+    }
+    .toolbox-substack { display: flex; flex-direction: column; gap: 18px; }
+    .toolbox-card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+      padding: 20px 22px; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .toolbox-card-shell { border-top: 3px solid #2471a3; }
+    .toolbox-card-analytics { border-top: 3px solid #d68910; }
+    .toolbox-card-title {
+      font-size: 1rem; font-weight: 700; color: #111; margin: 0 0 6px;
+      padding-bottom: 10px; border-bottom: 2px solid #f5cba7;
+    }
+    .toolbox-card p {
+      font-size: 0.88rem; color: #555; line-height: 1.7; margin-bottom: 16px;
+    }
+    .toolbox-card p:last-child { margin-bottom: 0; }
+    .toolbox-card .feature-grid { margin-top: 0; }
+
+    /* ── Architecture image ─────────────────────── */
+    .arch-img {
+      width: 100%; border-radius: 12px; margin-top: 20px; display: block;
+      border: 1px solid #e6e6e6; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* ── Header logo ────────────────────────────── */
+    .header-logo {
+      width: 340px; max-width: 88%; margin-bottom: 20px;
+      border-radius: 12px;
+    }
+
+    /* ── Citation box ───────────────────────────── */
+    .citation-box {
+      background: #f5f5f3; border: 1px solid #e0e0de; border-radius: 8px;
+      padding: 16px 18px; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.8rem; color: #333; white-space: pre-wrap; word-break: break-all;
+      margin-top: 12px; line-height: 1.65;
+    }
+
+    /* ── Team table ─────────────────────────────── */
+    .team-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .team-table th, .team-table td {
+      padding: 10px 14px; border: 1px solid #e6e6e6; font-size: 0.9rem; text-align: left;
+    }
+    .team-table th { background: #fef3e2; color: #d35400; font-weight: 700; }
+    .team-table tr:hover td { background: #fffaf5; }
+
+    /* ── Pill links ─────────────────────────────── */
+    .pill-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 7px; font-size: 0.84rem; font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .16s, box-shadow .16s; text-decoration: none;
+    }
+    .pill:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); text-decoration: none; }
+    .pill-orange { background: #d35400; color: #fff; border-color: #d35400; }
+    .pill-orange:hover { background: #b94600; }
+    .pill-out { background: #fff; color: #333; border-color: #d0d0d0; }
+    .pill-out:hover { background: #f5f5f5; border-color: #aaa; }
+
+    /* ── Footer ─────────────────────────────────── */
+    footer { background: #1c1c1c; color: #999; text-align: center; padding: 28px 24px; font-size: 0.84rem; }
+    footer a { color: #e87b6e; }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 48px 0; }
+      .feature-grid, .agent-grid { grid-template-columns: 1fr; }
+      .highlight-panel { padding: 20px 18px 22px; }
+      .toolbox-group { padding: 18px 18px 20px; }
+      .toolbox-card { padding: 18px 18px 20px; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+    }
+    @media (max-width: 480px) {
+      .workflow-step { flex-direction: column; gap: 8px; }
+      .step-left { flex-direction: row; }
+      .step-line { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="container">
+    <img src="assets/logo.png" alt="CastClaw" class="header-logo" />
+    <h1><span class="hl">CastClaw</span></h1>
+    <p class="subtitle">
+      人机协同时序预测 AI 智能体框架<br>
+      多智能体协同 · Agentic Workflow · 全程人机交互 · 30+ 模型族
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室 AGI 组</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://github.com/SkyeGT/CastClaw" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:14px;height:14px">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="btn btn-secondary" href="#quickstart">使用指南</a>
+      <a class="btn btn-secondary" href="../">← 返回主页</a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ STICKY NAV ═══════════════════ -->
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#overview">项目概览</a>
+    <a href="#key-highlights">关键特色介绍</a>
+    <a href="#system-design">系统概要设计</a>
+    <a href="#toolenv">运行时工具箱</a>
+    <a href="#workflow">设计理念与Workflow</a>
+    <a href="#quickstart">使用指南</a>
+    <a href="#team">关于我们</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<section id="overview" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>一句话介绍：</strong>
+      CastClaw 是一个基于 CLI-TUI 的<strong>人机协同时序预测智能体框架</strong>——编排 Planner、Forecaster、Critic 三大智能体，通过严格的 Agentic Workflow（初始化 → 预测前分析 → 技能审核 → 实验循环 → 后置报告）自动化完成实验设计、模型训练与结果分析，<strong>全程保持人类在环（HITL），让研究者而非 AI 做最终决策</strong>。
+    </div>
+
+    <h2 class="section-title">项目概览</h2>
+    <p>
+      时间序列预测研究面临两大挑战：一是模型选型与调参空间巨大，难以系统探索；二是全自动流程缺乏可解释性，难以融入领域知识。CastClaw 以<strong>智能体编排</strong>为核心，将繁琐的实验流程自动化，同时在关键决策节点设置<strong>人机协作暂停</strong>，让研究者随时介入、注入专业判断。
+    </p>
+    <p>
+      框架通过 <strong>CLI 驱动的 TUI 界面</strong>运行，无需 Web 服务，直接在终端内切换三个智能体标签页。Planner 负责任务定义与数据分析，Forecaster 驱动实验循环，Critic 生成最终分析报告。三者共享 <code>.forecast/</code> 工作目录协议，状态透明、可追溯。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════ KEY HIGHLIGHTS ═══════════════════ -->
+<section id="key-highlights">
+  <div class="container">
+    <h2 class="section-title">关键特色介绍</h2>
+    <div class="tldr">
+      <strong>核心结构：</strong>
+      CastClaw 的关键特色并不是孤立功能的堆叠，而是由<strong>多智能体协同</strong>、<strong>人机高效协作</strong>与<strong>基于 Skill 的自主进化</strong>三层机制共同构成。它们分别定义了系统如何组织任务、如何引入人类判断，以及如何把一次次实验经验转化为长期能力。
+    </div>
+
+    <div class="highlight-stack">
+      <div id="agents" class="highlight-panel highlight-panel-agent">
+        <div class="highlight-head">
+          <span class="highlight-index">01</span>
+          <h3 class="highlight-title">多智能体协同</h3>
+        </div>
+        <p>CastClaw 通过三个职责分明的专属智能体协同工作，使用 <code>Ctrl+1</code> / <code>Ctrl+2</code> / <code>Ctrl+3</code> 在 TUI 中切换。每个智能体维护独立上下文，通过 <code>.forecast/</code> 文件协议共享状态。</p>
+        <div class="agent-grid">
+
+          <div class="agent-card">
+            <div class="agent-icon">🗂️</div>
+            <h4>Planner（规划者）</h4>
+            <span class="agent-shortcut">Ctrl+1</span>
+            <p>负责任务定义、数据诊断与阶段编排。并发启动两条分析轨道：定性域研究（WebSearch）+ 定量数据统计，融合为预测前报告。生成 2–4 个技能文件供人工审核确认。</p>
+          </div>
+
+          <div class="agent-card">
+            <div class="agent-icon">🔬</div>
+            <h4>Forecaster（预测者）</h4>
+            <span class="agent-shortcut">Ctrl+2</span>
+            <p>驱动迭代实验循环——读取最佳结果与失败历史，从技能中选取模型配置，调用 <code>generate_model</code> 训练评估，进行反思记录，管理实验预算。停滞时触发 HITL 暂停等待人类反馈。</p>
+          </div>
+
+          <div class="agent-card">
+            <div class="agent-icon">📊</div>
+            <h4>Critic（评审者）</h4>
+            <span class="agent-shortcut">Ctrl+3</span>
+            <p>读取所有实验产物，生成各模型族最佳结果对比、按时序特征的性能分解、可视化脚本，以及结构化的最终 Markdown 预测报告，输出至 <code>.forecast/reports/final-report.md</code>。</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="hitl" class="highlight-panel highlight-panel-hitl">
+        <div class="highlight-head">
+          <span class="highlight-index">02</span>
+          <h3 class="highlight-title">人机高效协作</h3>
+        </div>
+        <p>CastClaw 不追求让人类完全退出预测流程，而是在<strong>关键决策与关键结果</strong>上保留人工确认。研究者可以在高价值节点注入领域知识、修正偏差并确认下一步策略，从而获得更高精度、更可信的预测结果。</p>
+        <div class="feature-grid">
+
+          <div class="feature-card">
+            <div class="feature-icon">🧭</div>
+            <h4>任务设定确认</h4>
+            <p>在初始化阶段，由人类确认目标列、时间列、预测步长、评估指标和资源约束，避免任务定义偏差在后续实验中被持续放大。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h4>关键策略审核</h4>
+            <p>Planner 生成技能草案后，研究者会审核模型族选择、参数搜索空间与风险警告，确保实验策略符合数据特征与领域先验。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h4>关键结果确认</h4>
+            <p>当实验停滞、结果显著变化或生成候选最优方案时，人类对关键结果进行确认与干预，帮助系统纠偏并指导下一轮更高精度的预测探索。</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="skill-evolution" class="highlight-panel highlight-panel-skill">
+        <div class="highlight-head">
+          <span class="highlight-index">03</span>
+          <h3 class="highlight-title">基于 Skill 的自主进化</h3>
+        </div>
+        <p>CastClaw 将 Planner 生成并经人工审核的技能文件视为可以长期积累的<strong>系统经验</strong>。这些 Skill 不只服务于单次实验，而是会持续沉淀模型选择策略、参数搜索空间、适用条件与风险提示；随着 Skill 的不断积累，CastClaw 可以在新任务中更快启动、更准决策，并逐步实现面向预测任务的自主进化。</p>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h4>技能资产沉淀</h4>
+            <p>将模型配置、适用数据特征、参数搜索空间和风险警告写成结构化技能文件，避免经验只停留在单次实验里。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h4>人工审核后沉淀</h4>
+            <p>Skill 不会直接自动进入实验循环，而是先经过人工确认，再作为可信策略被长期保留，确保系统的后续进化建立在高质量经验之上。</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🔁</div>
+            <h4>随积累持续进化</h4>
+            <p>面对相似的数据形态、预测步长或资源约束时，CastClaw 可以从已有 Skill 出发完成更快的任务初始化、更合理的实验设计和更高精度的预测探索，表现出随经验积累而增强的自主进化能力。</p>
+          </div>
+        </div>
+
+        <h3 class="sub-title">可持续积累的 Skill 内容</h3>
+        <div class="pill-links">
+          <span class="pill pill-out">模型选择策略</span>
+          <span class="pill pill-out">参数搜索空间</span>
+          <span class="pill pill-out">特征模板</span>
+          <span class="pill pill-out">适用条件说明</span>
+          <span class="pill pill-out">风险与失败经验</span>
+          <span class="pill pill-out">领域先验备注</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SYSTEM DESIGN ═══════════════════ -->
+<section id="system-design">
+  <div class="container">
+    <h2 class="section-title">系统概要设计</h2>
+    <div class="tldr">
+      <strong>设计目标：</strong>
+      CastClaw 被设计成一个面向研究者的<strong>预测工作台</strong>，而不是“黑盒自动预测器”。它让 AI 负责高频分析与实验执行，让人类在关键节点做确认与校正，在降低操作负担的同时尽可能提高预测精度与结果可信度。
+    </div>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🖥️</div>
+        <h4>终端优先工作台</h4>
+        <p>采用 CLI-TUI 作为主要交互界面，不引入额外 Web 服务。研究者可以在终端里直接切换智能体、查看状态、审核结果，保持研究流程的轻量与高效。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🤝</div>
+        <h4>关键节点人工确认</h4>
+        <p>在任务设定、技能审核、实验停滞处理和关键结果判断等节点保留人工确认，把领域知识注入流程，避免自动化系统在错误方向上持续放大偏差。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📂</div>
+        <h4>透明可追溯流程</h4>
+        <p>通过 <code>.forecast/</code> 工作目录协议组织任务状态、实验记录与报告产物，让多智能体协作过程始终可见、可审查、可复现，而不是隐藏在不可解释的内部状态里。</p>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 20px;">
+      这套设计的核心取舍是：<strong>自动化负责效率，人类负责关键判断</strong>。CastClaw 不是替代研究者，而是帮助研究者更系统地组织预测流程、探索模型空间并沉淀可复用经验。
+    </p>
+
+    <h3 id="architecture" class="sub-title">系统架构</h3>
+    <p>
+      CastClaw 以 <strong>CLI-TUI</strong> 为交互界面，三个智能体共享 <code>.forecast/</code> 文件协议实现状态同步。LLM 层通过 Vercel AI SDK 解耦，支持 20+ 提供商无缝切换；Python ML 后端由 <code>uv</code> 管理，<code>generate_model</code> 工具自动调用，无需手动介入。
+    </p>
+    <img src="assets/architecture.svg" alt="CastClaw 系统架构" class="arch-img" onerror="this.style.display='none'" />
+    <p style="margin-top: 20px;">
+      <strong>关键设计决策：</strong>阶段转换由 <code>forecast_state</code> 工具在文件系统层强制执行，而非依赖智能体自律性。即使 LLM 产生幻觉也无法跳过阶段，确保流程可靠性。<code>CAST.md</code> 约束文件在每次 Agent 初始化时自动注入上下文，实现项目级行为约束的持久化。
+    </p>
+
+    <h3 class="sub-title">核心特性</h3>
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🤝</div>
+        <h4>人机协作暂停（HITL）</h4>
+        <p>实验停滞或连续无改善时，Forecaster 自动暂停并请求人类反馈。你的领域知识将被记录为专家输入，重置无改善计数器后继续探索。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h4>双轨预测前分析</h4>
+        <p>并发运行定性域研究（网络调研行业背景、风险因素）与定量数据诊断（趋势、季节性、平稳性、异常值），融合为驱动后续模型选择的分析报告。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h4>技能文件审核</h4>
+        <p>Planner 基于分析报告生成结构化技能文件，含适用条件、参数搜索空间与风险警告。人工确认通过后才进入实验阶段，避免盲目跑模型。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h4>实验预算管理</h4>
+        <p>通过 <code>CAST.md</code> 或默认值设定最大实验次数、连续无改善阈值与崩溃阈值。预算追踪实时更新，防止资源浪费。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h4>约束文件（CAST.md）</h4>
+        <p>项目级约束自动注入每个智能体上下文：禁用模型列表、资源限制、评估偏好、领域说明。使用 <code>/cast-creation</code> 交互式生成。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h4>30+ 模型族支持</h4>
+        <p>涵盖经典统计模型（ARIMA、ETS、Theta）、主流深度学习架构（PatchTST、iTransformer、TimesNet 等）及基础预训练模型（Chronos、TimesFM、Moirai）。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ RUNTIME STACK ═══════════════════ -->
+<section id="toolenv">
+  <div class="container">
+    <h2 class="section-title">运行时工具箱</h2>
+    <p>CastClaw 将数据科学中的数据分析方法、机器学习模型中的特征工程经验，以及经典时序模型与时序基础模型的思想，统一封装为可调用的运行时工具能力。它们既可以直接服务于具体预测任务，也可以通过 MCP 等协议持续扩展，形成一个面向时序预测、可继承、可组合、可演进的工具箱。</p>
+
+    <div class="toolbox-layout">
+      <div class="toolbox-group toolbox-group-shell">
+        <div class="toolbox-group-head">
+          <div class="toolbox-group-index">A</div>
+          <h3 class="toolbox-group-title">实验执行类</h3>
+        </div>
+        <p class="toolbox-group-desc">负责把智能体决策落到可复现的训练与评估过程，强调环境隔离、自动执行与失败收敛。</p>
+
+        <div class="toolbox-card toolbox-card-shell">
+          <h4 class="toolbox-card-title">实验执行沙盒</h4>
+          <p>CastClaw 的 Python 后端以独立的 <code>uv</code> 虚拟环境运行，与宿主系统完全隔离。<code>generate_model</code> 工具以标准化接口触发训练与评估，结果自动写回 <code>.forecast/runs/</code>；崩溃或超时由沙盒捕获，不影响主智能体上下文。所有模型调用均无需研究者手动干预。</p>
+          <div class="feature-grid">
+            <div class="feature-card" style="background:#fafafa;">
+              <div class="feature-icon">🔒</div>
+              <h4>环境隔离</h4>
+              <p>uv 虚拟环境与宿主隔离，依赖版本锁定，跨机器可复现。</p>
+            </div>
+            <div class="feature-card" style="background:#fafafa;">
+              <div class="feature-icon">⚡</div>
+              <h4>自动触发</h4>
+              <p>Forecaster 通过 <code>generate_model</code> 调用沙盒，训练日志与评估指标自动归档。</p>
+            </div>
+            <div class="feature-card" style="background:#fafafa;">
+              <div class="feature-icon">🛡️</div>
+              <h4>崩溃隔离</h4>
+              <p>训练崩溃或超时由沙盒捕获，不中断智能体主流程，失败记入实验历史。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbox-group toolbox-group-analytics">
+        <div class="toolbox-group-head">
+          <div class="toolbox-group-index">B</div>
+          <h3 class="toolbox-group-title">分析与模型类</h3>
+        </div>
+        <p class="toolbox-group-desc">将数据分析、时序特征诊断与模型资产封装成可组合的能力层，支撑技能生成、路线筛选与不同模型族的系统探索。</p>
+
+        <div class="toolbox-substack">
+          <div class="toolbox-card toolbox-card-analytics">
+            <h4 class="toolbox-card-title">数据分析工具</h4>
+            <p>在进入时序特征诊断之前，CastClaw 也可以调用通用数据分析工具，对数据集完成基础画像与探索性分析，为后续特征工程、技能生成和模型选择提供更稳固的分析基础：</p>
+            <div class="model-group">
+              <div class="model-pills">
+                <span class="model-pill highlight">描述性统计</span>
+                <span class="model-pill highlight">字段画像</span>
+                <span class="model-pill highlight">缺失值分析</span>
+                <span class="model-pill">分布统计</span>
+                <span class="model-pill">相关性分析</span>
+                <span class="model-pill">分组聚合</span>
+                <span class="model-pill">滚动窗口分析</span>
+                <span class="model-pill">异常样本初筛</span>
+                <span class="model-pill">数据切片对比</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbox-card toolbox-card-analytics">
+            <h4 class="toolbox-card-title">特征分析能力</h4>
+            <p>Planner 在预测前分析阶段调用数据诊断能力，全面刻画数据集统计特征，为技能生成和模型选择提供量化依据：</p>
+            <div class="model-group">
+              <div class="model-pills">
+                <span class="model-pill highlight">趋势检测</span>
+                <span class="model-pill highlight">季节性分析</span>
+                <span class="model-pill highlight">平稳性检验（ADF）</span>
+                <span class="model-pill highlight">波动率分析</span>
+                <span class="model-pill">异常值识别</span>
+                <span class="model-pill">ACF / PACF</span>
+                <span class="model-pill">缺失值诊断</span>
+                <span class="model-pill">分布统计</span>
+                <span class="model-pill">WebSearch 定性研究</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbox-card toolbox-card-analytics">
+            <h4 class="toolbox-card-title">经典时序预测模型</h4>
+
+            <div class="model-group">
+              <h4>统计模型</h4>
+              <div class="model-pills">
+                <span class="model-pill highlight">ARIMA</span>
+                <span class="model-pill highlight">ETS</span>
+                <span class="model-pill highlight">Theta</span>
+              </div>
+            </div>
+
+            <div class="model-group">
+              <h4>深度学习模型</h4>
+              <div class="model-pills">
+                <span class="model-pill">DLinear</span>
+                <span class="model-pill">NLinear</span>
+                <span class="model-pill">PatchTST</span>
+                <span class="model-pill">TimesNet</span>
+                <span class="model-pill">iTransformer</span>
+                <span class="model-pill">Autoformer</span>
+                <span class="model-pill">FEDformer</span>
+                <span class="model-pill">Informer</span>
+                <span class="model-pill">Transformer</span>
+                <span class="model-pill">MICN</span>
+                <span class="model-pill">SCINet</span>
+                <span class="model-pill">TimeMixer</span>
+                <span class="model-pill">TSMixer</span>
+                <span class="model-pill">SegRNN</span>
+                <span class="model-pill">FITS</span>
+                <span class="model-pill">TiDE</span>
+                <span class="model-pill">Mamba</span>
+                <span class="model-pill">Crossformer</span>
+                <span class="model-pill">ConvTimeNet</span>
+                <span class="model-pill">20+ 更多</span>
+              </div>
+            </div>
+
+            <div class="model-group">
+              <h4>时序基础模型</h4>
+              <div class="model-pills">
+                <span class="model-pill highlight">Chronos（Amazon）</span>
+                <span class="model-pill highlight">TimesFM（Google）</span>
+                <span class="model-pill highlight">Moirai（Salesforce）</span>
+              </div>
+            </div>
+
+            <div class="model-group">
+              <h4>时序推理模型</h4>
+              <div class="model-pills">
+                <span class="model-pill highlight">TimeReasoner</span>
+                <span class="model-pill highlight">Time-R1</span>
+                <span class="model-pill highlight">MemCast</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════ WORKFLOW ═══════════════════ -->
+<section id="workflow">
+  <div class="container">
+    <h2 class="section-title">智能体设计理念与 Agentic Workflow</h2>
+    <div class="tldr">
+      <strong>核心思路：</strong>
+      CastClaw 不只是“调用训练脚本”的外壳，更是一套围绕<strong>动作空间（Action Space）</strong>组织起来的智能体工作台。不同智能体会调用不同能力模块完成特征分析、技能生成、实验反思与报告整理；其中高频、结构化、短上下文的任务适合交给<strong>轻量模型</strong>处理，复杂整合与关键决策则交给主智能体和人工审核。
+    </div>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🗂️</div>
+        <h4>Planner Action Space</h4>
+        <p>任务解析、目标列/时间列确认、特征分析、趋势与季节性诊断、异常值识别、WebSearch 定性研究、技能草案生成与约束注入。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔬</div>
+        <h4>Forecaster Action Space</h4>
+        <p>读取实验历史、选择技能与配置、调用 <code>generate_model</code>、预算检查、失败归因、<code>forecast_reflect</code> 反思记录，以及 HITL 暂停与反馈融合。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h4>Critic Action Space</h4>
+        <p>聚合结果、按时序特征拆解性能、对比模型族表现、生成可视化脚本、整理结论和输出最终 Markdown 报告。</p>
+      </div>
+
+    </div>
+
+    <h3 class="sub-title">可调用的轻量模型</h3>
+    <p>
+      对于特征分析、摘要整理、技能草案生成、实验反思等高频辅助任务，CastClaw 可以接入<strong>可配置的轻量模型池</strong>，以更低成本支持多轮协同。具体供应商和型号并不固定，可按部署环境自由替换。
+    </p>
+    <div class="model-group">
+      <div class="model-pills">
+        <span class="model-pill highlight">Anthropic Haiku 类模型</span>
+        <span class="model-pill highlight">OpenAI Mini 类模型</span>
+        <span class="model-pill highlight">Google Flash 类模型</span>
+        <span class="model-pill">特征分析</span>
+        <span class="model-pill">领域摘要</span>
+        <span class="model-pill">技能草案</span>
+        <span class="model-pill">实验反思</span>
+        <span class="model-pill">报告整理</span>
+      </div>
+    </div>
+
+    <p style="margin-top: 20px;">
+      这样的分工让 CastClaw 既能保持多智能体协同的响应速度，又能把更昂贵的大模型调用留给真正需要综合判断的阶段。
+    </p>
+
+    <h3 class="sub-title">Agentic Workflow</h3>
+    <div class="feature-grid" style="grid-template-columns:1fr;margin-top:16px;">
+      <div class="feature-card" style="border-top:4px solid #d35400;">
+        <div class="feature-icon">🧭</div>
+        <h4>严格流程编排</h4>
+        <p>CastClaw 遵循严格的 Agentic Workflow，阶段转换由 <code>forecast_state</code> 工具强制执行——<strong>不可跳过任何阶段</strong>，确保每次实验过程可追溯、可复现。</p>
+      </div>
+    </div>
+
+    <div class="workflow">
+
+      <div class="workflow-step">
+        <div class="step-left">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <span class="step-tag">Planner</span>
+          <h4>初始化（Init）</h4>
+          <p>定义预测任务：数据集路径、目标列、时间列、预测步长（Horizon）、回看长度（Look-back）、训练/验证/测试分割比例、评估指标与考虑的模型族。Planner 调用 <code>forecast_state init</code> 创建 <code>.forecast/</code> 目录，<code>forecast_task</code> 冻结 <code>task.json</code>。可选使用 <code>/cast-creation</code> 生成项目约束文件。</p>
+        </div>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-left">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <span class="step-tag">Planner</span>
+          <h4>预测前分析（Pre-forecast Analysis）</h4>
+          <p>Planner 并发启动两个子智能体：<strong>定性轨道</strong>网络调研预测领域（行业背景、关键事件、风险因素）；<strong>定量轨道</strong>分析数据集统计特征（趋势、季节性、平稳性、波动率、异常值）。双轨结果融合为 <code>.forecast/reports/pre-forecast.md</code>，驱动后续所有模型选择决策。</p>
+        </div>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-left">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <span class="step-tag">Planner · 人工审核</span>
+          <h4>技能审核（Skill Audit）</h4>
+          <p>基于预测前分析，Planner 生成 2–4 个结构化<strong>技能文件</strong>，每个文件包含：适用条件、参数搜索空间、特征模板（配置 JSON）及针对当前数据集的风险警告。人工审核并确认后，阶段正式过渡到实验循环。</p>
+        </div>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-left">
+          <div class="step-num">4</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <span class="step-tag">Forecaster · HITL</span>
+          <h4>实验循环（Experiment Loop）</h4>
+          <p>Forecaster 使用已确认技能迭代实验：读取当前最佳结果与近期失败历史 → 选取模型与配置 → <code>generate_model</code> 训练评估 → <code>forecast_reflect</code> 反思记录 → 预算检查 → 循环。停滞时触发 HITL 暂停，等待并融合人类领域反馈后继续。</p>
+        </div>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-left">
+          <div class="step-num">5</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <span class="step-tag">Critic</span>
+          <h4>后置报告（Post-forecast Report）</h4>
+          <p>Critic 读取全部实验产物，生成：各模型族最佳结果对比、按时序特征（趋势/季节性/平稳性）的性能分解、可视化脚本（时序图、误差分布图），以及结构化最终预测报告，输出至 <code>.forecast/reports/final-report.md</code>。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ QUICK START ═══════════════════ -->
+<section id="quickstart" class="alt">
+  <div class="container">
+    <h2 class="section-title">使用指南</h2>
+
+    <h3 id="runtime-env" class="sub-title">模型与运行环境</h3>
+    <p>CastClaw 通过主力模型与轻量 LLM 的分层协作完成不同复杂度的任务，同时依托 Bun、Python/uv 与 Vercel AI SDK 组成跨 TypeScript 与 Python 的运行环境。</p>
+
+    <div style="background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:20px 22px;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+      <h3 style="font-size:1rem;font-weight:700;color:#111;margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid #f5cba7;">可调用的轻量 LLM</h3>
+      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-bottom:16px;">特征摘要、技能草案生成、实验反思、结果整理等高频短上下文任务，可配置轻量模型处理，大幅降低整体调用成本：</p>
+      <div class="model-group">
+        <div class="model-pills">
+          <span class="model-pill highlight">claude-haiku-4-5</span>
+          <span class="model-pill highlight">gpt-4o-mini</span>
+          <span class="model-pill highlight">gemini-2.0-flash</span>
+          <span class="model-pill">特征分析摘要</span>
+          <span class="model-pill">领域研究整理</span>
+          <span class="model-pill">技能草案生成</span>
+          <span class="model-pill">实验反思记录</span>
+          <span class="model-pill">报告段落整理</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:20px 22px;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+      <h3 style="font-size:1rem;font-weight:700;color:#111;margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid #f5cba7;">运行时依赖</h3>
+      <div class="feature-grid" style="margin-top:16px;">
+        <div class="feature-card" style="background:#fafafa;">
+          <div class="feature-icon">🟡</div>
+          <h4>Bun ≥ 1.3.11</h4>
+          <p>CLI 运行时与包管理器，驱动 TUI 界面与智能体编排层。</p>
+        </div>
+        <div class="feature-card" style="background:#fafafa;">
+          <div class="feature-icon">🐍</div>
+          <h4>Python ≥ 3.10 + uv</h4>
+          <p>ML 后端运行环境，<code>uv sync</code> 一键安装全部依赖，无需手动管理虚拟环境。</p>
+        </div>
+        <div class="feature-card" style="background:#fafafa;">
+          <div class="feature-icon">🔌</div>
+          <h4>Vercel AI SDK</h4>
+          <p>LLM 提供商抽象层，支持 20+ 提供商（Anthropic、OpenAI、Google、OpenRouter 等），格式 <code>provider/model-id</code>。</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">安装</h3>
+    <div class="code-block"><span class="comment"># 方式一：npm 全局安装（推荐）</span>
+<span class="cmd">npm</span> install -g castclaw
+
+<span class="comment"># 方式二：从源码构建</span>
+<span class="cmd">git clone</span> https://github.com/SkyeGT/CastClaw.git
+<span class="cmd">cd</span> CastClaw
+<span class="cmd">bun</span> install
+<span class="cmd">cd</span> python && <span class="cmd">uv sync</span> && <span class="cmd">cd</span> ..
+<span class="cmd">bun run</span> --cwd packages/castclaw build
+<span class="cmd">bun link</span> --cwd packages/castclaw  <span class="comment"># 可选：全局链接</span></div>
+
+    <h3 class="sub-title">验证安装</h3>
+    <div class="code-block"><span class="cmd">castclaw</span> --version
+<span class="cmd">cd</span> python && <span class="cmd">uv run python</span> -c <span class="str">"from castclaw_ml import runner; print('OK')"</span></div>
+
+    <h3 class="sub-title">配置 LLM</h3>
+    <div class="code-block"><span class="comment"># Anthropic（默认）</span>
+<span class="cmd">export</span> ANTHROPIC_API_KEY=sk-ant-...
+
+<span class="comment"># 或 OpenAI / Google / OpenRouter</span>
+<span class="cmd">export</span> OPENAI_API_KEY=sk-...
+<span class="cmd">export</span> GOOGLE_GENERATIVE_AI_API_KEY=...
+
+<span class="comment"># castclaw.json 配置</span>
+{
+  <span class="str">"model"</span>: <span class="str">"anthropic/claude-sonnet-4-6"</span>
+}</div>
+
+    <h3 class="sub-title">开始预测</h3>
+    <div class="code-block"><span class="comment"># 进入数据集所在目录，启动 TUI</span>
+<span class="cmd">cd</span> /path/to/your/dataset
+<span class="cmd">castclaw</span>
+
+<span class="comment"># 或指定模型</span>
+<span class="cmd">castclaw</span> --model anthropic/claude-sonnet-4-6</div>
+
+    <p style="margin-top: 16px;">TUI 启动后，在 <strong>Planner</strong> 标签页（<code>Ctrl+1</code>）中输入任务描述：</p>
+    <div class="code-block"><span class="comment"># 示例：初始化一个能源消耗预测任务</span>
+为 data/etth1.csv 初始化预测会话。目标列：OT，时间列：date，
+预测步长：96 步，回看长度：336。采用 70/20/10 分割，使用 MSE 和 MAE 评估。</div>
+
+    <div class="pill-links">
+      <a class="pill pill-orange" href="https://github.com/SkyeGT/CastClaw" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="pill pill-out" href="https://github.com/SkyeGT/CastClaw/blob/main/docs/tutorial.md" target="_blank" rel="noopener">完整教程</a>
+      <a class="pill pill-out" href="https://github.com/SkyeGT/CastClaw/blob/main/docs/cast-md.md" target="_blank" rel="noopener">CAST.md 参考</a>
+      <a class="pill pill-out" href="https://github.com/SkyeGT/CastClaw/blob/main/docs/models.md" target="_blank" rel="noopener">模型列表</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ RELATED ═══════════════════ -->
+<section id="related" class="alt">
+  <div class="container">
+    <h2 class="section-title">相关项目</h2>
+    <p>
+      CastClaw 与 <strong>AlphaCast</strong>、<strong>Cast-R1</strong>、<strong>Agent-R1</strong> 共同构成我们在时间序列智能体与相关训练方法方向上的研究工作，分别从人机协同实验编排、预测系统探索、顺序决策学习与智能体训练框架等不同侧面推进这一研究方向。
+    </p>
+    <div class="pill-links">
+      <span class="pill pill-out">AlphaCast</span>
+      <a class="pill pill-out" href="../agent-apps/#cast-r1">Cast-R1</a>
+      <a class="pill pill-out" href="../agent-r1/">Agent-R1</a>
+      <a class="pill pill-out" href="../">← 返回主页</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ TEAM & CITATION ═══════════════════ -->
+<section id="team">
+  <div class="container">
+    <h2 class="section-title">关于我们</h2>
+    <p>CastClaw 由<strong>中国科学技术大学认知智能全国重点实验室 AGI 组</strong>构建。</p>
+    <table class="team-table">
+      <thead>
+        <tr><th>角色</th><th>成员</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>核心开发</td>
+          <td>Tian Gao</td>
+        </tr>
+        <tr>
+          <td>指导教师</td>
+          <td>
+            <a href="https://mingyue-cheng.github.io/" target="_blank" rel="noopener">Mingyue Cheng</a>
+            &nbsp;·&nbsp;
+            <a href="http://staff.ustc.edu.cn/~qiliuql/" target="_blank" rel="noopener">Qi Liu</a>
+            &nbsp;·&nbsp;
+            <a href="http://staff.ustc.edu.cn/~cheneh/" target="_blank" rel="noopener">Enhong Chen</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">致谢</h3>
+    <p>
+      CastClaw 借鉴了 <a href="https://github.com/anomalyco/opencode" target="_blank" rel="noopener">OpenCode</a>（CLI 框架基础）与 <a href="https://github.com/thuml/Time-Series-Library" target="_blank" rel="noopener">Time Series Library</a>（ML 后端模型库）的源代码，在此致以诚挚感谢。
+    </p>
+
+    <h3 class="sub-title">引用</h3>
+    <p>如果 CastClaw 对你的研究或项目有帮助，欢迎引用：</p>
+    <div class="citation-box">@misc{castclaw2026,
+  title        = {CastClaw: A Human-AI Collaborative Agent Framework for Time Series Forecasting},
+  author       = {Gao, Tian and Cheng, Mingyue and Liu, Qi and Chen, Enhong},
+  year         = {2026},
+  howpublished = {\url{https://github.com/SkyeGT/CastClaw}}
+}</div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <p>&copy; 2025–2026 Agentic AI Team · AGI Group · State Key Laboratory of Cognitive Intelligence, USTC</p>
+    <p style="font-size:0.78rem;color:#555;margin-top:6px;">
+      <a href="../">← 返回主页</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

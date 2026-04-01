@@ -545,6 +545,8 @@
     .btn-enter-rag:hover      { background: #6c3483; border-color: #6c3483; }
     .btn-enter-tabclaw { background: #d35400; color: #fff; border-color: #d35400; }
     .btn-enter-tabclaw:hover { background: #b94600; border-color: #b94600; }
+    .btn-enter-castclaw { background: #0f766e; color: #fff; border-color: #0f766e; }
+    .btn-enter-castclaw:hover { background: #0b5f59; border-color: #0b5f59; }
     .btn-enter-rlalgo  { background: #b9770e; color: #fff; border-color: #b9770e; }
     .btn-enter-rlalgo:hover  { background: #9c640c; border-color: #9c640c; }
     .btn-outline { background: #fff; color: #444; border-color: #d8d8d8; }
@@ -1000,7 +1002,6 @@
       <div class="project-card project-card-wide">
         <div class="card-accent accent-tabclaw"></div>
         <div class="card-body">
-          <span class="card-tag tag-tabclaw">Agent Tool · Table Analysis</span>
           <h3>TabClaw</h3>
           <p class="card-desc">
             面向表格数据的本地对话式 AI Agent。上传 CSV / Excel 后用自然语言描述需求，TabClaw 先展示执行计划、多表并行派遣专属 Agent、跨会话持久记忆偏好，并将每次交互蒸馏为可复用技能——无需 SQL，无需编程，对话即可完成复杂表格分析。
@@ -1021,7 +1022,6 @@
           </div>
           <div class="card-links">
             <a class="card-btn btn-enter-tabclaw" href="tab-claw/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://github.com/fishsure/TabClaw" target="_blank" rel="noopener">文档</a>
             <a class="card-btn btn-outline" href="https://github.com/fishsure/TabClaw" target="_blank" rel="noopener">
               <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px">
                 <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
@@ -1036,27 +1036,32 @@
       <div class="project-card project-card-wide">
         <div class="card-accent accent-castclaw"></div>
         <div class="card-body">
-          <span class="card-tag tag-castclaw">OpenClaw Agent · Time Series Forecasting</span>
           <h3>CastClaw</h3>
           <p class="card-desc">
-            面向时间序列预测场景的 OpenClaw 智能体。围绕预测任务分解、时序工具调用与结果解释，探索将多步时序分析能力封装为可持续协作的 Agent 系统。
+            面向时间序列预测研究的人机协同智能体框架。CastClaw 通过 Planner、Forecaster、Critic 三个专属智能体编排完整预测流程，并在关键节点引入人工确认，将数据分析、特征工程与经典时序模型能力封装为可扩展的运行时工具箱。
           </p>
           <div class="card-meta">
             <div class="meta-row">
               <span class="meta-icon">📈</span>
-              <span>时间序列预测 · 多步任务规划 · 工具增强推理</span>
+              <span>多智能体协同 · 人机高效协作 · Agentic Workflow</span>
             </div>
             <div class="meta-row">
               <span class="meta-icon">🧰</span>
-              <span>OpenClaw Runtime · 数据准备 · 模型调用 · 预测分析</span>
+              <span>运行时工具箱：实验执行沙盒 · 数据分析工具 · 特征分析 · 经典时序模型</span>
             </div>
             <div class="meta-row">
               <span class="meta-icon">🗂️</span>
-              <span>面向真实预测工作流的 Agent 应用系统</span>
+              <span>Skill 持续沉淀 · 面向真实预测工作流的研究工作台</span>
             </div>
           </div>
           <div class="card-links">
-            <span class="card-btn btn-outline btn-disabled">内容建设中</span>
+            <a class="card-btn btn-enter-castclaw" href="cast-claw/index.html">查看主页 →</a>
+            <a class="card-btn btn-outline" href="https://github.com/SkyeGT/CastClaw" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+              GitHub
+            </a>
           </div>
         </div>
       </div>
