@@ -264,99 +264,6 @@
       text-decoration: none;
     }
 
-    /* ── Tech blog ────────────────────────────────── */
-    .blog-section {
-      margin-bottom: 56px;
-      padding: 28px 30px 30px;
-      border-radius: 16px;
-      background: #fff;
-      border: 1px solid #e8e8e8;
-    }
-    .blog-header {
-      margin-bottom: 22px;
-    }
-    .blog-kicker {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 10px;
-      margin-bottom: 10px;
-      border-radius: 999px;
-      border: 1px solid #e5e5e5;
-      background: #fafafa;
-      color: #666;
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
-    .blog-header h2 {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #111;
-      line-height: 1.3;
-      margin-bottom: 8px;
-    }
-    .blog-header p {
-      color: #666;
-      font-size: 0.94rem;
-      line-height: 1.75;
-    }
-    .blog-list {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-    .blog-item {
-      display: grid;
-      grid-template-columns: 116px minmax(0, 1fr) auto;
-      gap: 18px;
-      align-items: start;
-      padding: 18px 0;
-      border-top: 1px solid #ededed;
-    }
-    .blog-item:first-child {
-      border-top: none;
-      padding-top: 0;
-    }
-    .blog-label {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 30px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #f7f7f7;
-      border: 1px solid #e4e4e4;
-      color: #666;
-      font-size: 0.76rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .blog-content h3 {
-      font-size: 1rem;
-      font-weight: 800;
-      color: #111;
-      line-height: 1.45;
-      margin-bottom: 6px;
-    }
-    .blog-content p {
-      color: #555;
-      font-size: 0.9rem;
-      line-height: 1.75;
-    }
-    .blog-link {
-      display: inline-flex;
-      align-items: center;
-      color: #666;
-      font-size: 0.86rem;
-      font-weight: 600;
-      white-space: nowrap;
-      padding-top: 2px;
-    }
-    .blog-link:hover {
-      color: #333;
-      text-decoration: none;
-    }
-
     /* ── Project cards ─────────────────────────────── */
     .project-grid {
       display: grid;
@@ -628,20 +535,12 @@
         padding: 22px 18px 24px;
         margin-bottom: 44px;
       }
-      .blog-section {
-        padding: 22px 18px 24px;
-        margin-bottom: 44px;
-      }
       .news-header {
         flex-direction: column;
         align-items: flex-start;
         margin-bottom: 18px;
       }
       .news-board { grid-template-columns: 1fr; }
-      .blog-item {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
       header h1 { font-size: 1.7rem; }
       .project-grid { grid-template-columns: 1fr; }
       .project-card-wide { grid-column: auto; }
@@ -660,8 +559,6 @@
     <a class="nav-brand" href="#hero-header">USTC-AGI <span>Agentic AI</span></a>
     <div class="nav-links">
       <a href="#hero-header" class="nav-primary">首页概览</a>
-      <a href="#news">动态发布</a>
-      <a href="#tech-blog">技术博客</a>
       <a href="#research-tracks">研究成果</a>
       <a href="#application-systems">应用系统</a>
       <a href="#team-members">团队成员</a>
@@ -684,40 +581,6 @@
 <!-- ═══════════════════ MAIN ═══════════════════ -->
 <main>
   <div class="container">
-    <section class="blog-section section-anchor" id="tech-blog">
-      <div class="blog-header">
-        <span class="blog-kicker">技术博客</span>
-        <h2>方法、系统与实践笔记</h2>
-        <p>用于整理训练框架、运行时设计与应用系统实现过程中的技术文章。当前先挂接到现有项目页面，后续可以替换为独立博客链接。</p>
-      </div>
-      <div class="blog-list">
-        <article class="blog-item">
-          <div class="blog-label">RL Training</div>
-          <div class="blog-content">
-            <h3>Agent-R1：面向 LLM Agent 的端到端强化学习训练框架</h3>
-            <p>聚焦多轮工具调用场景中的轨迹建模、奖励设计与训练流程，适合作为 Agentic RL 相关方法总结与实验记录的入口文章。</p>
-          </div>
-          <a class="blog-link" href="agent-r1/">阅读页面 →</a>
-        </article>
-        <article class="blog-item">
-          <div class="blog-label">Runtime</div>
-          <div class="blog-content">
-            <h3>Agent Runtime：复杂任务推理与执行系统设计</h3>
-            <p>围绕任务分解、动态记忆、工具检索和多步反思等能力，整理面向复杂科学任务的 Agent 运行时设计经验。</p>
-          </div>
-          <a class="blog-link" href="agent-runtime/">阅读页面 →</a>
-        </article>
-        <article class="blog-item">
-          <div class="blog-label">Applications</div>
-          <div class="blog-content">
-            <h3>TabClaw：多 Agent 表格分析系统的交互与工程实践</h3>
-            <p>从计划生成、多表并行分析、记忆管理到技能蒸馏，总结面向真实数据分析工作流的产品化实现经验。</p>
-          </div>
-          <a class="blog-link" href="tab-claw/">阅读页面 →</a>
-        </article>
-      </div>
-    </section>
-
     <div class="section-intro section-anchor" id="research-tracks">
       <h2>研究成果</h2>
       <p>覆盖训练、架构、评测与领域应用的 Agentic AI 研究布局。</p>
