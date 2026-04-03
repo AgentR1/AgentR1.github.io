@@ -82,6 +82,10 @@
     h3.sub-title { font-size: 1.05rem; font-weight: 700; color: #222; margin: 28px 0 10px; }
     p { margin-bottom: 14px; }
     p:last-child { margin-bottom: 0; }
+    main, section .container, footer .container {
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
 
     /* ── TL;DR ──────────────────────────────────── */
     .tldr {
@@ -311,6 +315,12 @@
     footer { background: #1c1c1c; color: #999; text-align: center; padding: 28px 24px; font-size: 0.84rem; }
     footer a { color: #e87b6e; }
 
+    header, .nav-bar, .btn-row, .pill-links, .model-pills,
+    .feature-grid, .agent-grid, .workflow, .highlight-head,
+    .toolbox-group-head, .team-table {
+      text-align: initial;
+    }
+
     /* ── Responsive ─────────────────────────────── */
     @media (max-width: 640px) {
       header h1 { font-size: 1.5rem; }
@@ -373,7 +383,7 @@
   <div class="container">
     <div class="tldr">
       <strong>一句话介绍：</strong>
-      CastClaw 是一款基于 CLI 的<strong>人机协同时间序列预测智能体框架</strong>。它通过编排 Planner、Forecaster 与 Critic 三大核心角色，构建了一套“初始化→前置分析→技能审核→实验循环→后置报告”的自动化 Agentic Workflow；在保证实验设计与模型训练高效自动化的同时，坚持“人在回路”的设计哲学，将关键决策权交还研究者。
+      CastClaw 是专为时间序列预测打造的<strong>自主交互式智能体框架</strong>。该框架采用 Planner、Forecaster 和 Critic 三位一体的架构，驱动涵盖初始化、预测前分析、技能审核、实验循环及后置报告的全链路 Agentic Workflow。通过自动化执行繁琐的实验与分析流程，并配合“人在回路”机制进行关键节点把控，CastClaw 实现了 AI 执行力与人类判断力的深度融合。
     </div>
 
     <h2 class="section-title">项目概览</h2>
@@ -398,7 +408,7 @@
     <h2 class="section-title">关键特色介绍</h2>
     <div class="tldr">
       <strong>核心结构：</strong>
-      CastClaw 的关键特色并不是孤立功能的堆叠，而是由<strong>多智能体协同</strong>、<strong>人机高效协作</strong>与<strong>基于 Skill 的自主进化</strong>三层机制共同构成。它们分别定义了系统如何组织任务、如何引入人类判断，以及如何把一次次实验经验转化为长期能力。
+      CastClaw 的核心竞争力并非功能的简单堆叠，而是由<strong>多智能体协同</strong>、<strong>人机深度融合</strong>以及<strong>基于技能（Skill）的自主进化</strong>三大机制共同驱动。这三层机制分别定义了系统的任务组织范式、人类智慧的介入路径，以及实验经验向长期能力的转化逻辑。
     </div>
 
     <div class="highlight-stack">
@@ -509,7 +519,7 @@
     <h2 class="section-title">系统概要设计</h2>
     <div class="tldr">
       <strong>设计目标：</strong>
-      CastClaw 被设计成一个面向研究者的<strong>预测工作台</strong>，而不是“黑盒自动预测器”。它让 AI 负责高频分析与实验执行，让人类在关键节点做确认与校正，在降低操作负担的同时尽可能提高预测精度与结果可信度。
+      CastClaw 旨在为研究者打造一个开放的<strong>预测工作台</strong>，而非封闭的“黑盒自动预测器”。它通过 AI 承担高频的数据分析与实验执行，由人类在关键节点进行逻辑确认与策略校正，在大幅降低科研负载的同时，显著提升预测结果的精度与可信度。
     </div>
 
     <div class="feature-grid">
