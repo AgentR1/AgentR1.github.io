@@ -925,6 +925,21 @@
       </div>
     </div>
 
+    <h3 class="sub-title">样例数据集</h3>
+    <div class="example-showcase">
+      <div class="example-card">
+        <span class="example-badge">Sample Dataset</span>
+        <p>为了方便快速体验 CastClaw，我们在页面中提供了一份可直接下载的电力负荷样例数据集 <a href="assets/load.csv" download><code>load.csv</code></a>。该文件包含约 1.5 万条小时级样本，可用于初始化一个典型的短期负荷预测任务。</p>
+        <p>需要注意的是，这份样例数据集的实际字段名为 <code>TIMESTAMP</code>（时间列）和 <code>LOAD</code>（目标列）。如果你直接使用这份样例文件，请在 Planner 中按真实字段名建立任务，而不是使用下方演示里的 <code>date</code> / <code>OT</code> 占位写法。</p>
+        <div class="pill-links">
+          <a class="pill pill-orange" href="assets/load.csv" download>下载 load.csv</a>
+          <span class="pill pill-out">频率：1 小时</span>
+          <span class="pill pill-out">时间列：TIMESTAMP</span>
+          <span class="pill pill-out">目标列：LOAD</span>
+        </div>
+      </div>
+    </div>
+
     <h3 class="sub-title">安装</h3>
     <div class="code-block"><span class="comment"># 方式一：npm 全局安装（推荐）</span>
 <span class="cmd">npm</span> install -g castclaw
