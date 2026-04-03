@@ -819,28 +819,6 @@
 
     </div>
 
-    <h3 class="sub-title">基础模型选择指南</h3>
-    <p>
-      CastClaw 在基础模型接入上保持开放，不预设唯一供应商路线。无论是国外主流大模型，还是国内可部署模型与推理服务，都可以根据你的算力条件、成本预算和合规要求灵活接入系统。
-    </p>
-    <div class="model-group">
-      <div class="model-pills">
-        <span class="model-pill highlight">国外主流大模型 API</span>
-        <span class="model-pill highlight">国内可部署模型 API</span>
-        <span class="model-pill highlight">自建推理服务</span>
-        <span class="model-pill">OpenAI</span>
-        <span class="model-pill">Anthropic</span>
-        <span class="model-pill">Google</span>
-        <span class="model-pill">Qwen</span>
-        <span class="model-pill">DeepSeek</span>
-        <span class="model-pill">昇腾算力部署 API</span>
-      </div>
-    </div>
-
-    <p style="margin-top: 20px;">
-      我们鼓励研究者根据自身实验环境选择最合适的模型来源，尤其欢迎结合昇腾算力部署 API 进行本地化或机构内落地，以兼顾性能、成本和可控性。
-    </p>
-
     <h3 class="sub-title">Agentic Workflow</h3>
     <div class="feature-grid" style="grid-template-columns:1fr;margin-top:16px;">
       <div class="feature-card" style="border-top:4px solid #d35400;">
@@ -925,8 +903,8 @@
     <p>CastClaw 通过主力模型与轻量 LLM 的分层协作完成不同复杂度的任务，同时依托 Bun、Python/uv 与 Vercel AI SDK 组成跨 TypeScript 与 Python 的运行环境。</p>
 
     <div style="background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:20px 22px;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-      <h3 style="font-size:1rem;font-weight:700;color:#111;margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid #f5cba7;">CastClaw 基础模型使用指南</h3>
-      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-bottom:16px;">CastClaw 兼容国内外主流大模型，用户可根据访问条件自由选择：</p>
+      <h3 style="font-size:1rem;font-weight:700;color:#111;margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid #f5cba7;">基础模型选用指南</h3>
+      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-bottom:16px;">CastClaw 在基础模型接入上保持开放，不预设唯一供应商路线。无论是国外主流大模型，还是国内可部署模型与推理服务，都可以根据你的算力条件、成本预算和合规要求灵活接入系统。</p>
       <div class="model-group">
         <div style="margin-bottom:10px;">
           <span style="font-size:0.8rem;font-weight:600;color:#888;margin-right:8px;">国际模型</span>
@@ -934,13 +912,21 @@
           <span class="model-pill highlight">GPT 系列</span>
           <span class="model-pill highlight">Gemini 系列</span>
         </div>
-        <div>
+        <div style="margin-bottom:10px;">
           <span style="font-size:0.8rem;font-weight:600;color:#888;margin-right:8px;">国内模型</span>
           <span class="model-pill highlight">DeepSeek 系列</span>
           <span class="model-pill highlight">Qwen 系列</span>
           <span class="model-pill highlight">GLM 系列</span>
         </div>
+        <div>
+          <span style="font-size:0.8rem;font-weight:600;color:#888;margin-right:8px;">部署方式</span>
+          <span class="model-pill">国外主流大模型 API</span>
+          <span class="model-pill">国内可部署模型 API</span>
+          <span class="model-pill">自建推理服务</span>
+          <span class="model-pill">昇腾算力部署 API</span>
+        </div>
       </div>
+      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-top:16px;margin-bottom:0;">我们鼓励研究者根据自身实验环境选择最合适的模型来源，尤其欢迎结合昇腾算力部署 API 进行本地化或机构内落地，以兼顾性能、成本和可控性。</p>
     </div>
 
     <div style="background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:20px 22px;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
