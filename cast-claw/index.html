@@ -478,7 +478,7 @@
           <div class="agent-card">
             <div class="agent-icon">🗂️</div>
             <h4>Planner（规划者）</h4>
-            <p>负责任务定义、数据诊断与阶段编排。并发启动两条分析轨道：定性域研究（WebSearch）+ 定量数据统计，融合为预测前报告。生成 2–4 个技能文件供人工审核确认。</p>
+            <p>负责任务定义、数据诊断与阶段编排。并发启动两条分析轨道：定性域研究（WebSearch）+ 定量数据统计，融合为预测前报告。生成 2–4 个技能文件供人类审核确认。</p>
           </div>
 
           <div class="agent-card">
@@ -501,7 +501,7 @@
           <span class="highlight-index">02</span>
           <h3 class="highlight-title">人机高效协作</h3>
         </div>
-        <p>CastClaw 不追求让人类完全退出预测流程，而是在<strong>关键决策与关键结果</strong>上保留人工确认。研究者可以在高价值节点注入领域知识、修正偏差并确认下一步策略，从而获得更高精度、更可信的预测结果。</p>
+        <p>CastClaw 不追求让人类完全退出预测流程，而是在<strong>关键决策与关键结果</strong>上保留人类确认。研究者可以在高价值节点注入领域知识、修正偏差并确认下一步策略，从而获得更高精度、更可信的预测结果。</p>
         <div class="feature-grid">
 
           <div class="feature-card">
@@ -530,7 +530,7 @@
           <span class="highlight-index">03</span>
           <h3 class="highlight-title">基于 Skill 的自主进化</h3>
         </div>
-        <p>CastClaw 将 Planner 生成并经人工审核的技能文件视为可以长期积累的<strong>系统经验</strong>。这些 Skill 不只服务于单次实验，而是会持续沉淀模型选择策略、参数搜索空间、适用条件与风险提示；随着 Skill 的不断积累，CastClaw 可以在新任务中更快启动、更准决策，并逐步实现面向预测任务的自主进化。</p>
+        <p>CastClaw 将 Planner 生成并经人类审核的技能文件视为可以长期积累的<strong>系统经验</strong>。这些 Skill 不只服务于单次实验，而是会持续沉淀模型选择策略、参数搜索空间、适用条件与风险提示；随着 Skill 的不断积累，CastClaw 可以在新任务中更快启动、更准决策，并逐步实现面向预测任务的自主进化。</p>
         <div class="feature-grid">
           <div class="feature-card">
             <div class="feature-icon">🧠</div>
@@ -540,8 +540,8 @@
 
           <div class="feature-card">
             <div class="feature-icon">✅</div>
-            <h4>人工审核后沉淀</h4>
-            <p>Skill 不会直接自动进入实验循环，而是先经过人工确认，再作为可信策略被长期保留，确保系统的后续进化建立在高质量经验之上。</p>
+            <h4>人类审核后沉淀</h4>
+            <p>Skill 不会直接自动进入实验循环，而是先经过人类确认，再作为可信策略被长期保留，确保系统的后续进化建立在高质量经验之上。</p>
           </div>
 
           <div class="feature-card">
@@ -584,8 +584,8 @@
 
       <div class="feature-card">
         <div class="feature-icon">🤝</div>
-        <h4>关键节点人工确认</h4>
-        <p>在任务设定、技能审核、实验停滞处理和关键结果判断等节点保留人工确认，把领域知识注入流程，避免自动化系统在错误方向上持续放大偏差。</p>
+        <h4>关键节点人类确认</h4>
+        <p>在任务设定、技能审核、实验停滞处理和关键结果判断等节点保留人类确认，把领域知识注入流程，避免自动化系统在错误方向上持续放大偏差。</p>
       </div>
 
       <div class="feature-card">
@@ -627,7 +627,7 @@
       <div class="feature-card">
         <div class="feature-icon">🎯</div>
         <h4>技能文件审核</h4>
-        <p>Planner 基于分析报告生成结构化技能文件，含适用条件、参数搜索空间与风险警告。人工确认通过后才进入实验阶段，避免盲目跑模型。</p>
+        <p>Planner 基于分析报告生成结构化技能文件，含适用条件、参数搜索空间与风险警告。人类确认通过后才进入实验阶段，避免盲目跑模型。</p>
       </div>
 
       <div class="feature-card">
@@ -789,7 +789,7 @@
     <h2 class="section-title">智能体设计理念与 Agentic Workflow</h2>
     <div class="tldr">
       <strong>核心思路：</strong>
-      CastClaw 不只是“调用训练脚本”的外壳，更是一套围绕<strong>动作空间（Action Space）</strong>组织起来的智能体工作台。不同智能体会调用不同能力模块完成特征分析、技能生成、实验反思与报告整理；其中高频、结构化、短上下文的任务适合交给<strong>轻量模型</strong>处理，复杂整合与关键决策则交给主智能体和人工审核。
+      CastClaw 不只是“调用训练脚本”的外壳，更是一套围绕<strong>动作空间（Action Space）</strong>组织起来的智能体工作台。不同智能体会调用不同能力模块完成特征分析、技能生成、实验反思与报告整理；其中高频、结构化、短上下文的任务适合交给<strong>轻量模型</strong>处理，复杂整合与关键决策则交给主智能体和人类审核。
     </div>
 
     <div class="feature-grid">
@@ -814,32 +814,33 @@
 
     </div>
 
-    <h3 class="sub-title">可调用的轻量模型</h3>
+    <h3 class="sub-title">基础模型选择指南</h3>
     <p>
-      对于特征分析、摘要整理、技能草案生成、实验反思等高频辅助任务，CastClaw 可以接入<strong>可配置的轻量模型池</strong>，以更低成本支持多轮协同。具体供应商和型号并不固定，可按部署环境自由替换。
+      CastClaw 在基础模型接入上保持开放，不预设唯一供应商路线。无论是国外主流大模型，还是国内可部署模型与推理服务，都可以根据你的算力条件、成本预算和合规要求灵活接入系统。
     </p>
     <div class="model-group">
       <div class="model-pills">
-        <span class="model-pill highlight">Anthropic Haiku 类模型</span>
-        <span class="model-pill highlight">OpenAI Mini 类模型</span>
-        <span class="model-pill highlight">Google Flash 类模型</span>
-        <span class="model-pill">特征分析</span>
-        <span class="model-pill">领域摘要</span>
-        <span class="model-pill">技能草案</span>
-        <span class="model-pill">实验反思</span>
-        <span class="model-pill">报告整理</span>
+        <span class="model-pill highlight">国外主流大模型 API</span>
+        <span class="model-pill highlight">国内可部署模型 API</span>
+        <span class="model-pill highlight">自建推理服务</span>
+        <span class="model-pill">OpenAI</span>
+        <span class="model-pill">Anthropic</span>
+        <span class="model-pill">Google</span>
+        <span class="model-pill">Qwen</span>
+        <span class="model-pill">DeepSeek</span>
+        <span class="model-pill">昇腾算力部署 API</span>
       </div>
     </div>
 
     <p style="margin-top: 20px;">
-      这样的分工让 CastClaw 既能保持多智能体协同的响应速度，又能把更昂贵的大模型调用留给真正需要综合判断的阶段。
+      我们鼓励研究者根据自身实验环境选择最合适的模型来源，尤其欢迎结合昇腾算力部署 API 进行本地化或机构内落地，以兼顾性能、成本和可控性。
     </p>
 
     <h3 class="sub-title">Agentic Workflow</h3>
     <div class="feature-grid" style="grid-template-columns:1fr;margin-top:16px;">
       <div class="feature-card" style="border-top:4px solid #d35400;">
         <div class="feature-icon">🧭</div>
-        <h4>严格流程编排</h4>
+        <h4>流程自主编排</h4>
         <p>CastClaw 遵循严格的 Agentic Workflow，阶段转换由 <code>forecast_state</code> 工具强制执行——<strong>不可跳过任何阶段</strong>，确保每次实验过程可追溯、可复现。</p>
       </div>
     </div>
@@ -876,9 +877,9 @@
           <div class="step-line"></div>
         </div>
         <div class="step-body">
-          <span class="step-tag">Planner · 人工审核</span>
+          <span class="step-tag">Planner · 人类审核</span>
           <h4>技能审核（Skill Audit）</h4>
-          <p>基于预测前分析，Planner 生成 2–4 个结构化<strong>技能文件</strong>，每个文件包含：适用条件、参数搜索空间、特征模板（配置 JSON）及针对当前数据集的风险警告。人工审核并确认后，阶段正式过渡到实验循环。</p>
+          <p>基于预测前分析，Planner 生成 2–4 个结构化<strong>技能文件</strong>，每个文件包含：适用条件、参数搜索空间、特征模板（配置 JSON）及针对当前数据集的风险警告。人类审核并确认后，阶段正式过渡到实验循环。</p>
         </div>
       </div>
 
@@ -1046,32 +1047,6 @@
 - 澳大利亚冬季（6-8 月，UTC）日照时间短，整体功率低；夏季（12-2 月）峰值高，具有明显的日周期（24 小时）和周周期（168 小时）特征
 - 夏季和冬季用电高峰，春秋季为低谷</div>
       </div>
-
-      <div class="example-card">
-        <span class="example-badge">CAST.md 示例</span>
-        <p>如果希望在任务开始前就固定实验边界，可以在项目目录写入如下 <code>CAST.md</code>，用于约束实验过程中的安全性与预算控制：</p>
-        <div class="code-block"># CAST Constraints
-
-## Safety
-- 禁止数据泄露
-
-## Experiment Budget
-- 最大实验次数：20
-- 连续无改进阈值：3
-- 崩溃阈值：3</div>
-      </div>
-    </div>
-
-    <div class="pill-links">
-      <a class="pill pill-orange" href="https://github.com/SkyeGT/CastClaw" target="_blank" rel="noopener">
-        <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px">
-          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-        </svg>
-        GitHub
-      </a>
-      <a class="pill pill-out" href="https://github.com/SkyeGT/CastClaw/blob/main/docs/tutorial.md" target="_blank" rel="noopener">完整教程</a>
-      <a class="pill pill-out" href="https://github.com/SkyeGT/CastClaw/blob/main/docs/cast-md.md" target="_blank" rel="noopener">CAST.md 参考</a>
-      <a class="pill pill-out" href="https://github.com/SkyeGT/CastClaw/blob/main/docs/models.md" target="_blank" rel="noopener">模型列表</a>
     </div>
   </div>
 </section>
