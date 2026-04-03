@@ -146,6 +146,59 @@
       font-size: 0.9rem; color: #555; line-height: 1.75; margin-bottom: 14px;
     }
     .example-card p:last-child { margin-bottom: 0; }
+    .demo-video {
+      width: 100%;
+      display: block;
+      margin-top: 14px;
+      border-radius: 12px;
+      border: 1px solid #e6e6e6;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+      background: #000;
+    }
+    .paper-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .paper-card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 14px;
+      padding: 22px 22px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-top: 4px solid #d35400;
+    }
+    .paper-meta {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: #fef3e2;
+      color: #d35400;
+      border: 1px solid #f5cba7;
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .paper-title {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.55;
+      color: #111;
+      margin-bottom: 10px;
+    }
+    .paper-desc {
+      font-size: 0.89rem;
+      color: #555;
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    .paper-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
     /* ── Workflow stepper ───────────────────────── */
     .workflow { margin-top: 28px; display: flex; flex-direction: column; gap: 0; }
@@ -183,11 +236,6 @@
     }
     .agent-card .agent-icon { font-size: 2rem; margin-bottom: 10px; }
     .agent-card h4 { font-size: 1rem; font-weight: 800; color: #111; margin-bottom: 4px; }
-    .agent-card .agent-shortcut {
-      font-size: 0.78rem; color: #d35400; font-weight: 600;
-      background: #fef3e2; border: 1px solid #f5cba7; border-radius: 4px;
-      padding: 2px 8px; display: inline-block; margin-bottom: 10px;
-    }
     .agent-card p { font-size: 0.88rem; color: #555; line-height: 1.65; margin: 0; }
 
     /* ── Highlight panels ───────────────────────── */
@@ -332,7 +380,7 @@
     @media (max-width: 640px) {
       header h1 { font-size: 1.5rem; }
       section { padding: 48px 0; }
-      .feature-grid, .agent-grid { grid-template-columns: 1fr; }
+      .feature-grid, .agent-grid, .paper-grid { grid-template-columns: 1fr; }
       .highlight-panel { padding: 20px 18px 22px; }
       .toolbox-group { padding: 18px 18px 20px; }
       .toolbox-card { padding: 18px 18px 20px; }
@@ -430,21 +478,18 @@
           <div class="agent-card">
             <div class="agent-icon">🗂️</div>
             <h4>Planner（规划者）</h4>
-            <span class="agent-shortcut">Ctrl+1</span>
             <p>负责任务定义、数据诊断与阶段编排。并发启动两条分析轨道：定性域研究（WebSearch）+ 定量数据统计，融合为预测前报告。生成 2–4 个技能文件供人工审核确认。</p>
           </div>
 
           <div class="agent-card">
             <div class="agent-icon">🔬</div>
             <h4>Forecaster（预测者）</h4>
-            <span class="agent-shortcut">Ctrl+2</span>
             <p>驱动迭代实验循环——读取最佳结果与失败历史，从技能中选取模型配置，调用 <code>generate_model</code> 训练评估，进行反思记录，管理实验预算。停滞时触发 HITL 暂停等待人类反馈。</p>
           </div>
 
           <div class="agent-card">
             <div class="agent-icon">📊</div>
             <h4>Critic（评审者）</h4>
-            <span class="agent-shortcut">Ctrl+3</span>
             <p>读取所有实验产物，生成各模型族最佳结果对比、按时序特征的性能分解、可视化脚本，以及结构化的最终 Markdown 预测报告，输出至 <code>.forecast/reports/final-report.md</code>。</p>
           </div>
 
@@ -648,7 +693,7 @@
       <div class="toolbox-group toolbox-group-analytics">
         <div class="toolbox-group-head">
           <div class="toolbox-group-index">B</div>
-          <h3 class="toolbox-group-title">分析与模型类</h3>
+          <h3 class="toolbox-group-title">预测辅助工具</h3>
         </div>
         <p class="toolbox-group-desc">将数据分析、时序特征诊断与模型资产封装成可组合的能力层，支撑技能生成、路线筛选与不同模型族的系统探索。</p>
 
@@ -704,26 +749,12 @@
             <div class="model-group">
               <h4>深度学习模型</h4>
               <div class="model-pills">
-                <span class="model-pill">DLinear</span>
-                <span class="model-pill">NLinear</span>
-                <span class="model-pill">PatchTST</span>
-                <span class="model-pill">TimesNet</span>
-                <span class="model-pill">iTransformer</span>
-                <span class="model-pill">Autoformer</span>
-                <span class="model-pill">FEDformer</span>
                 <span class="model-pill">Informer</span>
-                <span class="model-pill">Transformer</span>
-                <span class="model-pill">MICN</span>
-                <span class="model-pill">SCINet</span>
-                <span class="model-pill">TimeMixer</span>
-                <span class="model-pill">TSMixer</span>
-                <span class="model-pill">SegRNN</span>
-                <span class="model-pill">FITS</span>
+                <span class="model-pill">PatchTST</span>
+                <span class="model-pill">TSMixer++</span>
                 <span class="model-pill">TiDE</span>
-                <span class="model-pill">Mamba</span>
-                <span class="model-pill">Crossformer</span>
                 <span class="model-pill">ConvTimeNet</span>
-                <span class="model-pill">20+ 更多</span>
+                <span class="model-pill">等</span>
               </div>
             </div>
 
@@ -940,6 +971,18 @@
       </div>
     </div>
 
+    <h3 class="sub-title">演示视频</h3>
+    <div class="example-showcase">
+      <div class="example-card">
+        <span class="example-badge">Product Demo</span>
+        <p>下面的视频展示了 CastClaw 在真实终端工作流中的使用方式，包括任务建立、智能体协同切换，以及预测流程中的关键交互环节。你也可以直接下载原始压缩版演示文件 <a href="assets/castclaw-demo.mp4" download><code>castclaw-demo.mp4</code></a>。</p>
+        <video class="demo-video" controls preload="metadata" playsinline>
+          <source src="assets/castclaw-demo.mp4" type="video/mp4" />
+          你的浏览器暂不支持视频播放，请直接下载演示文件查看。
+        </video>
+      </div>
+    </div>
+
     <h3 class="sub-title">安装</h3>
     <div class="code-block"><span class="comment"># 方式一：npm 全局安装（推荐）</span>
 <span class="cmd">npm</span> install -g castclaw
@@ -1038,11 +1081,61 @@
   <div class="container">
     <h2 class="section-title">相关项目</h2>
     <p>
-      CastClaw 与 <strong>AlphaCast</strong>、<strong>Cast-R1</strong>、<strong>Agent-R1</strong> 共同构成我们在时间序列智能体与相关训练方法方向上的研究工作，分别从人机协同实验编排、预测系统探索、顺序决策学习与智能体训练框架等不同侧面推进这一研究方向。
+      CastClaw 所在的研究线并不局限于单一项目，而是与一系列围绕时间序列智能体、交互式预测、推理增强和经验进化展开的代表性论文共同构成。下面列出几篇与 CastClaw 关系最紧密的工作，更多论文可以在 <a href="https://mingyue-cheng.github.io/" target="_blank" rel="noopener">Mingyue Cheng 的主页</a> 中继续检索。
     </p>
-    <div class="pill-links">
-      <span class="pill pill-out">AlphaCast</span>
-      <a class="pill pill-out" href="../agent-apps/#cast-r1">Cast-R1</a>
+
+    <div class="paper-grid">
+      <div class="paper-card">
+        <span class="paper-meta">Position Paper</span>
+        <h3 class="paper-title">Beyond Model-Centric Prediction — Agentic Time Series Forecasting</h3>
+        <p class="paper-desc">从范式层面提出 Agentic Time Series Forecasting，为 CastClaw 这种“预测即交互式决策过程”的设计提供理论起点。</p>
+        <div class="paper-links">
+          <a class="pill pill-orange" href="https://arxiv.org/abs/2602.01776" target="_blank" rel="noopener">PDF</a>
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <span class="paper-meta">Human-AI Collaboration</span>
+        <h3 class="paper-title">AlphaCast: A Human Wisdom-LLM Intelligence Co-Reasoning Framework for Interactive Time Series Forecasting</h3>
+        <p class="paper-desc">聚焦人机协同交互式预测，强调在关键节点引入专家判断，是 CastClaw 的人机协作设计来源之一。</p>
+        <div class="paper-links">
+          <a class="pill pill-orange" href="https://arxiv.org/abs/2511.08947" target="_blank" rel="noopener">PDF</a>
+          <a class="pill pill-out" href="https://github.com/SkyeGT/AlphaCast_Official" target="_blank" rel="noopener">Code</a>
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <span class="paper-meta">Sequential Decision Policy</span>
+        <h3 class="paper-title">Cast-R1: Learning Tool-Augmented Sequential Decision Policies for Time Series Forecasting</h3>
+        <p class="paper-desc">从强化学习与工具调用角度刻画时序预测中的多步决策，为 CastClaw 的实验循环和策略优化提供方法支撑。</p>
+        <div class="paper-links">
+          <a class="pill pill-orange" href="https://arxiv.org/abs/2602.13802" target="_blank" rel="noopener">PDF</a>
+          <a class="pill pill-out" href="https://github.com/Xiaoyu-Tao/Cast-R1-TS" target="_blank" rel="noopener">Code</a>
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <span class="paper-meta">Experience & Memory</span>
+        <h3 class="paper-title">MemCast: Memory-Driven Time Series Forecasting with Experience-Conditioned Reasoning</h3>
+        <p class="paper-desc">强调经验积累、记忆调用与持续进化，对 CastClaw 中基于 Skill 的长期能力沉淀具有直接启发意义。</p>
+        <div class="paper-links">
+          <a class="pill pill-orange" href="https://arxiv.org/abs/2602.03164" target="_blank" rel="noopener">PDF</a>
+          <a class="pill pill-out" href="https://github.com/Xiaoyu-Tao/MemCast-TS" target="_blank" rel="noopener">Code</a>
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <span class="paper-meta">Reasoning Over Time</span>
+        <h3 class="paper-title">Can Slow-Thinking LLMs Reason Over Time? Empirical Studies in Time Series Forecasting</h3>
+        <p class="paper-desc">系统研究“慢思考”式推理在时间序列预测中的作用，为 CastClaw 的分析、反思与多轮决策机制提供经验依据。</p>
+        <div class="paper-links">
+          <a class="pill pill-orange" href="https://arxiv.org/abs/2505.24511" target="_blank" rel="noopener">PDF</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pill-links" style="margin-top:22px;">
+      <a class="pill pill-out" href="https://mingyue-cheng.github.io/" target="_blank" rel="noopener">更多论文</a>
       <a class="pill pill-out" href="../agent-r1/">Agent-R1</a>
       <a class="pill pill-out" href="../">← 返回主页</a>
     </div>
