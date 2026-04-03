@@ -48,13 +48,20 @@
       border-bottom: 1px solid #f5cba7;
       padding: 64px 0 48px; text-align: center;
     }
+    header .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
     header h1 { font-size: 2rem; font-weight: 800; color: #111; line-height: 1.3; }
     header h1 .hl { color: #d35400; }
     .subtitle {
       margin-top: 14px; font-size: 1rem; color: #555;
       max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7;
+      text-align: center; text-justify: auto;
     }
-    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; }
+    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; text-align: center; text-justify: auto; }
     .btn-row {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px;
     }
@@ -604,7 +611,8 @@
 <section id="toolenv">
   <div class="container">
     <h2 class="section-title">运行时工具箱</h2>
-    <p>CastClaw 将数据科学中的数据分析方法、机器学习模型中的特征工程经验，以及经典时序模型与时序基础模型的思想，统一封装为可调用的运行时工具能力。它们既可以直接服务于具体预测任务，也可以通过 MCP 等协议持续扩展，形成一个面向时序预测、可继承、可组合、可演进的工具箱。</p>
+    <p>CastClaw 将数据科学中的分析方法论、机器学习中的特征工程实战经验，以及经典时序模型与前沿大模型的架构思想，深度沉淀并封装为高性能的运行时工具集（Runtime Toolkit）。</p>
+    <p>该工具集不仅能直接赋能于各类具体的预测任务，提供即插即用的计算能力，还支持通过 MCP（Model Context Protocol）等标准协议实现能力的动态扩展与持续迭代。由此，CastClaw 构建了一个面向时序预测、可继承、可组合、且具备自我演进能力的工程化工具箱，为复杂场景下的时序分析提供坚实的运行时支撑。</p>
 
     <div class="toolbox-layout">
       <div class="toolbox-group toolbox-group-shell">
