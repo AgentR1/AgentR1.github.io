@@ -579,7 +579,7 @@
       <div class="feature-card">
         <div class="feature-icon">🖥️</div>
         <h4>终端优先工作台</h4>
-        <p>采用 CLI-TUI 作为主要交互界面，不引入额外 Web 服务。研究者可以在终端里直接切换智能体、查看状态、审核结果，保持研究流程的轻量与高效。</p>
+        <p>采用 CLI 作为主要交互界面，不引入额外 Web 服务。研究者可以在终端里直接切换智能体、查看状态、审核结果，保持研究流程的轻量与高效。</p>
       </div>
 
       <div class="feature-card">
@@ -602,7 +602,7 @@
 
     <h3 id="architecture" class="sub-title">系统架构</h3>
     <p>
-      CastClaw 以 <strong>CLI-TUI</strong> 为交互界面，三个智能体共享 <code>.forecast/</code> 文件协议实现状态同步。LLM 层通过 Vercel AI SDK 解耦，支持 20+ 提供商无缝切换；Python ML 后端由 <code>uv</code> 管理，<code>generate_model</code> 工具自动调用，无需手动介入。
+      CastClaw 以 <strong>CLI</strong> 为交互界面，三个智能体共享 <code>.forecast/</code> 文件协议实现状态同步。LLM 层通过 Vercel AI SDK 解耦，支持 20+ 提供商无缝切换；Python ML 后端由 <code>uv</code> 管理，<code>generate_model</code> 工具自动调用，无需手动介入。
     </p>
     <img src="assets/architecture.svg" alt="CastClaw 系统架构" class="arch-img" onerror="this.style.display='none'" />
     <p style="margin-top: 20px;">
@@ -1143,6 +1143,11 @@
         </tr>
       </tbody>
     </table>
+
+    <h3 class="sub-title">媒体报道</h3>
+    <ul>
+      <li><a href="https://mp.weixin.qq.com/s/FW5f39GvGnSjwLVOP_NDmw?scene=2" target="_blank" rel="noopener">微信公众号报道</a></li>
+    </ul>
 
     <h3 class="sub-title">致谢</h3>
     <p>
