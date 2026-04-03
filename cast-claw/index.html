@@ -895,7 +895,7 @@
         </div>
         <div class="step-body">
           <span class="step-tag">Forecaster · HITL</span>
-          <h4>实验循环（Experiment Loop）</h4>
+          <h4>预测迭代</h4>
           <p>Forecaster 使用已确认技能迭代实验：读取当前最佳结果与近期失败历史 → 选取模型与配置 → <code>generate_model</code> 训练评估 → <code>forecast_reflect</code> 反思记录 → 预算检查 → 循环。停滞时触发 HITL 暂停，等待并融合人类领域反馈后继续。</p>
         </div>
       </div>
@@ -925,18 +925,20 @@
     <p>CastClaw 通过主力模型与轻量 LLM 的分层协作完成不同复杂度的任务，同时依托 Bun、Python/uv 与 Vercel AI SDK 组成跨 TypeScript 与 Python 的运行环境。</p>
 
     <div style="background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:20px 22px;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-      <h3 style="font-size:1rem;font-weight:700;color:#111;margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid #f5cba7;">可调用的轻量 LLM</h3>
-      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-bottom:16px;">特征摘要、技能草案生成、实验反思、结果整理等高频短上下文任务，可配置轻量模型处理，大幅降低整体调用成本：</p>
+      <h3 style="font-size:1rem;font-weight:700;color:#111;margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid #f5cba7;">CastClaw 基础模型使用指南</h3>
+      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-bottom:16px;">CastClaw 兼容国内外主流大模型，用户可根据访问条件自由选择：</p>
       <div class="model-group">
-        <div class="model-pills">
-          <span class="model-pill highlight">claude-haiku-4-5</span>
-          <span class="model-pill highlight">gpt-4o-mini</span>
-          <span class="model-pill highlight">gemini-2.0-flash</span>
-          <span class="model-pill">特征分析摘要</span>
-          <span class="model-pill">领域研究整理</span>
-          <span class="model-pill">技能草案生成</span>
-          <span class="model-pill">实验反思记录</span>
-          <span class="model-pill">报告段落整理</span>
+        <div style="margin-bottom:10px;">
+          <span style="font-size:0.8rem;font-weight:600;color:#888;margin-right:8px;">国际模型</span>
+          <span class="model-pill highlight">Claude 系列</span>
+          <span class="model-pill highlight">GPT 系列</span>
+          <span class="model-pill highlight">Gemini 系列</span>
+        </div>
+        <div>
+          <span style="font-size:0.8rem;font-weight:600;color:#888;margin-right:8px;">国内模型</span>
+          <span class="model-pill highlight">DeepSeek 系列</span>
+          <span class="model-pill highlight">Qwen 系列</span>
+          <span class="model-pill highlight">GLM 系列</span>
         </div>
       </div>
     </div>
