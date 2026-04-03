@@ -117,6 +117,25 @@
     .code-block .comment { color: #6a9955; }
     .code-block .str { color: #ce9178; }
 
+    /* ── Example showcase ──────────────────────── */
+    .example-showcase {
+      display: flex; flex-direction: column; gap: 18px; margin-top: 20px;
+    }
+    .example-card {
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 14px;
+      padding: 22px 22px 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .example-badge {
+      display: inline-flex; align-items: center;
+      background: #fef3e2; color: #d35400; border: 1px solid #f5cba7;
+      border-radius: 999px; padding: 4px 12px; font-size: 0.8rem; font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .example-card p {
+      font-size: 0.9rem; color: #555; line-height: 1.75; margin-bottom: 14px;
+    }
+    .example-card p:last-child { margin-bottom: 0; }
+
     /* ── Workflow stepper ───────────────────────── */
     .workflow { margin-top: 28px; display: flex; flex-direction: column; gap: 0; }
     .workflow-step {
@@ -318,8 +337,8 @@
     <img src="assets/logo.png" alt="CastClaw" class="header-logo" />
     <h1><span class="hl">CastClaw</span></h1>
     <p class="subtitle">
-      人机协同时序预测 AI 智能体框架<br>
-      多智能体协同 · Agentic Workflow · 全程人机交互 · 30+ 模型族
+      自主交互与人机协同双驱的新一代时间序列预测智能体<br>
+      多智能体协同、人机高效协作、基于 Skill 的自主进化、100+辅助预测工具
     </p>
     <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室 AGI 组</p>
     <div class="btn-row">
@@ -354,15 +373,21 @@
   <div class="container">
     <div class="tldr">
       <strong>一句话介绍：</strong>
-      CastClaw 是一个基于 CLI-TUI 的<strong>人机协同时序预测智能体框架</strong>——编排 Planner、Forecaster、Critic 三大智能体，通过严格的 Agentic Workflow（初始化 → 预测前分析 → 技能审核 → 实验循环 → 后置报告）自动化完成实验设计、模型训练与结果分析，<strong>全程保持人类在环（HITL），让研究者而非 AI 做最终决策</strong>。
+      CastClaw 是一款基于 CLI 的<strong>人机协同时间序列预测智能体框架</strong>。它通过编排 Planner、Forecaster 与 Critic 三大核心角色，构建了一套“初始化→前置分析→技能审核→实验循环→后置报告”的自动化 Agentic Workflow；在保证实验设计与模型训练高效自动化的同时，坚持“人在回路”的设计哲学，将关键决策权交还研究者。
     </div>
 
     <h2 class="section-title">项目概览</h2>
     <p>
-      时间序列预测研究面临两大挑战：一是模型选型与调参空间巨大，难以系统探索；二是全自动流程缺乏可解释性，难以融入领域知识。CastClaw 以<strong>智能体编排</strong>为核心，将繁琐的实验流程自动化，同时在关键决策节点设置<strong>人机协作暂停</strong>，让研究者随时介入、注入专业判断。
+      在能源调度、金融风控、工业智能等关键领域中，时间序列预测是支撑决策的重要基础。从最早的统计模型，到机器学习驱动的端到端方法，研究者不断尝试提升模型对复杂动态系统的刻画能力。然而，随着真实场景中数据非平稳性增强、情境因素日益复杂，传统“给定历史-预测未来”的建模范式，正在逐渐触及其能力边界。
     </p>
     <p>
-      框架通过 <strong>CLI 驱动的 TUI 界面</strong>运行，无需 Web 服务，直接在终端内切换三个智能体标签页。Planner 负责任务定义与数据分析，Forecaster 驱动实验循环，Critic 生成最终分析报告。三者共享 <code>.forecast/</code> 工作目录协议，状态透明、可追溯。
+      当前时序预测正面临一个显著的困局：模型虽然在基准数据集上不断刷新精度指标，但在真实复杂环境中却往往表现出脆弱性。一方面，<strong><u>模型缺乏对情境信息的深度理解，难以应对分布漂移与突发事件</u></strong>；另一方面，<strong><u>预测过程高度“黑箱化”，缺乏可解释的推理路径，也无法在关键决策节点引入人类经验与领域知识</u></strong>。这种<strong><u>“单次前向推理”</u></strong>的范式，使得模型难以像人类专家一样，通过分析、判断与反思不断修正预测结果。
+    </p>
+    <p>
+      针对这一挑战，中国科学技术大学认知智能全国重点实验室团队提出了一种全新的范式：<strong><u>基于自主决策与人机协同的时序预测智能体 CastClaw</u></strong>。该方法不再将预测视为一次性输出，而是将其重构为一个“感知-推理-决策-反思-进化”的多轮交互与动态演化过程。CastClaw 通过构建可交互的预测环境，使模型能够主动调用工具、分析数据结构、识别关键变化模式，从而逐步逼近更可靠的未来趋势。
+    </p>
+    <p>
+      进一步地，CastClaw 突破了传统模型“被动响应”的局限，具备与环境进行自主交互的能力。它可以模拟人类在面对复杂时序问题时的思维方式，对趋势变化进行多步推理与假设验证；在关键节点上，还能够引入人类专家的判断，实现人机协同决策。同时，借助模块化的 Skill 机制，CastClaw 可以不断积累经验、调用新能力，实现持续学习与自我进化。这种从“模型预测”迈向“智能体决策”的转变，或将为时间序列研究打开一条通往认知智能的新路径。
     </p>
   </div>
 </section>
@@ -924,6 +949,43 @@
 为 data/etth1.csv 初始化预测会话。目标列：OT，时间列：date，
 预测步长：96 步，回看长度：336。采用 70/20/10 分割，使用 MSE 和 MAE 评估。</div>
 
+    <h3 class="sub-title">使用样例展示</h3>
+    <p>下面给出一个电力负荷预测任务的完整示例，展示如何在 Planner 中描述任务，以及如何通过 <code>CAST.md</code> 预先写入实验约束。</p>
+
+    <div class="example-showcase">
+      <div class="example-card">
+        <span class="example-badge">Planner 输入示例</span>
+        <p>在 <strong>Planner</strong> 标签页中，可以直接输入如下任务描述，让 CastClaw 建立预测任务并进入后续分析与技能审核流程：</p>
+        <div class="code-block">我有一个电力负荷数据集 ./load.csv，频率为 1 小时，目标列是 OT（电力负荷），时间列为 date。
+请帮我建立预测任务。
+
+要求：
+- 训练集:验证集:测试集 = 7:1:2
+- lookback_window = 96（即 4 天历史数据）
+- predicted_window = 96（即预测未来 4 天）
+- label_len = 96
+- 评估指标使用 MSE 和 MAE
+- 模型族包含 statistical, deep_learning, foundation 三个家族
+- 具体模型：ARIMA, DLinear, TimeXer, PatchTST, iTransformer, Chronos
+- 澳大利亚冬季（6-8 月，UTC）日照时间短，整体功率低；夏季（12-2 月）峰值高，具有明显的日周期（24 小时）和周周期（168 小时）特征
+- 夏季和冬季用电高峰，春秋季为低谷</div>
+      </div>
+
+      <div class="example-card">
+        <span class="example-badge">CAST.md 示例</span>
+        <p>如果希望在任务开始前就固定实验边界，可以在项目目录写入如下 <code>CAST.md</code>，用于约束实验过程中的安全性与预算控制：</p>
+        <div class="code-block"># CAST Constraints
+
+## Safety
+- 禁止数据泄露
+
+## Experiment Budget
+- 最大实验次数：20
+- 连续无改进阈值：3
+- 崩溃阈值：3</div>
+      </div>
+    </div>
+
     <div class="pill-links">
       <a class="pill pill-orange" href="https://github.com/SkyeGT/CastClaw" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px">
@@ -965,8 +1027,8 @@
       </thead>
       <tbody>
         <tr>
-          <td>核心开发</td>
-          <td>Tian Gao</td>
+          <td>团队骨干</td>
+          <td>Tian Gao &nbsp;·&nbsp; Xiaoyu Tao</td>
         </tr>
         <tr>
           <td>指导教师</td>
