@@ -979,15 +979,7 @@
 
     <h3 class="sub-title">安装</h3>
     <div class="code-block"><span class="comment"># 方式一：npm 全局安装（推荐）</span>
-<span class="cmd">npm</span> install -g castclaw
-
-<span class="comment"># 方式二：从源码构建</span>
-<span class="cmd">git clone</span> https://github.com/SkyeGT/CastClaw.git
-<span class="cmd">cd</span> CastClaw
-<span class="cmd">bun</span> install
-<span class="cmd">cd</span> python && <span class="cmd">uv sync</span> && <span class="cmd">cd</span> ..
-<span class="cmd">bun run</span> --cwd packages/castclaw build
-<span class="cmd">bun link</span> --cwd packages/castclaw  <span class="comment"># 可选：全局链接</span></div>
+<span class="cmd">npm</span> install -g castclaw</div>
 
     <h3 class="sub-title">验证安装</h3>
     <div class="code-block"><span class="cmd">castclaw</span> --version
