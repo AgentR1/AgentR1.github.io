@@ -65,6 +65,9 @@
     .topbar-brand {
       position: relative;
       overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       font-weight: 700;
       font-size: 0.95rem;
       color: #111;
@@ -74,6 +77,14 @@
       user-select: none;
       text-decoration: none;
       transition: color 0.15s, background 0.15s;
+    }
+    .brand-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
     }
     .topbar-brand:hover { color: var(--accent); background: #fff5ef; text-decoration: none; }
     .brand-ripple {
@@ -489,7 +500,9 @@
   <div class="topbar-inner">
     <div class="topbar-left">
       <button class="topbar-btn menu-btn" type="button" id="menuButton">目录</button>
-      <a class="topbar-brand" href="#" id="brandLink">CastClaw 用户文档</a>
+      <a class="topbar-brand" href="#" id="brandLink">
+        <img src="../assets/logo.jpeg" alt="" class="brand-logo" />CastClaw 用户文档
+      </a>
     </div>
     <div class="topbar-right">
       <button class="topbar-btn" type="button" id="searchButton">
