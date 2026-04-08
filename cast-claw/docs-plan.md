@@ -18,16 +18,15 @@
 ├── 🚀 快速开始
 │   ├── 安装与环境配置
 │   ├── 第一个预测任务（5 分钟上手）
-│   └── TUI 界面基础操作
+│   └── CLI 基础操作
 │
 ├── 🧠 核心概念
 │   ├── 系统架构概览
 │   ├── 三智能体协同（Planner / Forecaster / Critic）
 │   ├── Agentic Workflow 全流程
-│   └── .forecast/ 目录协议
 │
-├── 👤 人机协作（HITL）
-│   ├── 什么是 HITL 暂停
+├── 👤 人在回路
+│   ├── 什么是人在回路暂停
 │   ├── 技能审核：如何介入
 │   └── 结果确认与干预时机
 │
@@ -89,11 +88,11 @@
 
 #### 第一个预测任务（5 分钟上手）
 - 下载样例数据集 `load.csv`（TIMESTAMP / LOAD 字段）
-- 启动 TUI：`castclaw`
+- 启动 CLI：`castclaw`
 - 在 Planner 标签页输入任务描述示例
 - 走通完整流程：初始化 → 分析 → 技能审核 → 迭代 → 报告
 
-#### TUI 界面基础操作
+#### CLI 基础操作
 - 快捷键速查表（`Ctrl+1/2/3` 切换智能体等）
 - 标签页说明：Planner / Forecaster / Critic
 - 任务状态查看与中断恢复
@@ -111,34 +110,19 @@
 | 智能体 | 职责 | 关键行为 |
 |--------|------|----------|
 | Planner | 任务定义、数据诊断、阶段编排 | 并发双轨分析、生成技能文件 |
-| Forecaster | 迭代实验循环 | 选配置 → 训练 → 反思 → HITL |
+| Forecaster | 迭代实验循环 | 选配置 → 训练 → 反思 → 人在回路 |
 | Critic | 结果聚合与报告生成 | 性能分解、可视化、final-report |
 
 #### Agentic Workflow 全流程（5 阶段）
 1. **初始化（Init）**：冻结 task.json，创建 `.forecast/` 目录
 2. **预测前分析（Pre-forecast Analysis）**：双轨并发（定性 WebSearch + 定量 CastSense）
 3. **技能审核（Skill Audit）**：生成 2–4 个技能文件，人类确认后进入实验
-4. **预测迭代（Forecasting）**：读历史 → 选配置 → CastFeat → CastZoo → 反思 → HITL
+4. **预测迭代（Forecasting）**：读历史 → 选配置 → CastFeat → CastZoo → 反思 → 人在回路
 5. **后置报告（Post-forecast Report）**：Critic 生成 `final-report.md`
-
-#### .forecast/ 目录协议
-```
-.forecast/
-├── task.json          # 任务定义（冻结）
-├── skills/            # 技能文件库
-├── experiments/       # 实验记录
-│   └── {run-id}/
-│       ├── config.json
-│       ├── result.json
-│       └── reflect.md
-└── reports/
-    ├── pre-forecast.md
-    └── final-report.md
-```
 
 ---
 
-### 👤 人机协作（HITL）
+### 👤 人在回路
 
 #### 三类人类介入节点
 1. **任务设定确认**：目标列、时间列、预测步长、评估指标、资源约束
@@ -206,7 +190,7 @@ domain_notes: ""
 |------|------|
 | `banned_models` | 禁用模型列表 |
 | `max_experiments` | 最大实验次数 |
-| `no_improve_threshold` | 触发 HITL 的连续无改善阈值 |
+| `no_improve_threshold` | 触发人在回路的连续无改善阈值 |
 | `eval_metric` | 评估指标偏好 |
 | `domain_notes` | 领域背景说明（注入每个 Agent 上下文） |
 
@@ -231,12 +215,12 @@ domain_notes: ""
 
 #### 启动命令
 ```bash
-castclaw                                    # 启动 TUI（当前目录）
+castclaw                                    # 启动 CLI（当前目录）
 castclaw --model anthropic/claude-sonnet-4-6  # 指定模型
 castclaw --version                          # 查看版本
 ```
 
-#### TUI 快捷键
+#### CLI 快捷键
 | 快捷键 | 功能 |
 |--------|------|
 | `Ctrl+1` | 切换到 Planner |
@@ -263,13 +247,13 @@ castclaw --version                          # 查看版本
 - 数据特征：强日周期、夜间恒零、受天气因素影响大、季节性显著
 - 推荐 Skill 策略：statistical（Theta）+ foundation（TimesFM、Moirai）
 - CastSense 诊断重点：夜间零值处理、云层遮蔽导致的突变识别
-- HITL 介入重点：天气异常日（阴雨连续）的人工标注与领域补充
+- 人在回路介入重点：天气异常日（阴雨连续）的人类标注与领域补充
 
 #### 金融时序预测
 - 数据特征：高波动、非平稳、对突发事件极敏感（财报、政策）
 - 推荐 Skill 策略：statistical + foundation ensemble，避免过度依赖单一深度模型
 - CastSense 诊断重点：分布漂移检测、结构性断点识别
-- HITL 介入重点：重大事件日期标注、风险警告人工确认
+- 人在回路介入重点：重大事件日期标注、风险警告人类确认
 
 ---
 
@@ -277,7 +261,7 @@ castclaw --version                          # 查看版本
 
 #### 常见问题
 - Q：如何更换 LLM 提供商？→ 修改 `castclaw.json` 或环境变量
-- Q：HITL 暂停后如何继续？→ 在 Forecaster 标签页输入反馈后回车
+- Q：人在回路暂停后如何继续？→ 在 Forecaster 标签页输入反馈后回车
 - Q：Skill 文件在哪里管理？→ `.forecast/skills/` 目录
 
 #### 环境问题排查
@@ -293,7 +277,7 @@ castclaw --version                          # 查看版本
 |--------|------|------|
 | P0 | 快速开始 | 用户最先访问 |
 | P0 | Agentic Workflow 全流程 | 核心使用逻辑 |
-| P1 | HITL 人机协作 | 差异化特色，需详细说明 |
+| P1 | 人在回路 | 差异化特色，需详细说明 |
 | P1 | CLI 命令参考 | 工具查询高频 |
 | P2 | 插件 & Skill 系统 | 进阶使用 |
 | P2 | 使用示例 | 辅助理解 |

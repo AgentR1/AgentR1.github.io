@@ -36,7 +36,7 @@
 
 - coding benchmark（代码生成评测）
 - reasoning tasks（数学推理、逻辑推断）
-- synthetic environment（人工构造的任务沙盒）
+- synthetic environment（人类构造的任务沙盒）
 
 这些都是 **特定任务的训练场**，而非真实的 Agent Runtime。模型可以学会推理和决策，但它从未真正运行在现实工具系统中。
 

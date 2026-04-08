@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CastClaw — 人机协同时序预测 AI 智能体框架</title>
-  <meta name="description" content="CastClaw：面向时间序列预测的人机协同 AI 智能体框架，编排 Planner、Forecaster、Critic 三大智能体，支持 30+ 模型族、Agentic Workflow、技能生成与人机协作暂停机制。" />
+  <meta name="description" content="CastClaw：面向时间序列预测的人机协同 AI 智能体框架，编排 Planner、Forecaster、Critic 三大智能体，支持 30+ 模型族、Agentic Workflow、技能生成与人在回路暂停机制。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -12,6 +12,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
                    "PingFang SC", "Hiragino Sans GB", sans-serif;
       background: #f7f7f5; color: #1a1a1a; line-height: 1.8; font-size: 16px;
+      text-align: justify; text-justify: inter-ideograph;
     }
     a { color: #d35400; text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -251,7 +252,7 @@
       scroll-margin-top: 52px;
     }
     .highlight-panel-agent { border-top: 4px solid #d35400; }
-    .highlight-panel-hitl { border-top: 4px solid #ca6f1e; }
+    .highlight-panel-human-loop { border-top: 4px solid #ca6f1e; }
     .highlight-panel-skill { border-top: 4px solid #138d75; }
     .highlight-head {
       display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
@@ -262,7 +263,7 @@
       background: #d35400; color: #fff; font-size: 0.8rem; font-weight: 800;
       flex-shrink: 0;
     }
-    .highlight-panel-hitl .highlight-index { background: #ca6f1e; }
+    .highlight-panel-human-loop .highlight-index { background: #ca6f1e; }
     .highlight-panel-skill .highlight-index { background: #138d75; }
     .highlight-title {
       font-size: 1.08rem; font-weight: 700; color: #111; margin: 0;
@@ -419,8 +420,6 @@
         GitHub
       </a>
       <a class="btn btn-secondary" href="docs/">用户文档</a>
-      <a class="btn btn-secondary" href="#quickstart">使用指南</a>
-      <a class="btn btn-secondary" href="../">← 返回主页</a>
     </div>
   </div>
 </header>
@@ -478,7 +477,7 @@
           <span class="highlight-index">01</span>
           <h3 class="highlight-title">多智能体协同</h3>
         </div>
-        <p>CastClaw 通过三个职责分明的专属智能体协同工作，使用 <code>Ctrl+1</code> / <code>Ctrl+2</code> / <code>Ctrl+3</code> 在 TUI 中切换。每个智能体维护独立上下文，通过 <code>.forecast/</code> 文件协议共享状态。</p>
+        <p>CastClaw 通过三个职责分明的专属智能体协同工作，使用 <code>Ctrl+1</code> / <code>Ctrl+2</code> / <code>Ctrl+3</code> 在 CLI 中切换。每个智能体维护独立上下文，通过 <code>.forecast/</code> 文件协议共享状态。</p>
         <div class="agent-grid">
 
           <div class="agent-card">
@@ -490,7 +489,7 @@
           <div class="agent-card">
             <div class="agent-icon">🔬</div>
             <h4>Forecaster（预测者）</h4>
-            <p>驱动迭代实验循环——读取最佳结果与失败历史，从技能中选取模型配置，调用 <code>generate_model</code> 训练评估，进行反思记录，管理实验预算。停滞时触发 HITL 暂停等待人类反馈。</p>
+            <p>驱动迭代实验循环——读取最佳结果与失败历史，从技能中选取模型配置，调用 <code>generate_model</code> 训练评估，进行反思记录，管理实验预算。停滞时触发人在回路暂停，等待人类反馈。</p>
           </div>
 
           <div class="agent-card">
@@ -502,7 +501,7 @@
         </div>
       </div>
 
-      <div id="hitl" class="highlight-panel highlight-panel-hitl">
+      <div id="human-loop" class="highlight-panel highlight-panel-human-loop">
         <div class="highlight-head">
           <span class="highlight-index">02</span>
           <h3 class="highlight-title">人机高效协作</h3>
@@ -620,7 +619,7 @@
 
       <div class="feature-card">
         <div class="feature-icon">🤝</div>
-        <h4>人机协作暂停（HITL）</h4>
+        <h4>人在回路暂停</h4>
         <p>实验停滞或连续无改善时，Forecaster 自动暂停并请求人类反馈。你的领域知识将被记录为专家输入，重置无改善计数器后继续探索。</p>
       </div>
 
@@ -803,7 +802,7 @@ Reflection & Report</div>
       <div class="feature-card">
         <div class="feature-icon">🔬</div>
         <h4>Forecaster Action Space</h4>
-        <p>读取实验历史、选择技能与插件组合、调用 CastFeat / CastZoo 与 <code>generate_model</code>、预算检查、失败归因、<code>forecast_reflect</code> 反思记录，以及 HITL 暂停与反馈融合。</p>
+        <p>读取实验历史、选择技能与插件组合、调用 CastFeat / CastZoo 与 <code>generate_model</code>、预算检查、失败归因、<code>forecast_reflect</code> 反思记录，以及人在回路暂停与反馈融合。</p>
       </div>
 
       <div class="feature-card">
@@ -867,9 +866,9 @@ Reflection & Report</div>
           <div class="step-line"></div>
         </div>
         <div class="step-body">
-          <span class="step-tag">Forecaster · HITL</span>
+          <span class="step-tag">Forecaster · 人在回路</span>
           <h4>预测迭代</h4>
-          <p>Forecaster 使用已确认技能迭代实验：读取当前最佳结果与近期失败历史 → 选取插件与模型配置 → 调用 CastFeat 构建表示 → 由 CastZoo 执行训练评估 → <code>forecast_reflect</code> 反思记录 → 预算检查 → 循环。停滞时触发 HITL 暂停，等待并融合人类领域反馈后继续。</p>
+          <p>Forecaster 使用已确认技能迭代实验：读取当前最佳结果与近期失败历史 → 选取插件与模型配置 → 调用 CastFeat 构建表示 → 由 CastZoo 执行训练评估 → <code>forecast_reflect</code> 反思记录 → 预算检查 → 循环。停滞时触发人在回路暂停，等待并融合人类领域反馈后继续。</p>
         </div>
       </div>
 
@@ -930,7 +929,7 @@ Reflection & Report</div>
         <div class="feature-card" style="background:#fafafa;">
           <div class="feature-icon">🟡</div>
           <h4>Bun ≥ 1.3.11</h4>
-          <p>CLI 运行时与包管理器，驱动 TUI 界面与智能体编排层。</p>
+          <p>CLI 运行时与包管理器，驱动 CLI 交互与智能体编排层。</p>
         </div>
         <div class="feature-card" style="background:#fafafa;">
           <div class="feature-icon">🐍</div>
@@ -994,14 +993,14 @@ Reflection & Report</div>
 }</div>
 
     <h3 class="sub-title">开始预测</h3>
-    <div class="code-block"><span class="comment"># 进入数据集所在目录，启动 TUI</span>
+    <div class="code-block"><span class="comment"># 进入数据集所在目录，启动 CLI</span>
 <span class="cmd">cd</span> /path/to/your/dataset
 <span class="cmd">castclaw</span>
 
 <span class="comment"># 或指定模型</span>
 <span class="cmd">castclaw</span> --model anthropic/claude-sonnet-4-6</div>
 
-    <p style="margin-top: 16px;">TUI 启动后，在 <strong>Planner</strong> 标签页（<code>Ctrl+1</code>）中输入任务描述：</p>
+    <p style="margin-top: 16px;">CLI 启动后，在 <strong>Planner</strong> 标签页（<code>Ctrl+1</code>）中输入任务描述：</p>
     <div class="code-block"><span class="comment"># 示例：初始化一个能源消耗预测任务</span>
 为 data/etth1.csv 初始化预测会话。目标列：OT，时间列：date，
 预测步长：96 步，回看长度：336。采用 70/20/10 分割，使用 MSE 和 MAE 评估。</div>
