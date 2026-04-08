@@ -289,6 +289,12 @@
       line-height: 1.65;
     }
     .doc-table th { background: #fafafa; font-weight: 700; color: #333; }
+    .doc-table .ascend-row td { background: #fff7ef; }
+    .doc-table .ascend-row td:first-child {
+      color: #9a4200;
+      font-weight: 700;
+    }
+    .inline-tag { margin-left: 8px; vertical-align: middle; }
 
     /* ── Panel ── */
     .panel {
@@ -630,10 +636,10 @@
               <td>CUDA 12.8</td>
               <td>深度学习模型加速</td>
             </tr>
-            <tr>
-              <td>Ascend NPU（可选）</td>
+            <tr class="ascend-row">
+              <td>Ascend NPU（可选）<span class="tag hi inline-tag">推荐试用</span></td>
               <td>Atlas 800 A2/A3（Ascend HDK 25.5.1）</td>
-              <td>华为昇腾上的深度学习加速</td>
+              <td>华为昇腾上的深度学习加速，鼓励优先体验国产计算算力。</td>
             </tr>
           </tbody>
         </table>
