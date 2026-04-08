@@ -149,13 +149,15 @@
     }
     .sidebar-group { margin-bottom: 20px; }
     .sidebar-group-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: #999;
-      margin: 0 0 6px;
-      padding: 0 6px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      background: #fff5ef;
+      border: 1px solid #f2ddcc;
+      border-radius: 6px;
+      margin: 0 0 8px;
+      padding: 6px 8px;
     }
     .sidebar-links { display: flex; flex-direction: column; gap: 1px; }
     .sidebar-link {
@@ -1335,7 +1337,6 @@ domain_notes: ""</code></pre></div>
     const searchOverlay = document.getElementById("searchOverlay");
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
-    const breadcrumbCurrent = document.getElementById("breadcrumbCurrent");
     const onThisPageLinks = document.getElementById("onThisPageLinks");
     const blocks = Array.from(document.querySelectorAll(".doc-block[id]"));
     const sections = Array.from(document.querySelectorAll(".doc-section[id]"));
@@ -1372,8 +1373,6 @@ domain_notes: ""</code></pre></div>
       const section = document.getElementById(sectionId);
       if (!section) return;
       activeSectionId = sectionId;
-      const title = section.querySelector("h2");
-      if (title) breadcrumbCurrent.textContent = title.textContent.trim();
       renderOnThisPage(sectionId);
     }
 
