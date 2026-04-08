@@ -1337,12 +1337,20 @@ domain_notes: ""</code></pre></div>
     const searchOverlay = document.getElementById("searchOverlay");
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
+    const searchShortcutHint = searchButton.querySelector(".search-kbd");
     const onThisPageLinks = document.getElementById("onThisPageLinks");
     const blocks = Array.from(document.querySelectorAll(".doc-block[id]"));
     const sections = Array.from(document.querySelectorAll(".doc-section[id]"));
     const sidebarLinks = Array.from(document.querySelectorAll(".sidebar-link"));
     let activeSectionId = "quick-start";
     let activeBlockId = "install-setup";
+    const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+    const isApplePlatform = /Mac|iPhone|iPad|iPod/.test(platform);
+
+    if (searchShortcutHint) {
+      searchShortcutHint.textContent = isApplePlatform ? "⌘ K" : "Ctrl K";
+      searchShortcutHint.title = "也支持 /";
+    }
 
     function openSidebar() { sidebar.classList.add("open"); mobileScrim.classList.add("active"); }
     function closeSidebar() { sidebar.classList.remove("open"); mobileScrim.classList.remove("active"); }
@@ -1469,11 +1477,27 @@ domain_notes: ""</code></pre></div>
       searchOverlay.setAttribute("aria-hidden", "true");
     }
 
+    function isEditableTarget(target) {
+      if (!target) return false;
+      if (target.isContentEditable) return true;
+      const tagName = target.tagName;
+      return tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT";
+    }
+
     searchButton.addEventListener("click", openSearch);
     searchOverlay.addEventListener("click", function (e) { if (e.target === searchOverlay) closeSearch(); });
     searchInput.addEventListener("input", function (e) { renderSearch(e.target.value); });
     document.addEventListener("keydown", function (e) {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openSearch(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openSearch();
+        return;
+      }
+      if (!e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey && e.key === "/" && !isEditableTarget(e.target)) {
+        e.preventDefault();
+        openSearch();
+        return;
+      }
       if (e.key === "Escape") { closeSearch(); closeSidebar(); }
     });
   })();
