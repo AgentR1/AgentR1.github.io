@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CastClaw 用户文档</title>
+  <meta
+    name="description"
+    content="CastClaw 用户文档：快速开始、Agentic Workflow、HITL 人机协作、插件工具箱、Skill 系统、配置参考、CLI 命令与典型使用示例。"
+  />
+  <style>
+    :root {
+      --bg: #f7f7f5;
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-solid: #ffffff;
+      --panel-soft: #fcfbf8;
+      --text: #1b1b1b;
+      --muted: #66645e;
+      --line: #e5e2da;
+      --line-strong: #d8d1c5;
+      --accent: #d35400;
+      --accent-deep: #b94600;
+      --accent-soft: #fef3e2;
+      --shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+      --sidebar-width: 240px;
+      --content-width: 760px;
+      --aside-width: 220px;
+      --topbar-height: 64px;
+      --radius: 16px;
+      --code-bg: #1e1e1e;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+        "PingFang SC", "Hiragino Sans GB", sans-serif;
+      --font-mono: "SF Mono", "Fira Mono", "Consolas", monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background:
+        radial-gradient(circle at top right, rgba(243, 156, 18, 0.10), transparent 24%),
+        linear-gradient(180deg, #fbfaf7 0%, var(--bg) 280px);
+      color: var(--text);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: #f1eee8;
+      border: 1px solid #e6ddd1;
+      border-radius: 6px;
+      padding: 2px 6px;
+      color: var(--accent);
+    }
+    pre {
+      margin: 0;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    ::selection {
+      background: rgba(211, 84, 0, 0.18);
+      color: #111;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 120;
+      height: var(--topbar-height);
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.88);
+      border-bottom: 1px solid rgba(229, 226, 218, 0.9);
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.04);
+    }
+    .topbar-inner {
+      max-width: 1480px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+    .menu-button,
+    .search-button,
+    .topbar-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      color: #333;
+      min-height: 40px;
+      padding: 0 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .menu-button:hover,
+    .search-button:hover,
+    .topbar-link:hover {
+      transform: translateY(-1px);
+      border-color: #c9b9a5;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      text-decoration: none;
+    }
+    .menu-button { display: none; }
+    .crumbs {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .crumbs strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+    .crumb-sep {
+      color: #b5aea2;
+      flex-shrink: 0;
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .search-button {
+      padding: 0 12px;
+      min-width: 180px;
+      justify-content: space-between;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .search-kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      padding: 0 8px;
+      height: 26px;
+      border-radius: 7px;
+      border: 1px solid #ded7cc;
+      background: #faf8f4;
+      color: #4f4a42;
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+    }
+
+    .app {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 22px 20px 48px;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, var(--content-width)) var(--aside-width);
+      justify-content: center;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: calc(var(--topbar-height) + 18px);
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid rgba(229, 226, 218, 0.95);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .sidebar-inner {
+      max-height: calc(100vh - var(--topbar-height) - 38px);
+      overflow-y: auto;
+      padding: 20px 18px 18px;
+    }
+    .sidebar-brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 0 0 18px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 18px;
+    }
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid #ecd9c6;
+      background: #fff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+    }
+    .brand-copy {
+      min-width: 0;
+    }
+    .brand-copy strong {
+      display: block;
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .brand-copy span {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .sidebar-group {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+    .sidebar-group:last-of-type {
+      border-bottom: 0;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+    .sidebar-group summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      padding: 8px 2px;
+    }
+    .sidebar-group summary::-webkit-details-marker { display: none; }
+    .sidebar-group summary::after {
+      content: "▾";
+      color: #9a8e7f;
+      font-size: 0.9rem;
+      transition: transform 0.2s;
+    }
+    .sidebar-group:not([open]) summary::after { transform: rotate(-90deg); }
+    .sidebar-links {
+      display: grid;
+      gap: 4px;
+      padding-bottom: 6px;
+    }
+    .sidebar-link {
+      display: block;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.88rem;
+      color: #4a4740;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+    .sidebar-link:hover {
+      background: #faf5ee;
+      color: var(--accent);
+      text-decoration: none;
+      transform: translateX(1px);
+    }
+    .sidebar-link.active {
+      background: linear-gradient(135deg, #fff4ea, #fffaf5);
+      color: var(--accent);
+      font-weight: 700;
+      border: 1px solid #f2d4bc;
+    }
+    .sidebar-footer {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+    .mini-card {
+      background: linear-gradient(180deg, #fffefc, #fbf8f3);
+      border: 1px solid #e8e1d5;
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .mini-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+    }
+    .mini-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.65;
+    }
+
+    .content {
+      min-width: 0;
+    }
+    .hero-card,
+    .doc-section {
+      background: var(--panel);
+      border: 1px solid rgba(229, 226, 218, 0.95);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .hero-card {
+      padding: 28px 30px 30px;
+      position: relative;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 249, 242, 0.98)),
+        radial-gradient(circle at top right, rgba(211, 84, 0, 0.10), transparent 40%);
+    }
+    .hero-topline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      background: #fff6eb;
+      color: var(--accent);
+      border: 1px solid #f1d2b1;
+      padding: 5px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .hero-card h1 {
+      margin: 16px 0 14px;
+      font-size: 2.1rem;
+      line-height: 1.18;
+      color: #111;
+    }
+    .hero-card p {
+      margin: 0;
+      max-width: 700px;
+      color: #4f4a42;
+      font-size: 1rem;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .hero-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      padding: 0 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .hero-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      text-decoration: none;
+    }
+    .hero-button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .hero-button.primary:hover { background: var(--accent-deep); }
+    .hero-button.secondary {
+      background: #fff;
+      color: #24211c;
+      border-color: #ddd5ca;
+    }
+    .hero-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .hero-stat {
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid #ebe3d8;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .hero-stat strong {
+      display: block;
+      font-size: 1.2rem;
+      line-height: 1.1;
+      color: #111;
+    }
+    .hero-stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .doc-section {
+      padding: 28px 30px 30px;
+      scroll-margin-top: calc(var(--topbar-height) + 18px);
+    }
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid #f4d1b1;
+      border-radius: 999px;
+      padding: 5px 12px;
+      margin-bottom: 12px;
+    }
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.72rem;
+      line-height: 1.25;
+      color: #111;
+    }
+    .section-head p {
+      margin: 10px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+    .section-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      white-space: nowrap;
+    }
+
+    .doc-block {
+      padding: 0;
+      margin: 0 0 26px;
+      scroll-margin-top: calc(var(--topbar-height) + 22px);
+    }
+    .doc-block:last-child { margin-bottom: 0; }
+    .doc-block h3 {
+      margin: 0 0 12px;
+      font-size: 1.14rem;
+      line-height: 1.4;
+      color: #111;
+    }
+    .doc-block p {
+      margin: 0 0 12px;
+      color: #45413a;
+    }
+    .doc-block p:last-child { margin-bottom: 0; }
+    .doc-block ul,
+    .doc-block ol {
+      margin: 0 0 14px 22px;
+      padding: 0;
+      color: #45413a;
+    }
+    .doc-block li { margin-bottom: 8px; }
+    .doc-block li:last-child { margin-bottom: 0; }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      align-items: start;
+      margin-top: 16px;
+    }
+    .card-grid,
+    .plugin-grid,
+    .example-grid,
+    .quicklink-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .card-grid.three,
+    .plugin-grid,
+    .example-grid,
+    .quicklink-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .card-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .surface-card {
+      background: var(--panel-solid);
+      border: 1px solid #e8e1d5;
+      border-radius: 18px;
+      padding: 18px 18px 20px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+    .surface-card h4 {
+      margin: 0 0 8px;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      color: #111;
+    }
+    .surface-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.72;
+    }
+    .surface-card strong {
+      color: #111;
+    }
+    .surface-card .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .callout {
+      display: grid;
+      gap: 8px;
+      margin: 16px 0;
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 1px solid #eadfce;
+      background: #fffaf2;
+    }
+    .callout strong {
+      color: #111;
+      font-size: 0.95rem;
+    }
+    .callout p {
+      margin: 0;
+      color: #5a5349;
+      font-size: 0.92rem;
+    }
+    .callout.tip {
+      background: #fff7ef;
+      border-color: #f0d8bd;
+    }
+    .callout.warn {
+      background: #fff8f1;
+      border-color: #f0c7a5;
+    }
+    .callout.info {
+      background: #faf8f3;
+      border-color: #e5ddd0;
+    }
+
+    .code-block {
+      margin-top: 14px;
+      border-radius: 16px;
+      background: var(--code-bg);
+      color: #d4d4d4;
+      padding: 18px 20px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+    .code-block code {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: inherit;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .code-block .comment { color: #6a9955; }
+    .code-block .cmd { color: #9cdcfe; }
+    .code-block .str { color: #ce9178; }
+
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      background: #fff;
+      border: 1px solid #e8e1d5;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .doc-table th,
+    .doc-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #eee7db;
+      border-right: 1px solid #f2ece2;
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+    .doc-table th:last-child,
+    .doc-table td:last-child { border-right: 0; }
+    .doc-table tr:last-child td { border-bottom: 0; }
+    .doc-table th {
+      background: #fef5ea;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid #e3dccf;
+      background: #fff;
+      color: #4d4840;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .tag.highlight {
+      background: #fff4e7;
+      border-color: #f0d4b3;
+      color: var(--accent);
+    }
+
+    .workflow {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .workflow-item {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      background: #fff;
+      border: 1px solid #e8e1d5;
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+    .workflow-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), #e67e22);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 10px 18px rgba(211, 84, 0, 0.18);
+    }
+    .workflow-body h4 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: #111;
+    }
+    .workflow-body p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .arch-image {
+      margin-top: 16px;
+      border-radius: 18px;
+      border: 1px solid #e8e1d5;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+
+    .aside {
+      position: sticky;
+      top: calc(var(--topbar-height) + 18px);
+      align-self: start;
+      display: grid;
+      gap: 16px;
+    }
+    .aside-card {
+      background: var(--panel);
+      border: 1px solid rgba(229, 226, 218, 0.95);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 18px 18px 16px;
+    }
+    .aside-card h3 {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      color: #111;
+    }
+    .aside-card p {
+      margin: 0;
+      font-size: 0.86rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .aside-links {
+      display: grid;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .aside-link {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 10px;
+      color: #4a4740;
+      font-size: 0.86rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .aside-link:hover {
+      background: #faf5ee;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .aside-link.active {
+      background: #fff3e6;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .footer-card {
+      background: linear-gradient(180deg, #fdf9f4 0%, #fff 100%);
+      border: 1px solid rgba(229, 226, 218, 0.95);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px 24px;
+      margin-top: 22px;
+    }
+    .footer-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 18, 14, 0.38);
+      backdrop-filter: blur(6px);
+      z-index: 150;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .search-modal {
+      width: min(760px, calc(100vw - 32px));
+      margin: 10vh auto 0;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid #e8e1d5;
+      border-radius: 24px;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+    }
+    .search-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid #eee7db;
+    }
+    .search-input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #111;
+    }
+    .search-body {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 12px;
+    }
+    .search-result {
+      display: block;
+      border-radius: 16px;
+      padding: 14px 14px 15px;
+      transition: background 0.2s;
+    }
+    .search-result:hover {
+      background: #faf6ef;
+      text-decoration: none;
+    }
+    .search-result + .search-result { margin-top: 4px; }
+    .search-group {
+      display: inline-flex;
+      margin-bottom: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: #fff3e4;
+      border: 1px solid #f3d4b7;
+      border-radius: 999px;
+      padding: 3px 8px;
+    }
+    .search-result strong {
+      display: block;
+      color: #111;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      margin-bottom: 4px;
+    }
+    .search-result span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+    .search-empty {
+      padding: 26px 18px 28px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    .mobile-scrim {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 18, 14, 0.32);
+      z-index: 109;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .mobile-scrim.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      }
+      .aside { display: none; }
+    }
+
+    @media (max-width: 980px) {
+      .menu-button { display: inline-flex; }
+      .app {
+        grid-template-columns: minmax(0, 1fr);
+        padding-top: 18px;
+      }
+      .sidebar {
+        position: fixed;
+        top: var(--topbar-height);
+        left: 0;
+        bottom: 0;
+        width: min(320px, calc(100vw - 48px));
+        border-radius: 0 22px 22px 0;
+        transform: translateX(-104%);
+        transition: transform 0.24s ease;
+        z-index: 115;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-inner {
+        max-height: calc(100vh - var(--topbar-height));
+        padding-bottom: 32px;
+      }
+      .mobile-scrim { display: block; }
+      .hero-grid,
+      .card-grid.three,
+      .plugin-grid,
+      .example-grid,
+      .quicklink-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .split-grid {
+        grid-template-columns: 1fr;
+      }
+      .search-button {
+        min-width: auto;
+        width: 44px;
+        padding: 0;
+        justify-content: center;
+      }
+      .search-button .search-copy,
+      .search-kbd { display: none; }
+    }
+
+    @media (max-width: 680px) {
+      .topbar-inner,
+      .app {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+      .topbar-right .topbar-link {
+        display: none;
+      }
+      .crumbs {
+        font-size: 0.82rem;
+      }
+      .hero-card,
+      .doc-section,
+      .footer-card {
+        border-radius: 20px;
+      }
+      .hero-card,
+      .doc-section {
+        padding: 22px 18px;
+      }
+      .hero-card h1 {
+        font-size: 1.7rem;
+      }
+      .hero-grid,
+      .card-grid.three,
+      .card-grid.two,
+      .plugin-grid,
+      .example-grid,
+      .quicklink-grid {
+        grid-template-columns: 1fr;
+      }
+      .doc-table {
+        display: block;
+        overflow-x: auto;
+      }
+      .workflow-item {
+        grid-template-columns: 1fr;
+      }
+      .workflow-num { width: 42px; height: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <button class="menu-button" type="button" aria-label="打开目录" id="menuButton">目录</button>
+        <div class="crumbs" aria-label="面包屑">
+          <strong>CastClaw</strong>
+          <span class="crumb-sep">/</span>
+          <span>用户文档</span>
+          <span class="crumb-sep">/</span>
+          <span id="breadcrumbCurrent">快速开始</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="search-button" type="button" id="searchButton" aria-label="搜索文档">
+          <span class="search-copy">搜索文档</span>
+          <span class="search-kbd">Ctrl K</span>
+        </button>
+        <a class="topbar-link" href="https://github.com/SkyeGT/CastClaw" target="_blank" rel="noopener">GitHub</a>
+        <a class="topbar-link" href="../">返回主页</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mobile-scrim" id="mobileScrim"></div>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-brand">
+          <img src="../assets/logo.jpeg" alt="CastClaw" class="brand-logo" />
+          <div class="brand-copy">
+            <strong>CastClaw 文档</strong>
+            <span>面向用户的上手、工作流与配置参考</span>
+          </div>
+        </div>
+
+        <details class="sidebar-group" open>
+          <summary>快速开始</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#install-setup">安装与环境配置</a>
+            <a class="sidebar-link" href="#first-forecast">第一个预测任务</a>
+            <a class="sidebar-link" href="#tui-basics">TUI 基础操作</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>核心概念</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#architecture-overview">系统架构概览</a>
+            <a class="sidebar-link" href="#three-agents">三智能体协同</a>
+            <a class="sidebar-link" href="#agentic-workflow">Agentic Workflow</a>
+            <a class="sidebar-link" href="#forecast-protocol">.forecast/ 目录协议</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>人机协作</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#hitl-pause">什么是 HITL 暂停</a>
+            <a class="sidebar-link" href="#skill-audit">技能审核如何介入</a>
+            <a class="sidebar-link" href="#intervention-timing">结果确认与干预时机</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>插件工具箱</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#castsense">CastSense</a>
+            <a class="sidebar-link" href="#castfeat">CastFeat</a>
+            <a class="sidebar-link" href="#castzoo">CastZoo</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>Skill 系统</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#skill-what">Skill 是什么</a>
+            <a class="sidebar-link" href="#skill-structure">Skill 文件结构</a>
+            <a class="sidebar-link" href="#skill-review">如何审核与沉淀 Skill</a>
+            <a class="sidebar-link" href="#cast-creation">/cast-creation 命令</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>配置参考</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#cast-md">CAST.md 约束文件</a>
+            <a class="sidebar-link" href="#castclaw-json">castclaw.json 参数</a>
+            <a class="sidebar-link" href="#llm-providers">模型接入</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>CLI 命令参考</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#launch-options">castclaw 启动选项</a>
+            <a class="sidebar-link" href="#shortcut-cheatsheet">快捷键速查</a>
+            <a class="sidebar-link" href="#forecast-tools">forecast_state / forecast_task</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>使用示例</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#example-load">电力负荷预测</a>
+            <a class="sidebar-link" href="#example-solar">光伏发电预测</a>
+            <a class="sidebar-link" href="#example-finance">金融时序预测</a>
+          </div>
+        </details>
+
+        <details class="sidebar-group" open>
+          <summary>FAQ 与排查</summary>
+          <div class="sidebar-links">
+            <a class="sidebar-link" href="#common-questions">常见问题</a>
+            <a class="sidebar-link" href="#env-troubleshooting">环境问题排查</a>
+          </div>
+        </details>
+
+        <div class="sidebar-footer">
+          <div class="mini-card">
+            <strong>优先阅读</strong>
+            <p>P0 内容建议先看「快速开始」和「Agentic Workflow 全流程」，能最快形成对 CastClaw 的正确使用心智。</p>
+          </div>
+          <div class="mini-card">
+            <strong>示例数据</strong>
+            <p><a href="../assets/load.csv" download>下载 load.csv</a>，配合第一个预测任务在 5 分钟内跑通完整流程。</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="hero-card">
+        <span class="hero-topline">CastClaw Documentation</span>
+        <h1>把时间序列预测流程，组织成一个可审查、可干预、可持续进化的智能体工作台。</h1>
+        <p>
+          这份文档站围绕真实使用路径来组织内容：先完成安装和第一个任务，再理解
+          Planner / Forecaster / Critic 的职责分工，最后进入 Skill、插件、配置与案例层。
+        </p>
+        <div class="hero-actions">
+          <a class="hero-button primary" href="#install-setup">从快速开始进入</a>
+          <a class="hero-button secondary" href="#agentic-workflow">先看全流程</a>
+          <a class="hero-button secondary" href="../assets/load.csv" download>下载示例数据</a>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-stat">
+            <strong>3</strong>
+            <span>核心智能体：Planner / Forecaster / Critic</span>
+          </div>
+          <div class="hero-stat">
+            <strong>5</strong>
+            <span>完整阶段：Init 到 Post-report 的闭环工作流</span>
+          </div>
+          <div class="hero-stat">
+            <strong>HITL</strong>
+            <span>关键节点保留人工确认与策略干预</span>
+          </div>
+          <div class="hero-stat">
+            <strong>Skill</strong>
+            <span>把一次实验经验沉淀成可复用的策略资产</span>
+          </div>
+        </div>
+        <div class="quicklink-grid">
+          <a class="surface-card" href="#first-forecast">
+            <div class="eyebrow">P0</div>
+            <h4>5 分钟上手</h4>
+            <p>从样例数据、启动 TUI 到完成第一轮任务，先把完整路径走通。</p>
+          </a>
+          <a class="surface-card" href="#agentic-workflow">
+            <div class="eyebrow">P0</div>
+            <h4>全流程工作流</h4>
+            <p>理解初始化、分析、技能审核、实验与报告五个阶段的职责分界。</p>
+          </a>
+          <a class="surface-card" href="#shortcut-cheatsheet">
+            <div class="eyebrow">P1</div>
+            <h4>高频操作速查</h4>
+            <p>快速定位 TUI 快捷键、启动命令和阶段控制工具。</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="doc-section" id="quick-start" data-group-title="快速开始">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P0 · 首次使用</div>
+            <h2>快速开始</h2>
+            <p>先确保依赖安装和 LLM 配置正确，再用示例数据完整走一遍预测任务。这个阶段的目标不是调到最优，而是理解系统如何运转。</p>
+          </div>
+          <div class="section-meta">建议阅读顺序：安装 → 第一个任务 → TUI 操作</div>
+        </div>
+
+        <article class="doc-block" id="install-setup" data-title="安装与环境配置">
+          <h3>安装与环境配置</h3>
+          <p>CastClaw 的本体通过 <code>npm</code> 安装，但运行阶段通常会同时依赖 Bun、Python 与 uv。建议先把运行时准备齐，再启动 TUI 做环境验证。</p>
+          <div class="split-grid">
+            <div class="surface-card">
+              <div class="eyebrow">Prerequisites</div>
+              <h4>前置依赖</h4>
+              <p><strong>Bun ≥ 1.3.11</strong> 用于前端与脚本执行，<strong>Python ≥ 3.10 + uv</strong> 用于预测后端与依赖管理，外加至少一个可用的 LLM API Key。</p>
+              <div class="tag-row">
+                <span class="tag highlight">Bun ≥ 1.3.11</span>
+                <span class="tag highlight">Python ≥ 3.10</span>
+                <span class="tag">uv</span>
+                <span class="tag">LLM API Key</span>
+              </div>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Validation</div>
+              <h4>建议验证项</h4>
+              <p>先确认 CLI、Python 和 uv 均可被当前 shell 识别，再启动一次 CastClaw 检查是否能顺利进入 TUI，并在日志中看到模型配置被正常加载。</p>
+            </div>
+          </div>
+          <div class="code-block"><pre><code><span class="comment"># 安装 CastClaw CLI</span>
+<span class="cmd">npm install -g castclaw</span>
+
+<span class="comment"># 验证基础运行时</span>
+<span class="cmd">castclaw --version</span>
+<span class="cmd">python --version</span>
+<span class="cmd">uv --version</span>
+
+<span class="comment"># 如果 Python 后端依赖尚未同步</span>
+<span class="cmd">cd python</span>
+<span class="cmd">uv sync</span></code></pre></div>
+          <p>LLM 可以通过环境变量或 <code>castclaw.json</code> 提供。环境变量适合本机快速切换，配置文件适合团队共享一套默认策略。</p>
+          <div class="code-block"><pre><code><span class="comment"># 任选其一或按需配置多个提供商</span>
+<span class="cmd">export ANTHROPIC_API_KEY=</span><span class="str">your_key_here</span>
+<span class="cmd">export OPENAI_API_KEY=</span><span class="str">your_key_here</span>
+<span class="cmd">export GOOGLE_GENERATIVE_AI_API_KEY=</span><span class="str">your_key_here</span>
+<span class="cmd">export DEEPSEEK_API_KEY=</span><span class="str">your_key_here</span></code></pre></div>
+          <div class="callout tip">
+            <strong>建议</strong>
+            <p>如果你只是第一次上手，先只接一个最熟悉的模型提供商，避免同时调试多套 API 配置，把问题面收窄。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="first-forecast" data-title="第一个预测任务">
+          <h3>第一个预测任务（5 分钟上手）</h3>
+          <p>推荐直接用文档站附带的样例数据 <a href="../assets/load.csv" download><code>load.csv</code></a>。它包含典型的 <code>TIMESTAMP</code> / <code>LOAD</code> 字段，适合快速理解 CastClaw 的初始化、分析、审核与实验节奏。</p>
+          <div class="workflow">
+            <div class="workflow-item">
+              <div class="workflow-num">1</div>
+              <div class="workflow-body">
+                <h4>准备工作目录与样例数据</h4>
+                <p>把 <code>load.csv</code> 放到一个独立实验目录，避免不同任务复用同一份 <code>.forecast/</code> 状态，便于后续回看与清理。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">2</div>
+              <div class="workflow-body">
+                <h4>启动 TUI</h4>
+                <p>在该目录中运行 <code>castclaw</code>。首次进入时先确认模型、实验预算与任务描述，再让 Planner 接管初始化。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">3</div>
+              <div class="workflow-body">
+                <h4>在 Planner 页面输入任务描述</h4>
+                <p>明确目标列、时间粒度、预测步长和评估指标。描述越具体，Planner 生成的分析与 Skill 草案越有针对性。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">4</div>
+              <div class="workflow-body">
+                <h4>审核 Skill 草案</h4>
+                <p>Planner 会结合定量诊断和领域分析给出 2 到 4 个候选 Skill，确认模型族、搜索空间与风险提示无明显偏差后再继续。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">5</div>
+              <div class="workflow-body">
+                <h4>观察 Forecaster 迭代与最终报告</h4>
+                <p>Forecaster 按技能执行实验循环，Critic 汇总结果并生成 <code>final-report.md</code>。你需要重点关注是否出现 HITL 暂停。</p>
+              </div>
+            </div>
+          </div>
+          <div class="code-block"><pre><code><span class="comment"># 典型首次启动流程</span>
+<span class="cmd">mkdir my-first-castclaw-run</span>
+<span class="cmd">cd my-first-castclaw-run</span>
+<span class="comment"># 将 load.csv 放入当前目录后</span>
+<span class="cmd">castclaw</span></code></pre></div>
+          <div class="callout info">
+            <strong>Planner 输入模板</strong>
+            <p>请用 <code>load.csv</code> 做未来 24 小时电力负荷预测；时间列为 <code>TIMESTAMP</code>，目标列为 <code>LOAD</code>，优先考虑日周期和周周期影响，评估指标使用 MAE 与 MAPE，实验预算控制在 20 次以内。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="tui-basics" data-title="TUI 界面基础操作">
+          <h3>TUI 界面基础操作</h3>
+          <p>TUI 不是简单的命令入口，而是你与三个智能体协同工作的控制台。理解切换逻辑和状态查看方式，能显著降低第一次使用时的混乱感。</p>
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>区域 / 快捷键</th>
+                <th>作用</th>
+                <th>你应当关注什么</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Ctrl+1</code></td>
+                <td>切换到 Planner</td>
+                <td>任务定义是否完整，分析报告与 Skill 草案是否合理。</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl+2</code></td>
+                <td>切换到 Forecaster</td>
+                <td>实验是否停滞，当前最优结果是否持续改善，是否触发 HITL。</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl+3</code></td>
+                <td>切换到 Critic</td>
+                <td>报告是否覆盖关键比较、性能分解与下一步建议。</td>
+              </tr>
+              <tr>
+                <td>任务状态面板</td>
+                <td>查看当前阶段和预算</td>
+                <td>确认当前处于 Init / Analysis / Forecasting / Report 的哪一阶段。</td>
+              </tr>
+              <tr>
+                <td>中断与恢复</td>
+                <td>暂停后继续当前任务</td>
+                <td>在人类反馈后恢复迭代，不需要重新初始化整个任务。</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout warn">
+            <strong>常见误区</strong>
+            <p>第一次使用时最容易把 TUI 当作单步问答界面。实际上它是阶段驱动的任务工作台，重点是“当前在哪个阶段、下一步由谁负责”。</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="doc-section" id="core-concepts" data-group-title="核心概念">
+        <div class="section-head">
+          <div>
+            <div class="section-label">核心心智模型</div>
+            <h2>核心概念</h2>
+            <p>CastClaw 的核心不是某个单独模型，而是一个由运行时、Skill、插件和人工确认共同组成的流程系统。</p>
+          </div>
+          <div class="section-meta">理解这部分后，很多 CLI 和配置行为会自然变得清晰</div>
+        </div>
+
+        <article class="doc-block" id="architecture-overview" data-title="系统架构概览">
+          <h3>系统架构概览</h3>
+          <p>可以把 CastClaw 理解成四层协同结构：<code>CastRuntime</code> 负责执行与状态，<code>CastSkill</code> 负责策略层，插件生态承担具体能力，<code>TimeEmbed</code> 提供统一表征与经验对齐能力。</p>
+          <img src="../assets/architecture.svg" alt="CastClaw 系统架构图" class="arch-image" />
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>层级</th>
+                <th>职责</th>
+                <th>你会在什么时候接触它</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>CastRuntime</strong></td>
+                <td>任务上下文管理、阶段推进、Agent Loop 执行、文件状态同步。</td>
+                <td>启动任务、切换阶段、查看预算与恢复暂停任务时。</td>
+              </tr>
+              <tr>
+                <td><strong>CastSkill</strong></td>
+                <td>根据分析结果检索或生成策略，决定模型路线、特征模板与搜索空间。</td>
+                <td>审核 Skill 草案、沉淀经验、复用历史策略时。</td>
+              </tr>
+              <tr>
+                <td><strong>Plugin Ecosystem</strong></td>
+                <td>通过 CastSense / CastFeat / CastZoo 完成诊断、表示构建和模型编排。</td>
+                <td>分析结果解释、特征设计和模型选择时。</td>
+              </tr>
+              <tr>
+                <td><strong>TimeEmbed</strong></td>
+                <td>提供跨任务表征、相似模式检索和经验对齐的能力底座。</td>
+                <td>更偏系统能力层，通常不直接手动操作，但会影响 Skill 检索质量。</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="code-block"><pre><code>User Task
+  ↓
+CastRuntime
+  ↓
+CastSkill
+  ↓
+CastSense → CastFeat → CastZoo
+  ↓
+Reflection / Report</code></pre></div>
+        </article>
+
+        <article class="doc-block" id="three-agents" data-title="三智能体协同">
+          <h3>三智能体协同（Planner / Forecaster / Critic）</h3>
+          <p>三个智能体不是“谁更聪明”的关系，而是严格分工的流水线。你应该把它们看成不同岗位，而不是三个能互相替代的聊天窗口。</p>
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>智能体</th>
+                <th>核心职责</th>
+                <th>关键行为</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Planner</strong></td>
+                <td>任务定义、数据诊断、阶段编排。</td>
+                <td>并发执行定性与定量分析，输出预测前报告，生成候选 Skill。</td>
+              </tr>
+              <tr>
+                <td><strong>Forecaster</strong></td>
+                <td>实验循环与策略试错。</td>
+                <td>读取历史、选配置、调用 CastFeat / CastZoo、记录反思、触发 HITL。</td>
+              </tr>
+              <tr>
+                <td><strong>Critic</strong></td>
+                <td>结果聚合与最终报告。</td>
+                <td>对比模型族表现、生成可视化与结构化结论，产出 <code>final-report.md</code>。</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="card-grid three">
+            <div class="surface-card">
+              <div class="eyebrow">Planner</div>
+              <h4>先看清问题，再开跑</h4>
+              <p>如果 Planner 阶段定义不清，后续的实验会在错误目标上持续优化，这会比模型选错更浪费资源。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Forecaster</div>
+              <h4>关注迭代节奏，不是单轮结果</h4>
+              <p>Forecaster 的价值在于持续比较、反思与收敛，而不是某一次偶然跑出高分。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Critic</div>
+              <h4>把实验转成结论</h4>
+              <p>它负责回答“为什么这个结果可信”，而不仅仅是“哪个数字最高”。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-block" id="agentic-workflow" data-title="Agentic Workflow 全流程">
+          <h3>Agentic Workflow 全流程</h3>
+          <p>CastClaw 把预测任务拆成五个强约束阶段。阶段切换由工具和文件协议控制，而不是完全依赖 LLM 自觉，因此流程可追溯、可审计。</p>
+          <div class="workflow">
+            <div class="workflow-item">
+              <div class="workflow-num">01</div>
+              <div class="workflow-body">
+                <h4>初始化（Init）</h4>
+                <p>冻结 <code>task.json</code>，创建 <code>.forecast/</code> 工作目录，确保所有后续实验都绑定在同一个明确任务定义上。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">02</div>
+              <div class="workflow-body">
+                <h4>预测前分析（Pre-forecast Analysis）</h4>
+                <p>双轨并发执行：一条做定性领域分析，一条做定量数据诊断，最后融合成驱动 Skill 生成的预测前报告。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">03</div>
+              <div class="workflow-body">
+                <h4>技能审核（Skill Audit）</h4>
+                <p>Planner 生成 2 到 4 个 Skill 候选后暂停，等待人工审核模型路线、风险与搜索空间，再进入实验循环。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">04</div>
+              <div class="workflow-body">
+                <h4>预测迭代（Forecasting）</h4>
+                <p>Forecaster 读取历史最佳结果，选择配置，构建特征，执行模型训练评估并产出反思记录；当持续无改善时触发 HITL。</p>
+              </div>
+            </div>
+            <div class="workflow-item">
+              <div class="workflow-num">05</div>
+              <div class="workflow-body">
+                <h4>后置报告（Post-forecast Report）</h4>
+                <p>Critic 汇总实验产物、性能分解与可视化说明，生成结构化的 <code>final-report.md</code>。</p>
+              </div>
+            </div>
+          </div>
+          <div class="callout tip">
+            <strong>流程设计重点</strong>
+            <p>CastClaw 的差异化不在“跑更多模型”，而在于先分析、再审核、后迭代，并在关键节点允许人介入纠偏。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="forecast-protocol" data-title=".forecast/ 目录协议">
+          <h3><code>.forecast/</code> 目录协议</h3>
+          <p>所有智能体共享状态的核心媒介就是这个目录。只要你理解了目录结构，就能理解 CastClaw 的阶段状态和实验产物落在哪。</p>
+          <div class="code-block"><pre><code>.forecast/
+├── task.json
+├── skills/
+├── experiments/
+│   └── {run-id}/
+│       ├── config.json
+│       ├── result.json
+│       └── reflect.md
+└── reports/
+    ├── pre-forecast.md
+    └── final-report.md</code></pre></div>
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>路径</th>
+                <th>含义</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>task.json</code></td>
+                <td>冻结后的任务定义，包含目标列、步长、预算等核心上下文。</td>
+              </tr>
+              <tr>
+                <td><code>skills/</code></td>
+                <td>Planner 生成并由人工审核后的 Skill 文件库。</td>
+              </tr>
+              <tr>
+                <td><code>experiments/{run-id}/</code></td>
+                <td>单轮实验的配置、结果与反思，供 Forecaster 与 Critic 复用。</td>
+              </tr>
+              <tr>
+                <td><code>reports/</code></td>
+                <td>预测前报告和最终报告的落盘位置，是最适合人工回顾的入口。</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </section>
+
+      <section class="doc-section" id="hitl-collaboration" data-group-title="人机协作">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P1 · 差异化特性</div>
+            <h2>人机协作（HITL）</h2>
+            <p>HITL 不是给系统兜底的“人工客服模式”，而是主动保留给研究者的高价值决策入口。</p>
+          </div>
+          <div class="section-meta">重点看：什么情况下该介入，以及介入时改什么</div>
+        </div>
+
+        <article class="doc-block" id="hitl-pause" data-title="什么是 HITL 暂停">
+          <h3>什么是 HITL 暂停</h3>
+          <p>当 Forecaster 连续多轮无改善、出现异常结果或者当前策略与领域认知明显冲突时，系统会暂停在一个可恢复点，等待你输入反馈。这个暂停并不意味着任务失败，而是一次强制的人类校正窗口。</p>
+          <div class="card-grid three">
+            <div class="surface-card">
+              <div class="eyebrow">节点一</div>
+              <h4>任务设定确认</h4>
+              <p>确认目标列、时间列、预测步长、评估指标与资源约束，避免后续一切建立在错误任务定义上。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">节点二</div>
+              <h4>技能策略审核</h4>
+              <p>确认模型族、参数搜索空间和风险提示是否合理，避免 Planner 在错误方向上生成大规模实验。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">节点三</div>
+              <h4>实验停滞干预</h4>
+              <p>当连续无改善时，注入领域先验、限制无效模型族或补充数据特征假设，再恢复迭代。</p>
+            </div>
+          </div>
+          <div class="callout warn">
+            <strong>不要把 HITL 理解成“重跑按钮”</strong>
+            <p>真正有效的人工介入，应当改变策略假设，例如限定模型族、缩窄搜索空间、说明异常日期、或补充外部约束。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="skill-audit" data-title="技能审核：如何介入">
+          <h3>技能审核：如何介入</h3>
+          <p>审核 Skill 时，不是看 YAML 写得是否漂亮，而是判断“这套策略是否真的适用于当前任务”。重点关注适用条件、搜索空间和风险提示三部分。</p>
+          <div class="card-grid two">
+            <div class="surface-card">
+              <h4>审核关注点</h4>
+              <ul>
+                <li>适用条件是否与数据特征匹配，例如强季节性、长序列、频率稳定等。</li>
+                <li>参数搜索空间是否过宽，是否会浪费预算在低价值区域。</li>
+                <li>风险警告是否覆盖已知缺陷，例如小样本过拟合、分布漂移、夜间零值等。</li>
+              </ul>
+            </div>
+            <div class="surface-card">
+              <h4>建议的介入方式</h4>
+              <ul>
+                <li>直接删掉明显不合适的模型族，而不是让 Forecaster 用预算去证明它不合适。</li>
+                <li>把你已知的重要节假日、设备变更、政策事件写进领域说明中。</li>
+                <li>缩窄学习率、窗口长度或 patch 长度等关键搜索维度。</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-block" id="intervention-timing" data-title="结果确认与干预时机">
+          <h3>结果确认与干预时机</h3>
+          <p>最值得人工确认的不是每一轮实验结果，而是“方向性信息”发生变化的时候。例如一整类模型持续失败、最佳模型突然切换、指标改善停止，或报告结论与业务常识冲突。</p>
+          <div class="tag-row">
+            <span class="tag highlight">连续无改善</span>
+            <span class="tag highlight">结果与领域常识冲突</span>
+            <span class="tag">最佳模型族切换</span>
+            <span class="tag">异常日期影响明显</span>
+            <span class="tag">预算即将耗尽</span>
+          </div>
+          <div class="callout info">
+            <strong>一个实用原则</strong>
+            <p>如果你的介入无法改变下一轮策略，就先不要介入。HITL 最有价值的地方是改变路径，而不是重复确认现状。</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="doc-section" id="plugin-toolbox-section" data-group-title="插件工具箱">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P2 · 能力层</div>
+            <h2>插件工具箱</h2>
+            <p>CastClaw 并不把“选模型”当作第一步，而是把诊断、表示和模型调用拆成可以独立演化的专业模块。</p>
+          </div>
+          <div class="section-meta">插件的职责分离，是 CastClaw 可持续扩展的关键</div>
+        </div>
+
+        <article class="doc-block" id="castsense" data-title="CastSense：数据诊断">
+          <h3>CastSense：数据诊断</h3>
+          <p>CastSense 负责回答“这个序列现在是什么状态”。它不是只给几项统计量，而是把趋势、季节性、异常和分布变化整理成结构化知识，供 Planner 生成策略时使用。</p>
+          <div class="plugin-grid">
+            <div class="surface-card">
+              <div class="eyebrow">Perception</div>
+              <h4>趋势与周期识别</h4>
+              <p>检测长期趋势、日周期、周周期与潜在多尺度周期，帮助判断应该优先走统计模型还是深度模型路线。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Quality</div>
+              <h4>异常与漂移定位</h4>
+              <p>发现突变、离群点、非平稳性和分布漂移，为风险提示与 HITL 干预提供依据。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Knowledge</div>
+              <h4>结构化输出</h4>
+              <p>把诊断结果沉淀为后续 Skill 检索、特征设计和模型编排都能消费的结构化 knowledge。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-block" id="castfeat" data-title="CastFeat：特征构建">
+          <h3>CastFeat：特征构建</h3>
+          <p>CastFeat 负责回答“应该怎样把数据变成模型可用的表示”。它承担特征工程与表征生成，把原始时序转成更适配下游模型的 representation。</p>
+          <div class="tag-row">
+            <span class="tag highlight">lag / rolling</span>
+            <span class="tag highlight">统计特征</span>
+            <span class="tag highlight">频域与多尺度表示</span>
+            <span class="tag highlight">patch / token</span>
+            <span class="tag">embedding</span>
+            <span class="tag">model-ready representation</span>
+          </div>
+          <div class="callout tip">
+            <strong>理解方式</strong>
+            <p>CastFeat 并不是一个“再做一遍手工特征工程”的模块，它更像是把领域特征、统计特征和基础模型输入形式统一到同一条表示构建管线上。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="castzoo" data-title="CastZoo：模型编排">
+          <h3>CastZoo：模型编排</h3>
+          <p>CastZoo 负责回答“用什么模型，以及怎么组合”。它不只是模型仓库，还负责策略化调度，包括 ensemble、pipeline 和 coarse-to-fine 等多种运行方式。</p>
+          <div class="card-grid two">
+            <div class="surface-card">
+              <h4>支持的模型族</h4>
+              <p>统计模型如 ARIMA、ETS、Theta；机器学习模型；深度学习模型如 Informer、PatchTST；基础模型如 Chronos、TimesFM、Moirai。</p>
+            </div>
+            <div class="surface-card">
+              <h4>支持的策略</h4>
+              <p>既可以单模型直接跑，也可以做多模型集成、先粗后细的两阶段调度，或把基础模型输出作为后续模型的先验信息。</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="doc-section" id="skill-system" data-group-title="Skill 系统">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P2 · 策略层</div>
+            <h2>Skill 系统</h2>
+            <p>Skill 是 CastClaw 把“这次任务学到的经验”结构化保存下来的机制，它是系统能否持续进化的关键资产层。</p>
+          </div>
+          <div class="section-meta">Skill 不只是配置文件，它是可复用策略</div>
+        </div>
+
+        <article class="doc-block" id="skill-what" data-title="Skill 是什么">
+          <h3>Skill 是什么</h3>
+          <p>Skill 可以理解为“经过分析与审核的策略模板”。它描述某类数据在什么条件下适合什么模型族、什么搜索空间、什么特征模板，以及有哪些已知风险。</p>
+          <div class="card-grid three">
+            <div class="surface-card">
+              <div class="eyebrow">Knowledge</div>
+              <h4>承接历史经验</h4>
+              <p>把一次次实验中验证过的路线沉淀下来，而不是每次从空白开始。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Policy</div>
+              <h4>指导未来任务</h4>
+              <p>为新任务缩小模型空间，减少盲试，让 Forecaster 一开始就站在更合理的起点上。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Audit</div>
+              <h4>允许人工把关</h4>
+              <p>Skill 先审核再使用，使系统进化建立在可信策略之上，而不是自动累积噪声经验。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-block" id="skill-structure" data-title="Skill 文件结构">
+          <h3>Skill 文件结构</h3>
+          <p>Skill 通常使用 YAML 表示，核心内容是适用条件、模型族、搜索空间、特征模板和风险项。下面是一个典型示例。</p>
+          <div class="code-block"><pre><code>name: deep_learning_periodic
+applicable_conditions:
+  - 强季节性数据
+  - 序列长度 &gt; 5000
+model_family: deep_learning
+models: [PatchTST, iTransformer]
+search_space:
+  learning_rate: [1e-4, 5e-4]
+  patch_len: [16, 32, 64]
+feature_template: patch_token
+risks:
+  - 数据量不足时过拟合风险高
+domain_notes: ""</code></pre></div>
+          <div class="callout info">
+            <strong>看 Skill 时的重点</strong>
+            <p>先看 <code>applicable_conditions</code> 和 <code>risks</code>，这两部分最直接决定当前任务是否该用这份 Skill。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="skill-review" data-title="如何审核与沉淀 Skill">
+          <h3>如何审核与沉淀 Skill</h3>
+          <p>Skill 的生命周期大致分四步：生成、审核、使用、沉淀。审核质量决定了系统后续是否会持续变强，还是持续放大误导。</p>
+          <ol>
+            <li>Planner 基于预测前分析草拟 2 到 4 个候选 Skill。</li>
+            <li>人工审核模型路线、适用条件和风险提示，必要时直接编辑内容。</li>
+            <li>通过审核的 Skill 进入 <code>.forecast/skills/</code>，供当前任务与相似任务复用。</li>
+            <li>后续随着经验积累持续演化，逐步形成团队级策略资产。</li>
+          </ol>
+          <div class="callout tip">
+            <strong>审核原则</strong>
+            <p>宁可保留少量高质量 Skill，也不要囤积大量“看起来可能有用”的低信号策略。Skill 库的价值在于可信，而不是数量。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="cast-creation" data-title="/cast-creation 命令">
+          <h3><code>/cast-creation</code> 命令</h3>
+          <p>这个命令用于交互式生成 <code>CAST.md</code> 项目约束文件。适合在任务开始前明确禁用模型、预算上限、评估偏好和领域说明，让每个 Agent 都带着相同边界工作。</p>
+          <div class="card-grid two">
+            <div class="surface-card">
+              <h4>适合什么时候用</h4>
+              <p>你已经知道哪些模型不该用、实验预算不能超过多少次，或者有必须注入给所有 Agent 的领域说明时。</p>
+            </div>
+            <div class="surface-card">
+              <h4>它解决什么问题</h4>
+              <p>避免每轮任务都口头重复约束条件，并降低 Agent 在后续阶段“忘掉限制”的概率。</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="doc-section" id="config-reference" data-group-title="配置参考">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P2 · 运行边界</div>
+            <h2>配置参考</h2>
+            <p>配置层决定系统的默认行为边界，包括预算、模型接入方式和注入给 Agent 的长期约束。</p>
+          </div>
+          <div class="section-meta">想让系统更稳，优先调约束，不要急着放大搜索空间</div>
+        </div>
+
+        <article class="doc-block" id="cast-md" data-title="CAST.md 约束文件">
+          <h3><code>CAST.md</code> 约束文件</h3>
+          <p><code>CAST.md</code> 是项目级行为约束，会被自动注入到 Agent 上下文中。适合承载稳定、长期、所有阶段都应该知道的规则。</p>
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>字段</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>banned_models</code></td>
+                <td>禁用模型列表，用于直接排除低价值或资源不允许的模型族。</td>
+              </tr>
+              <tr>
+                <td><code>max_experiments</code></td>
+                <td>最大实验次数，限制 Forecaster 的探索预算。</td>
+              </tr>
+              <tr>
+                <td><code>no_improve_threshold</code></td>
+                <td>连续无改善阈值，到达后通常触发 HITL 暂停。</td>
+              </tr>
+              <tr>
+                <td><code>eval_metric</code></td>
+                <td>评估指标偏好，例如 MAE、MAPE 或 RMSE。</td>
+              </tr>
+              <tr>
+                <td><code>domain_notes</code></td>
+                <td>领域背景说明，会注入每个 Agent 的上下文，帮助对结果做更符合业务的判断。</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="doc-block" id="castclaw-json" data-title="castclaw.json 参数">
+          <h3><code>castclaw.json</code> 参数</h3>
+          <p>如果你希望团队共享默认模型配置和预算策略，可以使用 <code>castclaw.json</code>。它适合作为任务级或项目级默认配置入口。</p>
+          <div class="code-block"><pre><code>{
+  "model": "anthropic/claude-sonnet-4-6",
+  "light_model": "anthropic/claude-haiku-4-5",
+  "max_experiments": 20,
+  "no_improve_threshold": 5
+}</code></pre></div>
+          <div class="callout info">
+            <strong>配置建议</strong>
+            <p>把高成本、高质量模型放在主模型位，把轻量模型放在辅助分析或低成本调用路径，可以更平衡速度与质量。</p>
+          </div>
+        </article>
+
+        <article class="doc-block" id="llm-providers" data-title="模型接入（LLM 配置）">
+          <h3>模型接入（LLM 配置）</h3>
+          <p>CastClaw 通过 Vercel AI SDK 风格的接入方式兼容多家模型提供商。你可以按网络环境、预算、模型偏好来选择国际或国内线路。</p>
+          <div class="card-grid three">
+            <div class="surface-card">
+              <div class="eyebrow">International</div>
+              <h4>国际提供商</h4>
+              <p>Anthropic Claude、OpenAI GPT、Google Gemini，适合已有稳定海外 API 接入的环境。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Domestic</div>
+              <h4>国内提供商</h4>
+              <p>DeepSeek、Qwen、GLM 等，适合国内网络环境和更灵活的接入策略。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Deployment</div>
+              <h4>部署方式</h4>
+              <p>既可以直接使用 API，也可以接自建推理服务或昇腾算力 API，便于统一企业内部部署。</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="doc-section" id="cli-reference" data-group-title="CLI 命令参考">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P1 · 高频查询</div>
+            <h2>CLI 命令参考</h2>
+            <p>CLI 是 CastClaw 的主要交互入口。这里重点覆盖启动命令、TUI 快捷键，以及阶段控制相关工具。</p>
+          </div>
+          <div class="section-meta">这部分适合在使用中随查，不必一次背完</div>
+        </div>
+
+        <article class="doc-block" id="launch-options" data-title="castclaw 启动选项">
+          <h3><code>castclaw</code> 启动选项</h3>
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>命令</th>
+                <th>用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>castclaw</code></td>
+                <td>在当前目录启动 TUI，并基于当前项目上下文接管预测任务。</td>
+              </tr>
+              <tr>
+                <td><code>castclaw --model anthropic/claude-sonnet-4-6</code></td>
+                <td>启动时显式指定主模型，适合临时覆盖默认配置。</td>
+              </tr>
+              <tr>
+                <td><code>castclaw --version</code></td>
+                <td>查看当前 CLI 版本，排查环境不一致时很有用。</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="doc-block" id="shortcut-cheatsheet" data-title="快捷键速查">
+          <h3>快捷键速查（Ctrl+1 / 2 / 3 等）</h3>
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>快捷键</th>
+                <th>功能</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Ctrl+1</code></td>
+                <td>切换到 Planner</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl+2</code></td>
+                <td>切换到 Forecaster</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl+3</code></td>
+                <td>切换到 Critic</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>把这三个快捷键用熟以后，你会自然形成一个节奏：在 Planner 定义与审核，在 Forecaster 看迭代，在 Critic 看是否能形成可信结论。</p>
+        </article>
+
+        <article class="doc-block" id="forecast-tools" data-title="forecast_state / forecast_task 工具">
+          <h3><code>forecast_state</code> / <code>forecast_task</code> 工具</h3>
+          <p><code>forecast_state</code> 用于阶段控制，核心意义是把流程切换变成受约束的显式动作；<code>forecast_task</code> 则围绕任务定义与其冻结状态展开，帮助你查看和维护当前任务上下文。</p>
+          <div class="card-grid two">
+            <div class="surface-card">
+              <h4><code>forecast_state</code></h4>
+              <ul>
+                <li><code>forecast_state init</code>：初始化任务并创建 <code>.forecast/</code> 目录。</li>
+                <li>阶段转换强制执行，不可随意跳过，确保过程可追溯。</li>
+              </ul>
+            </div>
+            <div class="surface-card">
+              <h4><code>forecast_task</code></h4>
+              <ul>
+                <li>面向 <code>task.json</code> 的任务定义辅助工具。</li>
+                <li>适合在 Init 阶段确认目标列、时间列、步长与评估指标。</li>
+                <li>与状态工具结合使用，可以把任务定义和阶段推进明确区分开。</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="doc-section" id="examples" data-group-title="使用示例">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P2 · 典型任务</div>
+            <h2>使用示例</h2>
+            <p>下面三个案例分别覆盖负荷、光伏和金融时序，目的是帮助你建立“不同数据形态对应不同策略”的感觉。</p>
+          </div>
+          <div class="section-meta">案例部分重点看数据特征、推荐 Skill 与 HITL 介入点</div>
+        </div>
+
+        <article class="doc-block" id="example-load" data-title="电力负荷预测">
+          <h3>电力负荷预测（load.csv）</h3>
+          <p><code>load.csv</code> 是最适合第一个示例的入门数据。它包含小时级负荷序列，通常具有稳定的日周期和周周期，并伴随季节性峰值变化。</p>
+          <div class="example-grid">
+            <div class="surface-card">
+              <div class="eyebrow">Data</div>
+              <h4>数据特征</h4>
+              <p>小时频率、约 1.5 万条样本，强日周期（24h）与周周期（168h），夏冬峰值明显。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Skill</div>
+              <h4>推荐策略</h4>
+              <p>优先考虑 <code>deep_learning</code>（PatchTST、iTransformer）加 <code>foundation</code>（Chronos）组合路线。</p>
+            </div>
+            <div class="surface-card">
+              <div class="eyebrow">Output</div>
+              <h4>预期产物</h4>
+              <p>看到 <code>pre-forecast.md</code>、若干实验目录以及最终 <code>final-report.md</code>，说明主流程已经打通。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-block" id="example-solar" data-title="光伏发电预测">
+          <h3>光伏发电预测</h3>
+          <p>光伏序列通常同时具备强日周期、夜间恒零和天气敏感性，是非常典型的“需要领域知识”的案例。</p>
+          <div class="card-grid two">
+            <div class="surface-card">
+              <h4>推荐数据与诊断重点</h4>
+              <p>例如 GEFCom2014 Solar Track 的小时级数据。CastSense 应重点识别夜间零值、天气突变和季节性变化。</p>
+            </div>
+            <div class="surface-card">
+              <h4>推荐策略与 HITL</h4>
+              <p>可从 statistical（Theta）+ foundation（TimesFM、Moirai）入手；HITL 重点放在阴雨连续日、天气异常日的人工标注与补充说明。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-block" id="example-finance" data-title="金融时序预测">
+          <h3>金融时序预测</h3>
+          <p>金融数据高波动、非平稳，对突发事件敏感，往往不适合盲目依赖单一深度模型路线，更需要风险意识与外部事件注入。</p>
+          <div class="card-grid two">
+            <div class="surface-card">
+              <h4>推荐策略</h4>
+              <p>更适合 <code>statistical + foundation ensemble</code> 的保守组合，避免把所有预算压在单一路线上。</p>
+            </div>
+            <div class="surface-card">
+              <h4>人工介入重点</h4>
+              <p>标注重大事件日期，如财报、政策发布或宏观冲击，并重点查看 CastSense 给出的分布漂移与结构断点提醒。</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="doc-section" id="faq-troubleshooting" data-group-title="FAQ 与排查">
+        <div class="section-head">
+          <div>
+            <div class="section-label">P3 · 按需查询</div>
+            <h2>FAQ 与故障排查</h2>
+            <p>常见问题聚焦在模型切换、暂停恢复、Skill 管理和环境依赖。排查时优先缩小问题范围，不要同时改多个配置面。</p>
+          </div>
+          <div class="section-meta">排查顺序：版本 → 依赖 → API Key → 配置 → 任务本身</div>
+        </div>
+
+        <article class="doc-block" id="common-questions" data-title="常见问题">
+          <h3>常见问题</h3>
+          <div class="card-grid two">
+            <div class="surface-card">
+              <h4>如何更换 LLM 提供商？</h4>
+              <p>修改 <code>castclaw.json</code> 中的模型配置，或切换对应环境变量即可。</p>
+            </div>
+            <div class="surface-card">
+              <h4>HITL 暂停后如何继续？</h4>
+              <p>在 Forecaster 标签页输入反馈并提交，系统会在当前任务上下文中继续，而不是从头开始。</p>
+            </div>
+            <div class="surface-card">
+              <h4>Skill 文件在哪里管理？</h4>
+              <p>默认位于 <code>.forecast/skills/</code> 目录，建议把审核后的稳定 Skill 再沉淀到团队共享资产库中。</p>
+            </div>
+            <div class="surface-card">
+              <h4>为什么结果不稳定？</h4>
+              <p>先检查任务定义、预算是否过小、是否存在异常日期未标注，再考虑模型和特征层面的优化。</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-block" id="env-troubleshooting" data-title="环境问题排查">
+          <h3>环境问题排查</h3>
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>现象</th>
+                <th>排查建议</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bun 版本不足</td>
+                <td>升级到 <code>1.3.11</code> 或更高版本后重新打开终端，再检查 <code>bun --version</code>。</td>
+              </tr>
+              <tr>
+                <td>Python 后端报错</td>
+                <td>进入 Python 目录重新执行 <code>uv sync</code>，确认虚拟环境与依赖被正确安装。</td>
+              </tr>
+              <tr>
+                <td>API Key 未生效</td>
+                <td>检查环境变量是否已 <code>export</code> 到当前 shell，或确认 <code>castclaw.json</code> 是否覆盖了模型设置。</td>
+              </tr>
+              <tr>
+                <td>阶段无法推进</td>
+                <td>检查 <code>.forecast/</code> 是否缺失关键文件，尤其是 <code>task.json</code> 和阶段相关报告产物。</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </section>
+
+      <div class="footer-card">
+        <p>
+          这份文档站按“先上手，再理解系统，再查细节”的顺序组织。若你要第一次演示 CastClaw，建议直接从
+          <a href="#first-forecast">第一个预测任务</a> 和 <a href="#agentic-workflow">Agentic Workflow 全流程</a> 开始。
+        </p>
+      </div>
+    </main>
+
+    <aside class="aside">
+      <div class="aside-card">
+        <h3>On This Page</h3>
+        <p>当前阅读章节的小节导航会随滚动更新，方便快速跳转。</p>
+        <div class="aside-links" id="onThisPageLinks"></div>
+      </div>
+      <div class="aside-card">
+        <h3>阅读建议</h3>
+        <p>首次使用优先看「快速开始」和「核心概念」。已经能跑任务后，再进入 Skill、配置和案例章节。</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="overlay" id="searchOverlay" aria-hidden="true">
+    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchInput">
+      <div class="search-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:18px;height:18px;color:#8a7d6d;">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.5-3.5"></path>
+        </svg>
+        <input id="searchInput" class="search-input" type="text" placeholder="搜索章节、命令、概念..." />
+        <span class="search-kbd">Esc</span>
+      </div>
+      <div class="search-body" id="searchResults"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const sidebar = document.getElementById("sidebar");
+      const mobileScrim = document.getElementById("mobileScrim");
+      const menuButton = document.getElementById("menuButton");
+      const searchButton = document.getElementById("searchButton");
+      const searchOverlay = document.getElementById("searchOverlay");
+      const searchInput = document.getElementById("searchInput");
+      const searchResults = document.getElementById("searchResults");
+      const breadcrumbCurrent = document.getElementById("breadcrumbCurrent");
+      const onThisPageLinks = document.getElementById("onThisPageLinks");
+      const blocks = Array.from(document.querySelectorAll(".doc-block[id]"));
+      const sections = Array.from(document.querySelectorAll(".doc-section[id]"));
+      const sidebarLinks = Array.from(document.querySelectorAll(".sidebar-link"));
+      let activeSectionId = "quick-start";
+      let activeBlockId = "install-setup";
+
+      function openSidebar() {
+        sidebar.classList.add("open");
+        mobileScrim.classList.add("active");
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove("open");
+        mobileScrim.classList.remove("active");
+      }
+
+      menuButton.addEventListener("click", function () {
+        if (sidebar.classList.contains("open")) closeSidebar();
+        else openSidebar();
+      });
+
+      mobileScrim.addEventListener("click", closeSidebar);
+      sidebarLinks.forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 980) closeSidebar();
+        });
+      });
+
+      const sectionBlocks = new Map(
+        sections.map(function (section) {
+          return [
+            section.id,
+            blocks.filter(function (block) {
+              return block.closest(".doc-section") === section;
+            })
+          ];
+        })
+      );
+
+      function renderOnThisPage(sectionId) {
+        const items = sectionBlocks.get(sectionId) || [];
+        onThisPageLinks.innerHTML = items
+          .map(function (item) {
+            const title = item.dataset.title || item.querySelector("h3").textContent.trim();
+            const activeClass = item.id === activeBlockId ? " active" : "";
+            return '<a class="aside-link' + activeClass + '" href="#' + item.id + '">' + title + "</a>";
+          })
+          .join("");
+      }
+
+      function setActiveSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+        activeSectionId = sectionId;
+        const title = section.querySelector("h2");
+        if (title) breadcrumbCurrent.textContent = title.textContent.trim();
+        renderOnThisPage(sectionId);
+      }
+
+      function setActiveBlock(blockId) {
+        activeBlockId = blockId;
+        sidebarLinks.forEach(function (link) {
+          const isActive = link.getAttribute("href") === "#" + blockId;
+          link.classList.toggle("active", isActive);
+        });
+        Array.from(onThisPageLinks.querySelectorAll(".aside-link")).forEach(function (link) {
+          const isActive = link.getAttribute("href") === "#" + blockId;
+          link.classList.toggle("active", isActive);
+        });
+      }
+
+      function updateByHash() {
+        const raw = window.location.hash.replace("#", "");
+        if (!raw) {
+          setActiveSection("quick-start");
+          setActiveBlock("install-setup");
+          return;
+        }
+        const section = document.getElementById(raw);
+        if (section && section.classList.contains("doc-section")) {
+          setActiveSection(section.id);
+          const firstBlock = (sectionBlocks.get(section.id) || [])[0];
+          if (firstBlock) setActiveBlock(firstBlock.id);
+          return;
+        }
+        const block = document.getElementById(raw);
+        if (!block || !block.classList.contains("doc-block")) return;
+        const parentSection = block.closest(".doc-section");
+        if (parentSection) setActiveSection(parentSection.id);
+        setActiveBlock(block.id);
+      }
+
+      const blockObserver = new IntersectionObserver(
+        function (entries) {
+          const visible = entries
+            .filter(function (entry) { return entry.isIntersecting; })
+            .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
+          if (!visible.length) return;
+          const block = visible[0].target;
+          const section = block.closest(".doc-section");
+          if (section && section.id !== activeSectionId) setActiveSection(section.id);
+          setActiveBlock(block.id);
+        },
+        {
+          rootMargin: "-18% 0px -62% 0px",
+          threshold: [0.15, 0.35, 0.6]
+        }
+      );
+
+      blocks.forEach(function (block) { blockObserver.observe(block); });
+      renderOnThisPage(activeSectionId);
+      updateByHash();
+      window.addEventListener("hashchange", updateByHash);
+
+      const searchIndex = blocks.map(function (block) {
+        const title = block.dataset.title || block.querySelector("h3").textContent.trim();
+        const section = block.closest(".doc-section");
+        const group = section ? section.dataset.groupTitle : "";
+        const text = block.textContent.replace(/\s+/g, " ").trim();
+        return {
+          id: block.id,
+          title: title,
+          group: group,
+          text: text,
+          searchText: text.toLowerCase()
+        };
+      });
+
+      function resultMarkup(item) {
+        const excerpt = item.text.slice(0, 110) + (item.text.length > 110 ? "..." : "");
+        return (
+          '<a class="search-result" href="#' + item.id + '">' +
+            '<span class="search-group">' + item.group + '</span>' +
+            '<strong>' + item.title + '</strong>' +
+            '<span>' + excerpt + "</span>" +
+          "</a>"
+        );
+      }
+
+      function renderSearch(query) {
+        const keyword = query.trim().toLowerCase();
+        let results = searchIndex;
+        if (keyword) {
+          results = searchIndex
+            .filter(function (item) {
+              return item.title.toLowerCase().includes(keyword) || item.searchText.includes(keyword);
+            })
+            .sort(function (a, b) {
+              const aTitle = a.title.toLowerCase().includes(keyword) ? 1 : 0;
+              const bTitle = b.title.toLowerCase().includes(keyword) ? 1 : 0;
+              return bTitle - aTitle;
+            });
+        } else {
+          results = searchIndex.filter(function (item) {
+            return [
+              "install-setup",
+              "first-forecast",
+              "agentic-workflow",
+              "shortcut-cheatsheet",
+              "castsense",
+              "example-load"
+            ].includes(item.id);
+          });
+        }
+
+        if (!results.length) {
+          searchResults.innerHTML = '<div class="search-empty">没有找到匹配内容，试试搜索“Skill”“HITL”“load.csv”或“castclaw”。</div>';
+          return;
+        }
+
+        searchResults.innerHTML = results.slice(0, 12).map(resultMarkup).join("");
+        Array.from(searchResults.querySelectorAll("a")).forEach(function (link) {
+          link.addEventListener("click", closeSearch);
+        });
+      }
+
+      function openSearch() {
+        searchOverlay.classList.add("active");
+        searchOverlay.setAttribute("aria-hidden", "false");
+        renderSearch(searchInput.value);
+        window.setTimeout(function () {
+          searchInput.focus();
+          searchInput.select();
+        }, 0);
+      }
+
+      function closeSearch() {
+        searchOverlay.classList.remove("active");
+        searchOverlay.setAttribute("aria-hidden", "true");
+      }
+
+      searchButton.addEventListener("click", openSearch);
+      searchOverlay.addEventListener("click", function (event) {
+        if (event.target === searchOverlay) closeSearch();
+      });
+      searchInput.addEventListener("input", function (event) {
+        renderSearch(event.target.value);
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+          event.preventDefault();
+          openSearch();
+        }
+        if (event.key === "Escape") {
+          closeSearch();
+          closeSidebar();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
