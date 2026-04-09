@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CastClaw 用户文档</title>
-  <meta name="description" content="CastClaw 用户文档：快速开始、Agentic Workflow、人在回路、插件工具箱、Skill 技能库、配置参考、CLI 命令与典型使用示例。" />
+  <title>CastClaw Documentation</title>
+  <meta name="description" content="CastClaw documentation: quick start, agent workflow, human-in-the-loop collaboration, plugin toolbox, skill system, configuration, CLI reference, and practical examples." />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -760,22 +760,22 @@
   </div>
   <div class="topbar-inner">
     <div class="topbar-left">
-      <button class="topbar-btn menu-btn" type="button" id="menuButton">目录</button>
-      <a class="topbar-brand" href="#" id="brandLink">CastClaw 用户文档</a>
+      <button class="topbar-btn menu-btn" type="button" id="menuButton">Menu</button>
+      <a class="topbar-brand" href="#" id="brandLink">CastClaw Documentation</a>
     </div>
     <div class="topbar-center" aria-hidden="true">
       <div class="slogan-rotator" id="sloganRotator">
-        <div class="slogan-item active">所有的伟大，源于一个勇敢的开始。</div>
-        <div class="slogan-item">红专并进，理实交融。</div>
+        <div class="slogan-item active">All greatness begins with one brave step.</div>
+        <div class="slogan-item">Advance in commitment and expertise, where theory meets practice.</div>
       </div>
     </div>
     <div class="topbar-right">
       <button class="topbar-btn" type="button" id="searchButton">
-        搜索
+        Search
         <span class="search-kbd">Ctrl K</span>
       </button>
-      <a class="topbar-btn" href="./en.html">EN</a>
-      <a class="topbar-btn" href="../">返回主页</a>
+      <a class="topbar-btn" href="./">中文</a>
+      <a class="topbar-btn" href="../">Back to Home</a>
     </div>
   </div>
 </div>
@@ -785,47 +785,47 @@
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-group">
-      <div class="sidebar-group-title">快速开始</div>
+      <div class="sidebar-group-title">Quick Start</div>
       <div class="sidebar-links">
-        <a class="sidebar-link" href="#install-setup">安装与环境配置</a>
-        <a class="sidebar-link" href="#first-forecast">第一个预测任务</a>
-        <a class="sidebar-link" href="#cli-basics">CLI 基础操作</a>
+        <a class="sidebar-link" href="#install-setup">Installation & Environment</a>
+        <a class="sidebar-link" href="#first-forecast">First Forecast Task</a>
+        <a class="sidebar-link" href="#cli-basics">CLI Basics</a>
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">CLI 命令参考</div>
+      <div class="sidebar-group-title">CLI Reference</div>
       <div class="sidebar-links">
-        <a class="sidebar-link" href="#launch-options">启动选项</a>
-        <a class="sidebar-link" href="#shortcut-cheatsheet">快捷键速查</a>
+        <a class="sidebar-link" href="#launch-options">Launch Options</a>
+        <a class="sidebar-link" href="#shortcut-cheatsheet">Shortcut Cheat Sheet</a>
         <a class="sidebar-link" href="#forecast-tools">forecast_state / task</a>
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">配置参考</div>
+      <div class="sidebar-group-title">Configuration</div>
       <div class="sidebar-links">
         <a class="sidebar-link" href="#cast-md">CAST.md</a>
         <a class="sidebar-link" href="#castclaw-json">castclaw.json</a>
-        <a class="sidebar-link" href="#llm-providers">模型接入</a>
+        <a class="sidebar-link" href="#llm-providers">Model Providers</a>
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">核心概念</div>
+      <div class="sidebar-group-title">Core Concepts</div>
       <div class="sidebar-links">
-        <a class="sidebar-link" href="#architecture-overview">系统架构概览</a>
-        <a class="sidebar-link" href="#three-agents">多智能体协同</a>
-        <a class="sidebar-link" href="#agentic-workflow">智能体运行流程</a>
+        <a class="sidebar-link" href="#architecture-overview">Architecture Overview</a>
+        <a class="sidebar-link" href="#three-agents">Multi-Agent Collaboration</a>
+        <a class="sidebar-link" href="#agentic-workflow">Agent Workflow</a>
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">人在回路</div>
+      <div class="sidebar-group-title">Human in the Loop</div>
       <div class="sidebar-links">
-        <a class="sidebar-link" href="#human-loop-pause">什么是人在回路</a>
-        <a class="sidebar-link" href="#skill-audit">技能审核</a>
-        <a class="sidebar-link" href="#intervention-timing">干预时机</a>
+        <a class="sidebar-link" href="#human-loop-pause">What Is Human in the Loop</a>
+        <a class="sidebar-link" href="#skill-audit">Skill Audit</a>
+        <a class="sidebar-link" href="#intervention-timing">When to Intervene</a>
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">插件工具箱</div>
+      <div class="sidebar-group-title">Plugin Toolbox</div>
       <div class="sidebar-links">
         <a class="sidebar-link" href="#castsense">CastSense</a>
         <a class="sidebar-link" href="#castfeat">CastFeat</a>
@@ -833,267 +833,267 @@
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">Skill 技能库</div>
+      <div class="sidebar-group-title">Skill System</div>
       <div class="sidebar-links">
-        <a class="sidebar-link" href="#skill-what">Skill 是什么</a>
-        <a class="sidebar-link" href="#skill-structure">文件结构</a>
-        <a class="sidebar-link" href="#skill-review">审核与沉淀</a>
+        <a class="sidebar-link" href="#skill-what">What Is a Skill</a>
+        <a class="sidebar-link" href="#skill-structure">Skill File Structure</a>
+        <a class="sidebar-link" href="#skill-review">Review & Curate</a>
         <a class="sidebar-link" href="#cast-creation">/cast-creation</a>
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">使用示例</div>
+      <div class="sidebar-group-title">Examples</div>
       <div class="sidebar-links">
-        <a class="sidebar-link" href="#example-load">电力负荷预测</a>
-        <a class="sidebar-link" href="#example-solar">光伏发电预测</a>
-        <a class="sidebar-link" href="#example-finance">金融时序预测</a>
+        <a class="sidebar-link" href="#example-load">Power Load Forecasting</a>
+        <a class="sidebar-link" href="#example-solar">Solar Forecasting</a>
+        <a class="sidebar-link" href="#example-finance">Financial Forecasting</a>
       </div>
     </div>
     <div class="sidebar-group">
-      <div class="sidebar-group-title">FAQ 与排查</div>
+      <div class="sidebar-group-title">FAQ & Troubleshooting</div>
       <div class="sidebar-links">
-        <a class="sidebar-link" href="#common-questions">常见问题</a>
-        <a class="sidebar-link" href="#env-troubleshooting">环境排查</a>
+        <a class="sidebar-link" href="#common-questions">FAQ</a>
+        <a class="sidebar-link" href="#env-troubleshooting">Environment Issues</a>
       </div>
     </div>
   </aside>
 
   <main class="content">
-    <!-- ── 快速开始 ── -->
-    <section class="doc-section" id="quick-start" data-group-title="快速开始">
-      <h2>快速开始</h2>
+    <!-- Quick Start -->
+    <section class="doc-section" id="quick-start" data-group-title="Quick Start">
+      <h2>Quick Start</h2>
 
-      <article class="doc-block" id="install-setup" data-title="安装与环境配置">
-        <h3>安装与环境配置</h3>
-        <p>CastClaw 通过 <code>npm</code> 安装，运行时同时依赖 Bun、Python 与 uv。建议先把运行时准备齐，再启动 CLI 做验证。</p>
-        <p><strong>前置依赖：</strong>Bun ≥ 1.3.11、Python ≥ 3.10、uv、至少一个 LLM API Key。</p>
+      <article class="doc-block" id="install-setup" data-title="Installation & Environment">
+        <h3>Installation & Environment</h3>
+        <p>CastClaw is installed via <code>npm</code> and requires Bun, Python, and uv at runtime. Prepare the runtime first, then launch the CLI for a quick smoke test.</p>
+        <p><strong>Prerequisites:</strong> Bun ≥ 1.3.11, Python ≥ 3.10, uv, and at least one LLM API key.</p>
         <table class="doc-table">
           <thead>
             <tr>
-              <th>依赖</th>
-              <th>版本</th>
-              <th>用途</th>
+              <th>Dependency</th>
+              <th>Version</th>
+              <th>Purpose</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>Bun</td>
               <td>≥ 1.3.11</td>
-              <td>运行时与包管理器</td>
+              <td>Runtime and package manager</td>
             </tr>
             <tr>
               <td>Python</td>
               <td>≥ 3.10</td>
-              <td>时序模型的 ML 后端</td>
+              <td>ML backend for forecasting models</td>
             </tr>
             <tr>
               <td>uv</td>
               <td>Latest</td>
-              <td>Python 依赖管理</td>
+              <td>Python dependency management</td>
             </tr>
             <tr>
-              <td>GPU（可选）</td>
+              <td>GPU (optional)</td>
               <td>CUDA 12.8</td>
-              <td>深度学习模型加速</td>
+              <td>Deep learning acceleration</td>
             </tr>
             <tr class="ascend-row">
-              <td>Ascend NPU（可选）<span class="tag hi inline-tag">推荐试用</span></td>
-              <td>Atlas 800 A2/A3（Ascend HDK 25.5.1）</td>
-              <td>华为昇腾上的深度学习加速，鼓励优先体验国产计算算力。</td>
+              <td>Ascend NPU (optional)<span class="tag hi inline-tag">Recommended</span></td>
+              <td>Atlas 800 A2/A3 (Ascend HDK 25.5.1)</td>
+              <td>Huawei Ascend acceleration for deep learning. Recommended if you want to try domestic compute infrastructure.</td>
             </tr>
           </tbody>
         </table>
-        <div class="code-block"><pre><code><span class="comment"># 安装 CastClaw CLI</span>
+        <div class="code-block"><pre><code><span class="comment"># Install the CastClaw CLI</span>
 <span class="cmd">npm install -g castclaw</span>
 
-<span class="comment"># 验证基础运行时</span>
+<span class="comment"># Verify the base runtime</span>
 <span class="cmd">castclaw --version</span>
 <span class="cmd">python --version</span>
 <span class="cmd">uv --version</span>
 
-<span class="comment"># 同步 Python 后端依赖</span>
+<span class="comment"># Sync Python backend dependencies</span>
 <span class="cmd">cd python && uv sync</span></code></pre></div>
-        <p>LLM 可通过环境变量或 <code>castclaw.json</code> 配置，任选其一：</p>
+        <p>You can configure your LLM through environment variables or <code>castclaw.json</code>. Either approach works:</p>
         <div class="code-block"><pre><code><span class="cmd">export ANTHROPIC_API_KEY=</span><span class="str">your_key_here</span>
 <span class="cmd">export OPENAI_API_KEY=</span><span class="str">your_key_here</span>
 <span class="cmd">export DEEPSEEK_API_KEY=</span><span class="str">your_key_here</span></code></pre></div>
         <div class="callout">
-          <strong>建议</strong>
-          <p>第一次上手只接一个熟悉的提供商，避免同时调试多套 API 配置。</p>
+          <strong>Recommendation</strong>
+          <p>For your first run, connect only one provider you already know well. Avoid debugging several API stacks at the same time.</p>
         </div>
       </article>
 
-      <article class="doc-block" id="first-forecast" data-title="第一个预测任务">
-        <h3>第一个预测任务（5 分钟上手）</h3>
-        <p>推荐直接用 <a href="../assets/load.csv" download><code>load.csv</code></a>（TIMESTAMP / LOAD 字段，小时频率）快速走通主流程。目标是理解系统节奏，不是调到最优。</p>
+      <article class="doc-block" id="first-forecast" data-title="First Forecast Task">
+        <h3>First Forecast Task (5-Minute Walkthrough)</h3>
+        <p>We recommend starting with <a href="../assets/load.csv" download><code>load.csv</code></a> (fields: <code>TIMESTAMP</code> / <code>LOAD</code>, hourly frequency) to walk through the full workflow quickly. The goal is to understand the system rhythm, not to squeeze out the absolute best score on day one.</p>
         <div class="workflow">
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">1</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>准备工作目录</h4>
-              <p>把 <code>load.csv</code> 放到独立实验目录，避免与其他任务共享 <code>.forecast/</code> 状态。</p>
+              <h4>Prepare a clean working directory</h4>
+              <p>Put <code>load.csv</code> in a dedicated experiment folder so it does not share <code>.forecast/</code> state with other tasks.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">2</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>启动 CLI</h4>
-              <p>进入目录后运行 <code>castclaw</code>，首次进入确认模型和预算配置。</p>
+              <h4>Launch the CLI</h4>
+              <p>Run <code>castclaw</code> inside that directory. On the first run, confirm the model and budget settings.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">3</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>在 Planner 输入任务描述</h4>
-              <p>明确目标列、时间粒度、预测步长和评估指标，描述越具体，Skill 草案越准。</p>
+              <h4>Enter the task in Planner</h4>
+              <p>Specify the target column, time granularity, forecast horizon, and metrics. The more concrete the description, the better the Skill draft.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">4</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>审核 Skill 草案</h4>
-              <p>确认模型族、搜索空间与风险提示无明显偏差后继续。</p>
+              <h4>Review the Skill draft</h4>
+              <p>Check whether the model families, search space, and risk notes are reasonable before continuing.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">5</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>观察迭代与最终报告</h4>
-              <p>Forecaster 执行实验循环，Critic 生成 <code>final-report.md</code>，留意是否出现人在回路暂停。</p>
+              <h4>Watch iterations and the final report</h4>
+              <p>Forecaster runs the experiment loop, and Critic produces <code>final-report.md</code>. Watch for possible human-in-the-loop pauses.</p>
             </div>
           </div>
         </div>
         <div class="code-block"><pre><code><span class="cmd">mkdir my-run && cd my-run</span>
-<span class="comment"># 将 load.csv 放入当前目录后</span>
+<span class="comment"># After placing load.csv in the current folder</span>
 <span class="cmd">castclaw</span></code></pre></div>
         <div class="callout info">
-          <strong>Planner 输入示例</strong>
-          <p>请用 <code>load.csv</code> 做未来 24 小时电力负荷预测；时间列为 <code>TIMESTAMP</code>，目标列为 <code>LOAD</code>，评估指标使用 MAE 与 MAPE，实验预算控制在 20 次以内。</p>
+          <strong>Sample Planner prompt</strong>
+          <p>Please forecast the next 24 hours of power load using <code>load.csv</code>; the time column is <code>TIMESTAMP</code>, the target column is <code>LOAD</code>, the evaluation metrics are MAE and MAPE, and the experiment budget should stay within 20 runs.</p>
         </div>
       </article>
 
-      <article class="doc-block" id="cli-basics" data-title="CLI 基础操作">
-        <h3>CLI 基础操作</h3>
-        <p>CLI 是与三个智能体协同工作的命令行工作台，核心是理解"当前在哪个阶段、由谁负责"。</p>
+      <article class="doc-block" id="cli-basics" data-title="CLI Basics">
+        <h3>CLI Basics</h3>
+        <p>The CLI is the command-line workspace where the three agents collaborate. The key is to know which stage you are in and which agent owns the next move.</p>
         <table class="doc-table">
           <thead>
             <tr>
-              <th>快捷键 / 区域</th>
-              <th>作用</th>
-              <th>应当关注什么</th>
+              <th>Shortcut / Area</th>
+              <th>Purpose</th>
+              <th>What to watch</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><code>Ctrl+1</code></td>
-              <td>切换到 Planner</td>
-              <td>任务定义是否完整，分析报告与 Skill 草案是否合理。</td>
+              <td>Switch to Planner</td>
+              <td>Check whether task definition, analysis output, and Skill drafts are coherent.</td>
             </tr>
             <tr>
               <td><code>Ctrl+2</code></td>
-              <td>切换到 Forecaster</td>
-              <td>实验是否停滞，是否持续改善，是否触发人在回路。</td>
+              <td>Switch to Forecaster</td>
+              <td>Watch for stagnation, improvement pace, and human-in-the-loop triggers.</td>
             </tr>
             <tr>
               <td><code>Ctrl+3</code></td>
-              <td>切换到 Critic</td>
-              <td>报告是否覆盖性能分解与下一步建议。</td>
+              <td>Switch to Critic</td>
+              <td>Verify that the report covers breakdowns, evidence, and concrete next steps.</td>
             </tr>
             <tr>
-              <td>任务状态面板</td>
-              <td>查看当前阶段与预算</td>
-              <td>确认处于哪一阶段（Init / Analysis / Forecasting / Report）。</td>
+              <td>Task status panel</td>
+              <td>Inspect current stage and budget</td>
+              <td>Confirm whether you are in Init, Analysis, Forecasting, or Report.</td>
             </tr>
           </tbody>
         </table>
         <div class="callout warn">
-          <strong>常见误区</strong>
-          <p>CLI 是阶段驱动的任务工作台，不是单步问答界面。重点是"当前在哪个阶段，下一步由谁负责"。</p>
+          <strong>Common misunderstanding</strong>
+          <p>The CLI is a stage-driven task workspace, not a one-shot chat box. The important question is always: which stage are we in, and who acts next?</p>
         </div>
       </article>
     </section>
 
-    <!-- ── CLI 命令参考 ── -->
-    <section class="doc-section" id="cli-reference" data-group-title="CLI 命令参考">
-      <h2>CLI 命令参考</h2>
+    <!-- CLI Reference -->
+    <section class="doc-section" id="cli-reference" data-group-title="CLI Reference">
+      <h2>CLI Reference</h2>
 
-      <article class="doc-block" id="launch-options" data-title="castclaw 启动选项">
-        <h3><code>castclaw</code> 启动选项</h3>
+      <article class="doc-block" id="launch-options" data-title="castclaw Launch Options">
+        <h3><code>castclaw</code> Launch Options</h3>
         <table class="doc-table">
-          <thead><tr><th>命令</th><th>用途</th></tr></thead>
+          <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr>
               <td><code>castclaw</code></td>
-              <td>在当前目录启动 CLI，基于当前项目上下文接管预测任务。</td>
+              <td>Launch CastClaw in the current directory and take over the forecasting task in this project context.</td>
             </tr>
             <tr>
               <td><code>castclaw --model anthropic/claude-sonnet-4-6</code></td>
-              <td>启动时显式指定主模型，临时覆盖默认配置。</td>
+              <td>Explicitly select the primary model at launch time and temporarily override the default configuration.</td>
             </tr>
             <tr>
               <td><code>castclaw --version</code></td>
-              <td>查看当前 CLI 版本，排查环境不一致时有用。</td>
+              <td>Print the current CLI version, useful when you are debugging environment mismatch.</td>
             </tr>
           </tbody>
         </table>
       </article>
 
-      <article class="doc-block" id="shortcut-cheatsheet" data-title="快捷键速查">
-        <h3>快捷键速查</h3>
+      <article class="doc-block" id="shortcut-cheatsheet" data-title="Shortcut Cheat Sheet">
+        <h3>Shortcut Cheat Sheet</h3>
         <table class="doc-table">
-          <thead><tr><th>快捷键</th><th>功能</th></tr></thead>
+          <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td><code>Ctrl+1</code></td><td>切换到 Planner</td></tr>
-            <tr><td><code>Ctrl+2</code></td><td>切换到 Forecaster</td></tr>
-            <tr><td><code>Ctrl+3</code></td><td>切换到 Critic</td></tr>
+            <tr><td><code>Ctrl+1</code></td><td>Switch to Planner</td></tr>
+            <tr><td><code>Ctrl+2</code></td><td>Switch to Forecaster</td></tr>
+            <tr><td><code>Ctrl+3</code></td><td>Switch to Critic</td></tr>
           </tbody>
         </table>
-        <p style="margin-top:10px;font-size:0.9rem;color:#555;">熟练使用这三个快捷键后，你会自然形成节奏：在 Planner 定义与审核，在 Forecaster 看迭代，在 Critic 看结论。</p>
+        <p style="margin-top:10px;font-size:0.9rem;color:#555;">Once these three shortcuts become muscle memory, the workflow feels natural: define and review in Planner, observe convergence in Forecaster, and judge evidence in Critic.</p>
       </article>
 
-      <article class="doc-block" id="forecast-tools" data-title="forecast_state / forecast_task 工具">
-        <h3><code>forecast_state</code> / <code>forecast_task</code> 工具</h3>
+      <article class="doc-block" id="forecast-tools" data-title="forecast_state / forecast_task Tools">
+        <h3><code>forecast_state</code> / <code>forecast_task</code> Tools</h3>
         <div class="panel-row">
           <div class="panel">
             <h4><code>forecast_state</code></h4>
             <ul>
-              <li><code>forecast_state init</code>：初始化任务并创建 <code>.forecast/</code> 目录。</li>
-              <li>阶段转换强制执行，不可随意跳过，确保过程可追溯。</li>
+              <li><code>forecast_state init</code>: initialize the task and create the <code>.forecast/</code> workspace.</li>
+              <li>Stage transitions are enforced. You should not skip them if you want the run to remain traceable.</li>
             </ul>
           </div>
           <div class="panel">
             <h4><code>forecast_task</code></h4>
             <ul>
-              <li>面向 <code>task.json</code> 的任务定义辅助工具。</li>
-              <li>适合在 Init 阶段确认目标列、时间列、步长与评估指标。</li>
+              <li>Helper tool for task definition around <code>task.json</code>.</li>
+              <li>Useful during Init when you need to confirm target column, time column, forecast horizon, and metrics.</li>
             </ul>
           </div>
         </div>
       </article>
     </section>
 
-    <!-- ── 配置参考 ── -->
-    <section class="doc-section" id="config-reference" data-group-title="配置参考">
-      <h2>配置参考</h2>
+    <!-- Configuration -->
+    <section class="doc-section" id="config-reference" data-group-title="Configuration">
+      <h2>Configuration</h2>
 
-      <article class="doc-block" id="cast-md" data-title="CAST.md 约束文件">
-        <h3><code>CAST.md</code> 约束文件</h3>
-        <p>项目级行为约束，自动注入到每个 Agent 上下文中。承载稳定、长期、所有阶段都应知道的规则。</p>
+      <article class="doc-block" id="cast-md" data-title="CAST.md Policy File">
+        <h3><code>CAST.md</code> Policy File</h3>
+        <p>This is the project-level policy file automatically injected into every agent context. It should hold stable, long-lived rules that every stage should know.</p>
         <table class="doc-table">
-          <thead><tr><th>字段</th><th>说明</th></tr></thead>
+          <thead><tr><th>Field</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>banned_models</code></td><td>禁用模型列表，直接排除低价值或资源不允许的模型族。</td></tr>
-            <tr><td><code>max_experiments</code></td><td>最大实验次数，限制 Forecaster 的探索预算。</td></tr>
-            <tr><td><code>no_improve_threshold</code></td><td>连续无改善阈值，到达后触发人在回路暂停。</td></tr>
-            <tr><td><code>eval_metric</code></td><td>评估指标偏好，例如 MAE、MAPE 或 RMSE。</td></tr>
-            <tr><td><code>domain_notes</code></td><td>领域背景说明，注入每个 Agent 上下文，帮助结果判断更符合业务认知。</td></tr>
+            <tr><td><code>banned_models</code></td><td>List of banned models or model families that should be excluded immediately.</td></tr>
+            <tr><td><code>max_experiments</code></td><td>Maximum number of experiments, which caps the Forecaster exploration budget.</td></tr>
+            <tr><td><code>no_improve_threshold</code></td><td>Number of non-improving rounds before a human-in-the-loop pause is triggered.</td></tr>
+            <tr><td><code>eval_metric</code></td><td>Preferred evaluation metric such as MAE, MAPE, or RMSE.</td></tr>
+            <tr><td><code>domain_notes</code></td><td>Domain background injected into every agent context to keep judgments aligned with business reality.</td></tr>
           </tbody>
         </table>
       </article>
 
-      <article class="doc-block" id="castclaw-json" data-title="castclaw.json 参数">
-        <h3><code>castclaw.json</code> 参数</h3>
-        <p>任务级或项目级默认配置入口，适合团队共享默认模型配置和预算策略。</p>
+      <article class="doc-block" id="castclaw-json" data-title="castclaw.json Parameters">
+        <h3><code>castclaw.json</code> Parameters</h3>
+        <p>This is the task-level or project-level default configuration entry point. It is a good place to share baseline model and budget settings across a team.</p>
         <div class="code-block"><pre><code>{
   "model": "anthropic/claude-sonnet-4-6",
   "light_model": "anthropic/claude-haiku-4-5",
@@ -1101,301 +1101,301 @@
   "no_improve_threshold": 5
 }</code></pre></div>
         <div class="callout info">
-          <strong>配置建议</strong>
-          <p>把高质量模型放主模型位，轻量模型放辅助分析路径，平衡速度与质量。</p>
+          <strong>Configuration tip</strong>
+          <p>Put your highest-quality model in the primary slot and a lighter model on the auxiliary analysis path to balance quality and speed.</p>
         </div>
       </article>
 
-      <article class="doc-block" id="llm-providers" data-title="模型接入（LLM 配置）">
-        <h3>模型接入（LLM 配置）</h3>
-        <p>CastClaw 通过 Vercel AI SDK 风格接入兼容多家提供商，按网络环境、预算和偏好自由选择。</p>
+      <article class="doc-block" id="llm-providers" data-title="Model Providers (LLM Configuration)">
+        <h3>Model Providers (LLM Configuration)</h3>
+        <p>CastClaw follows a Vercel AI SDK style integration pattern, so you can connect multiple providers depending on network conditions, budget, and deployment constraints.</p>
         <div class="panel-row-3">
           <div class="panel">
-            <h4>国际提供商</h4>
-            <p>Anthropic Claude、OpenAI GPT、Google Gemini，适合有稳定海外 API 接入的环境。</p>
+            <h4>Global providers</h4>
+            <p>Anthropic Claude, OpenAI GPT, and Google Gemini fit environments with stable international API access.</p>
           </div>
           <div class="panel">
-            <h4>国内提供商</h4>
-            <p>DeepSeek、Qwen、GLM 等，适合国内网络环境和更灵活的接入策略。</p>
+            <h4>China-friendly providers</h4>
+            <p>DeepSeek, Qwen, and GLM fit domestic network environments or teams that prefer locally accessible endpoints.</p>
           </div>
           <div class="panel">
-            <h4>部署方式</h4>
-            <p>直接 API、自建推理服务或昇腾算力 API，便于企业内部统一部署。</p>
+            <h4>Deployment options</h4>
+            <p>Direct APIs, self-hosted inference services, or Ascend-backed compute APIs all fit the same orchestration model.</p>
           </div>
         </div>
       </article>
     </section>
 
-    <!-- ── 核心概念 ── -->
-    <section class="doc-section" id="core-concepts" data-group-title="核心概念">
-      <h2>核心概念</h2>
+    <!-- Core Concepts -->
+    <section class="doc-section" id="core-concepts" data-group-title="Core Concepts">
+      <h2>Core Concepts</h2>
 
-      <article class="doc-block" id="architecture-overview" data-title="系统架构概览">
-        <h3>系统架构概览</h3>
-        <p>CastClaw 是四层协同结构：<code>CastRuntime</code> 负责执行与状态，<code>CastSkill</code> 负责策略选择，插件生态承担具体能力，<code>TimeEmbed</code> 提供表征与经验对齐。</p>
+      <article class="doc-block" id="architecture-overview" data-title="Architecture Overview">
+        <h3>Architecture Overview</h3>
+        <p>CastClaw uses a four-layer collaborative architecture: <code>CastRuntime</code> handles execution and state, <code>CastSkill</code> handles strategy selection, the plugin ecosystem provides concrete capabilities, and <code>TimeEmbed</code> aligns representations and experience across tasks.</p>
         <div class="code-block"><pre><code>User Task
   ↓
-CastRuntime（执行循环、上下文管理）
+CastRuntime (execution loop, context management)
   ↓
-CastSkill（策略检索与选择）
+CastSkill (strategy retrieval and selection)
   ↓
 CastSense → CastFeat → CastZoo
   ↓
 Reflection / Report</code></pre></div>
-        <img src="../assets/architecture.svg" alt="CastClaw 系统架构图" class="arch-img" onerror="this.style.display='none'" />
+        <img src="../assets/architecture.svg" alt="CastClaw system architecture" class="arch-img" onerror="this.style.display='none'" />
         <table class="doc-table">
-          <thead><tr><th>层级</th><th>职责</th><th>何时接触</th></tr></thead>
+          <thead><tr><th>Layer</th><th>Responsibility</th><th>When You Touch It</th></tr></thead>
           <tbody>
             <tr>
               <td><strong>CastRuntime</strong></td>
-              <td>任务上下文管理、阶段推进、Agent Loop、文件状态同步。</td>
-              <td>启动任务、切换阶段、恢复暂停任务。</td>
+              <td>Task context management, phase progression, agent loop control, and file-state synchronization.</td>
+              <td>When starting a task, switching phases, or resuming a paused run.</td>
             </tr>
             <tr>
               <td><strong>CastSkill</strong></td>
-              <td>根据分析结果检索或生成策略，决定模型路线与搜索空间。</td>
-              <td>审核 Skill 草案、沉淀经验、复用历史策略。</td>
+              <td>Retrieves or generates strategies from analysis results and decides model families and search spaces.</td>
+              <td>When reviewing Skill drafts, curating experience, or reusing prior strategies.</td>
             </tr>
             <tr>
               <td><strong>Plugin Ecosystem</strong></td>
-              <td>通过 CastSense / CastFeat / CastZoo 完成诊断、表示构建和模型编排。</td>
-              <td>分析结果解释、特征设计和模型选择。</td>
+              <td>Uses CastSense, CastFeat, and CastZoo for diagnostics, representation building, and model orchestration.</td>
+              <td>When interpreting results, designing features, or choosing model paths.</td>
             </tr>
             <tr>
               <td><strong>TimeEmbed</strong></td>
-              <td>跨任务表征、相似模式检索和经验对齐的能力底座。</td>
-              <td>通常不直接操作，影响 Skill 检索质量。</td>
+              <td>The capability foundation for cross-task representations, similar-pattern retrieval, and experience alignment.</td>
+              <td>You usually do not operate it directly, but it affects Skill retrieval quality.</td>
             </tr>
           </tbody>
         </table>
       </article>
 
-      <article class="doc-block" id="three-agents" data-title="多智能体协同">
-        <h3>多智能体协同（Planner / Forecaster / Critic）</h3>
-        <p>三个智能体是严格分工的流水线，把它们看成不同岗位，而不是可互相替代的聊天窗口。</p>
+      <article class="doc-block" id="three-agents" data-title="Multi-Agent Collaboration">
+        <h3>Multi-Agent Collaboration (Planner / Forecaster / Critic)</h3>
+        <p>The three agents form a strict assembly line. Treat them as different roles, not interchangeable chat windows.</p>
         <table class="doc-table">
-          <thead><tr><th>智能体</th><th>核心职责</th><th>关键行为</th></tr></thead>
+          <thead><tr><th>Agent</th><th>Core Responsibility</th><th>Key Behaviors</th></tr></thead>
           <tbody>
             <tr>
               <td><strong>Planner</strong></td>
-              <td>任务定义、数据诊断、阶段编排。</td>
-              <td>并发执行定性与定量分析，输出预测前报告，生成候选 Skill。</td>
+              <td>Task definition, data diagnostics, and phase orchestration.</td>
+              <td>Runs qualitative and quantitative analysis in parallel, writes the pre-forecast report, and drafts candidate Skills.</td>
             </tr>
             <tr>
               <td><strong>Forecaster</strong></td>
-              <td>实验循环与策略试错。</td>
-              <td>读取历史、选配置、调用 CastFeat / CastZoo、记录反思、触发人在回路。</td>
+              <td>Experiment loops and strategy iteration.</td>
+              <td>Reads history, selects configs, calls CastFeat and CastZoo, records reflections, and triggers Human in the Loop when needed.</td>
             </tr>
             <tr>
               <td><strong>Critic</strong></td>
-              <td>结果聚合与最终报告。</td>
-              <td>对比模型族表现、生成可视化与结构化结论，产出 <code>final-report.md</code>。</td>
+              <td>Result aggregation and final reporting.</td>
+              <td>Compares model-family performance, generates visualizations and structured conclusions, and produces <code>final-report.md</code>.</td>
             </tr>
           </tbody>
         </table>
       </article>
 
-      <article class="doc-block" id="agentic-workflow" data-title="智能体运行流程">
-        <h3>智能体运行流程</h3>
-        <p>CastClaw 把预测任务拆成五个强约束阶段，阶段切换由工具和文件协议控制，不依赖 LLM 自律性，因此流程可追溯、可审计。</p>
+      <article class="doc-block" id="agentic-workflow" data-title="Agentic Workflow">
+        <h3>Agentic Workflow</h3>
+        <p>CastClaw breaks forecasting into five tightly constrained phases. Phase transitions are enforced by tools and file protocols rather than LLM self-discipline, which makes the workflow traceable and auditable.</p>
         <div class="workflow">
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">1</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>初始化（Init）</h4>
-              <p>冻结 <code>task.json</code>，创建 <code>.forecast/</code> 工作目录。后续所有实验都绑定在同一任务定义上。</p>
+              <h4>Initialization</h4>
+              <p>Freezes <code>task.json</code> and creates the <code>.forecast/</code> working directory. Every later experiment stays bound to the same task definition.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">2</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>预测前分析（Pre-forecast Analysis）</h4>
-              <p>双轨并发：定性领域分析（WebSearch）+ 定量数据诊断（CastSense），融合为驱动 Skill 生成的预测前报告。</p>
+              <h4>Pre-forecast Analysis</h4>
+              <p>Runs two tracks in parallel: qualitative domain analysis through WebSearch and quantitative diagnostics through CastSense. The outputs merge into the pre-forecast report that drives Skill generation.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">3</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>技能审核（Skill Audit）</h4>
-              <p>Planner 生成 2–4 个 Skill 候选后暂停，等待人类审核模型路线、风险与搜索空间，再进入实验循环。</p>
+              <h4>Skill Audit</h4>
+              <p>Planner pauses after drafting 2 to 4 candidate Skills, waiting for human review of model routes, risks, and search spaces before experiments begin.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">4</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>预测迭代（Forecasting）</h4>
-              <p>读取历史最佳结果 → 选配置 → CastFeat 构建表示 → CastZoo 执行训练评估 → 反思记录 → 预算检查 → 循环。停滞时触发人在回路。</p>
+              <h4>Forecasting</h4>
+              <p>Read the best prior result → choose a config → build representations with CastFeat → train and evaluate through CastZoo → record reflections → check budget → repeat. Human in the Loop is triggered when progress stalls.</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">5</div><div class="wf-line"></div></div>
             <div class="wf-body">
-              <h4>后置报告（Post-forecast Report）</h4>
-              <p>Critic 汇总实验产物、性能分解与可视化说明，生成结构化的 <code>final-report.md</code>。</p>
+              <h4>Post-forecast Report</h4>
+              <p>Critic consolidates experiment artifacts, performance breakdowns, and visual explanations into a structured <code>final-report.md</code>.</p>
             </div>
           </div>
         </div>
         <div class="callout">
-          <strong>设计重点</strong>
-          <p>CastClaw 的差异化不在"跑更多模型"，而在先分析、再审核、后迭代，并在关键节点允许人介入纠偏。</p>
+          <strong>Design focus</strong>
+          <p>CastClaw is not differentiated by "running more models." It is differentiated by analyzing first, reviewing second, iterating third, and allowing humans to correct the path at critical points.</p>
         </div>
       </article>
 
     </section>
 
-    <!-- ── 人在回路 ── -->
-    <section class="doc-section" id="human-loop-collaboration" data-group-title="人在回路">
-      <h2>人在回路</h2>
+    <!-- Human in the Loop -->
+    <section class="doc-section" id="human-loop-collaboration" data-group-title="Human in the Loop">
+      <h2>Human in the Loop</h2>
 
-      <article class="doc-block" id="human-loop-pause" data-title="什么是人在回路">
-        <h3>什么是人在回路</h3>
-        <p>当 Forecaster 连续多轮无改善、出现异常结果，或策略与领域认知明显冲突时，系统会暂停在可恢复点等待人类反馈。这不是任务失败，而是强制校正窗口。</p>
+      <article class="doc-block" id="human-loop-pause" data-title="What Human in the Loop Means">
+        <h3>What Human in the Loop Means</h3>
+        <p>When Forecaster shows no improvement across multiple rounds, produces abnormal results, or follows a strategy that clearly conflicts with domain knowledge, the system pauses at a recoverable checkpoint and waits for human feedback. This is not failure. It is a forced correction window.</p>
         <div class="panel-row-3">
           <div class="panel">
-            <h4>节点一：任务设定确认</h4>
-            <p>确认目标列、时间列、预测步长、评估指标与资源约束，防止错误任务定义被后续持续放大。</p>
+            <h4>Checkpoint 1: Confirm the task setup</h4>
+            <p>Confirm the target column, time column, forecast horizon, evaluation metric, and resource limits so a flawed task definition does not get amplified downstream.</p>
           </div>
           <div class="panel">
-            <h4>节点二：技能策略审核</h4>
-            <p>确认模型族、参数搜索空间和风险提示是否合理，避免在错误方向上生成大规模实验。</p>
+            <h4>Checkpoint 2: Review the strategy Skill</h4>
+            <p>Confirm that the model families, parameter search spaces, and risk notes are reasonable before large-scale experiments are launched in the wrong direction.</p>
           </div>
           <div class="panel">
-            <h4>节点三：实验停滞干预</h4>
-            <p>注入领域先验、限制无效模型族或补充数据特征假设，再恢复迭代。</p>
+            <h4>Checkpoint 3: Intervene during stagnation</h4>
+            <p>Inject domain priors, block ineffective model families, or add new feature hypotheses before resuming iteration.</p>
           </div>
         </div>
         <div class="callout warn">
-          <strong>不要把人在回路理解成"重跑按钮"</strong>
-          <p>有效的介入应当改变策略假设，例如限定模型族、缩窄搜索空间、说明异常日期，或补充外部约束。</p>
+          <strong>Do not treat Human in the Loop as a rerun button</strong>
+          <p>Effective intervention changes the strategic assumptions: constrain model families, narrow the search space, explain anomalous dates, or add external constraints.</p>
         </div>
       </article>
 
-      <article class="doc-block" id="skill-audit" data-title="技能审核：如何介入">
-        <h3>技能审核：如何介入</h3>
-        <p>审核 Skill 时，重点是判断"这套策略是否真的适用于当前任务"，而不是 YAML 写得是否漂亮。关注适用条件、搜索空间和风险提示三部分。</p>
+      <article class="doc-block" id="skill-audit" data-title="Skill Audit: How to Intervene">
+        <h3>Skill Audit: How to Intervene</h3>
+        <p>When reviewing a Skill, the key question is whether the strategy truly fits the current task, not whether the YAML looks neat. Focus on applicability, search space, and risk notes.</p>
         <div class="panel-row">
           <div class="panel">
-            <h4>审核关注点</h4>
+            <h4>What to review</h4>
             <ul>
-              <li>适用条件是否与数据特征匹配（强季节性、长序列、稳定频率等）。</li>
-              <li>参数搜索空间是否过宽，会浪费预算在低价值区域。</li>
-              <li>风险警告是否覆盖已知缺陷（小样本过拟合、分布漂移、夜间零值等）。</li>
+              <li>Whether the applicability conditions match the data profile, such as strong seasonality, long sequences, or stable frequency.</li>
+              <li>Whether the parameter search space is too broad and likely to waste budget on low-value regions.</li>
+              <li>Whether the risk warnings cover known failure modes such as overfitting on small samples, distribution drift, or nighttime zeros.</li>
             </ul>
           </div>
           <div class="panel">
-            <h4>建议的介入方式</h4>
+            <h4>Recommended interventions</h4>
             <ul>
-              <li>直接删掉明显不合适的模型族，而不是让 Forecaster 用预算去证明它不合适。</li>
-              <li>把已知的重要节假日、设备变更、政策事件写进领域说明。</li>
-              <li>缩窄学习率、窗口长度或 patch 长度等关键搜索维度。</li>
+              <li>Remove clearly unsuitable model families directly instead of spending budget to prove they are wrong.</li>
+              <li>Add known holidays, equipment changes, or policy events to the domain notes.</li>
+              <li>Narrow critical search dimensions such as learning rate, window length, or patch length.</li>
             </ul>
           </div>
         </div>
       </article>
 
-      <article class="doc-block" id="intervention-timing" data-title="结果确认与干预时机">
-        <h3>结果确认与干预时机</h3>
-        <p>最值得人类确认的是"方向性信息"发生变化的时候，而不是每一轮实验结果。</p>
+      <article class="doc-block" id="intervention-timing" data-title="When to Confirm Results and Intervene">
+        <h3>When to Confirm Results and Intervene</h3>
+        <p>The most valuable moments for human review are when directional signals change, not after every single experiment round.</p>
         <div class="tag-row">
-          <span class="tag hi">连续无改善</span>
-          <span class="tag hi">结果与领域常识冲突</span>
-          <span class="tag">最佳模型族切换</span>
-          <span class="tag">异常日期影响明显</span>
-          <span class="tag">预算即将耗尽</span>
+          <span class="tag hi">No improvement across rounds</span>
+          <span class="tag hi">Results conflict with domain knowledge</span>
+          <span class="tag">Best model family changes</span>
+          <span class="tag">Anomalous dates matter materially</span>
+          <span class="tag">Budget is nearly exhausted</span>
         </div>
         <div class="callout info">
-          <strong>实用原则</strong>
-          <p>如果你的介入无法改变下一轮策略，先不要介入。人在回路最有价值的地方是改变路径，而不是重复确认现状。</p>
+          <strong>Practical rule</strong>
+          <p>If your intervention cannot change the next strategy decision, do not step in yet. Human in the Loop creates value by changing the path, not by repeatedly confirming the current state.</p>
         </div>
       </article>
     </section>
 
-    <!-- ── 插件工具箱 ── -->
-    <section class="doc-section" id="plugin-toolbox-section" data-group-title="插件工具箱">
-      <h2>插件工具箱</h2>
+    <!-- Plugin Toolbox -->
+    <section class="doc-section" id="plugin-toolbox-section" data-group-title="Plugin Toolbox">
+      <h2>Plugin Toolbox</h2>
 
-      <article class="doc-block" id="castsense" data-title="CastSense：数据诊断">
-        <h3>CastSense：数据诊断</h3>
-        <p>CastSense 负责回答"这个序列现在是什么状态"。它把趋势、季节性、异常和分布变化整理成结构化知识，供 Planner 生成策略时使用。</p>
+      <article class="doc-block" id="castsense" data-title="CastSense: Data Diagnostics">
+        <h3>CastSense: Data Diagnostics</h3>
+        <p>CastSense answers the question, "What state is this series in right now?" It turns trend, seasonality, anomalies, and distribution changes into structured knowledge that Planner can use to generate strategies.</p>
         <div class="panel-row-3">
           <div class="panel">
-            <h4>趋势与周期识别</h4>
-            <p>检测长期趋势、日周期、周周期与多尺度周期，帮助判断优先走哪条模型路线。</p>
+            <h4>Trend and seasonality detection</h4>
+            <p>Detects long-term trends, daily cycles, weekly cycles, and multiscale periodicities to help decide which model path should come first.</p>
           </div>
           <div class="panel">
-            <h4>异常与漂移定位</h4>
-            <p>发现突变、离群点、非平稳性和分布漂移，为风险提示与人在回路干预提供依据。</p>
+            <h4>Anomaly and drift localization</h4>
+            <p>Finds change points, outliers, non-stationarity, and distribution drift, providing evidence for risk prompts and Human in the Loop interventions.</p>
           </div>
           <div class="panel">
-            <h4>结构化输出</h4>
-            <p>把诊断结果沉淀为后续 Skill 检索、特征设计和模型编排都能消费的结构化 knowledge。</p>
+            <h4>Structured outputs</h4>
+            <p>Turns diagnostics into structured knowledge that later Skill retrieval, feature design, and model orchestration can all consume.</p>
           </div>
         </div>
       </article>
 
-      <article class="doc-block" id="castfeat" data-title="CastFeat：特征构建">
-        <h3>CastFeat：特征构建</h3>
-        <p>CastFeat 负责回答"应该怎样把数据变成模型可用的表示"。它把原始时序转成更适配下游模型的 representation。</p>
+      <article class="doc-block" id="castfeat" data-title="CastFeat: Feature Construction">
+        <h3>CastFeat: Feature Construction</h3>
+        <p>CastFeat answers the question, "How should the data be transformed into model-ready representations?" It converts raw time series into forms that better match downstream models.</p>
         <div class="tag-row">
           <span class="tag hi">lag / rolling</span>
-          <span class="tag hi">统计特征</span>
-          <span class="tag hi">频域与多尺度表示</span>
+          <span class="tag hi">statistical features</span>
+          <span class="tag hi">frequency-domain and multiscale representations</span>
           <span class="tag hi">patch / token</span>
           <span class="tag">embedding</span>
           <span class="tag">model-ready representation</span>
         </div>
         <div class="callout">
-          <strong>理解方式</strong>
-          <p>CastFeat 不是"再做一遍手工特征工程"，它把领域特征、统计特征和基础模型输入形式统一到同一条表示构建管线上。</p>
+          <strong>How to think about it</strong>
+          <p>CastFeat is not "manual feature engineering one more time." It unifies domain features, statistical features, and foundation-model input formats into a single representation-building pipeline.</p>
         </div>
       </article>
 
-      <article class="doc-block" id="castzoo" data-title="CastZoo：模型编排">
-        <h3>CastZoo：模型编排</h3>
-        <p>CastZoo 负责回答"用什么模型，以及怎么组合"。它不只是模型仓库，还负责策略化调度。</p>
+      <article class="doc-block" id="castzoo" data-title="CastZoo: Model Orchestration">
+        <h3>CastZoo: Model Orchestration</h3>
+        <p>CastZoo answers, "Which models should be used, and how should they be combined?" It is not only a model repository. It also handles strategy-aware scheduling.</p>
         <div class="panel-row">
           <div class="panel">
-            <h4>支持的模型族</h4>
-            <p>统计模型（ARIMA、ETS、Theta）、机器学习、深度学习（Informer、PatchTST）、基础模型（Chronos、TimesFM、Moirai）。</p>
+            <h4>Supported model families</h4>
+            <p>Statistical models such as ARIMA, ETS, and Theta; machine learning models; deep learning models such as Informer and PatchTST; and foundation models such as Chronos, TimesFM, and Moirai.</p>
           </div>
           <div class="panel">
-            <h4>支持的策略</h4>
-            <p>单模型直接跑、多模型集成（ensemble）、先粗后细两阶段调度，或把基础模型输出作为先验信息。</p>
+            <h4>Supported strategies</h4>
+            <p>Single-model runs, multi-model ensembles, coarse-to-fine two-stage scheduling, or using foundation-model outputs as priors.</p>
           </div>
         </div>
       </article>
     </section>
 
-    <!-- ── Skill 技能库 ── -->
-    <section class="doc-section" id="skill-system" data-group-title="Skill 技能库">
-      <h2>Skill 技能库</h2>
+    <!-- Skill System -->
+    <section class="doc-section" id="skill-system" data-group-title="Skill System">
+      <h2>Skill System</h2>
 
-      <article class="doc-block" id="skill-what" data-title="Skill 是什么">
-        <h3>Skill 是什么</h3>
-        <p>Skill 是"经过分析与审核的策略模板"，描述某类数据在什么条件下适合什么模型族、搜索空间、特征模板，以及有哪些已知风险。它是系统持续进化的关键资产层。</p>
+      <article class="doc-block" id="skill-what" data-title="What a Skill Is">
+        <h3>What a Skill Is</h3>
+        <p>A Skill is a reviewed strategy template. It describes which model families, search spaces, feature templates, and known risks fit a given class of data under specific conditions. It is the key asset layer that lets the system keep evolving.</p>
         <div class="panel-row-3">
           <div class="panel">
-            <h4>承接历史经验</h4>
-            <p>把实验中验证过的路线沉淀下来，不是每次从空白开始。</p>
+            <h4>Carry forward proven experience</h4>
+            <p>Preserve routes that have already been validated in experiments instead of starting from scratch every time.</p>
           </div>
           <div class="panel">
-            <h4>指导未来任务</h4>
-            <p>为新任务缩小模型空间，让 Forecaster 从更合理的起点出发。</p>
+            <h4>Guide future tasks</h4>
+            <p>Narrow the model space for new tasks so Forecaster starts from a more reasonable baseline.</p>
           </div>
           <div class="panel">
-            <h4>允许人类把关</h4>
-            <p>先审核再使用，使系统进化建立在可信策略之上，而不是自动累积噪声。</p>
+            <h4>Keep humans in control</h4>
+            <p>Review before use so the system evolves on top of trusted strategies instead of automatically accumulating noise.</p>
           </div>
         </div>
       </article>
 
-      <article class="doc-block" id="skill-structure" data-title="Skill 文件结构">
-        <h3>Skill 文件结构</h3>
-        <p>Skill 使用 YAML 表示，核心是适用条件、模型族、搜索空间、特征模板和风险项。</p>
+      <article class="doc-block" id="skill-structure" data-title="Skill File Structure">
+        <h3>Skill File Structure</h3>
+        <p>Skills are expressed in YAML. The core fields are applicability conditions, model family, search space, feature template, and risks.</p>
         <div class="code-block"><pre><code>name: deep_learning_periodic
 applicable_conditions:
-  - 强季节性数据
-  - 序列长度 &gt; 5000
+  - strongly seasonal data
+  - sequence length &gt; 5000
 model_family: deep_learning
 models: [PatchTST, iTransformer]
 search_space:
@@ -1403,145 +1403,145 @@ search_space:
   patch_len: [16, 32, 64]
 feature_template: patch_token
 risks:
-  - 数据量不足时过拟合风险高
+  - high overfitting risk when data volume is insufficient
 domain_notes: ""</code></pre></div>
         <div class="callout info">
-          <strong>审核重点</strong>
-          <p>先看 <code>applicable_conditions</code> 和 <code>risks</code>，这两部分最直接决定当前任务是否该用这份 Skill。</p>
+          <strong>Review focus</strong>
+          <p>Start with <code>applicable_conditions</code> and <code>risks</code>. These two parts most directly determine whether the Skill should be used for the current task.</p>
         </div>
       </article>
 
-      <article class="doc-block" id="skill-review" data-title="如何审核与沉淀 Skill">
-        <h3>如何审核与沉淀 Skill</h3>
+      <article class="doc-block" id="skill-review" data-title="How to Review and Curate Skills">
+        <h3>How to Review and Curate Skills</h3>
         <ol>
-          <li>Planner 基于预测前分析草拟 2–4 个候选 Skill。</li>
-          <li>人类审核模型路线、适用条件和风险提示，必要时直接编辑内容。</li>
-          <li>通过审核的 Skill 进入 <code>.forecast/skills/</code>，供当前与相似任务复用。</li>
-          <li>随积累持续演化，逐步形成团队级策略资产。</li>
+          <li>Planner drafts 2 to 4 candidate Skills from the pre-forecast analysis.</li>
+          <li>Humans review the model route, applicability conditions, and risk notes, editing them directly when needed.</li>
+          <li>Approved Skills enter <code>.forecast/skills/</code> for reuse in the current and similar tasks.</li>
+          <li>The library evolves over time and gradually becomes a team-level strategy asset.</li>
         </ol>
         <div class="callout">
-          <strong>审核原则</strong>
-          <p>宁可保留少量高质量 Skill，也不要囤积大量低信号策略。Skill 库的价值在于可信，而不是数量。</p>
+          <strong>Review principle</strong>
+          <p>Keep a small number of high-quality Skills rather than accumulating a large set of low-signal strategies. The value of the Skill library is trustworthiness, not size.</p>
         </div>
       </article>
 
-      <article class="doc-block" id="cast-creation" data-title="/cast-creation 命令">
-        <h3><code>/cast-creation</code> 命令</h3>
-        <p>交互式生成 <code>CAST.md</code> 项目约束文件。适合在任务开始前明确禁用模型、预算上限、评估偏好和领域说明。</p>
+      <article class="doc-block" id="cast-creation" data-title="/cast-creation Command">
+        <h3><code>/cast-creation</code> Command</h3>
+        <p>Interactively generates the <code>CAST.md</code> project-constraint file. Use it before a task starts to define disallowed models, budget caps, evaluation preferences, and domain notes.</p>
         <div class="panel-row">
           <div class="panel">
-            <h4>适合什么时候用</h4>
-            <p>你已经知道哪些模型不该用、实验预算不能超过多少次，或者有必须注入给所有 Agent 的领域说明时。</p>
+            <h4>When to use it</h4>
+            <p>Use it when you already know which models should be excluded, how many experiments the budget allows, or which domain notes must be injected for every agent.</p>
           </div>
           <div class="panel">
-            <h4>解决什么问题</h4>
-            <p>避免每轮任务都口头重复约束条件，并降低 Agent 在后续阶段"忘掉限制"的概率。</p>
+            <h4>What problem it solves</h4>
+            <p>It avoids repeating the same constraints verbally in every run and reduces the chance that agents forget critical limits in later phases.</p>
           </div>
         </div>
       </article>
     </section>
 
-    <!-- ── 使用示例 ── -->
-    <section class="doc-section" id="examples" data-group-title="使用示例">
-      <h2>使用示例</h2>
-      <p style="margin-bottom:28px;color:var(--muted);font-size:0.93rem;">三个案例分别覆盖负荷、光伏和金融时序，帮助你建立"不同数据形态对应不同策略"的感觉。重点看数据特征、推荐 Skill 与人在回路介入点。</p>
+    <!-- Examples -->
+    <section class="doc-section" id="examples" data-group-title="Examples">
+      <h2>Examples</h2>
+      <p style="margin-bottom:28px;color:var(--muted);font-size:0.93rem;">These three cases cover load, solar, and financial time series. The point is to build intuition for how different data shapes map to different strategies. Focus on the data profile, the recommended Skill path, and where Human in the Loop matters.</p>
 
-      <article class="doc-block" id="example-load" data-title="电力负荷预测">
-        <h3>电力负荷预测（load.csv）</h3>
-        <p><code>load.csv</code> 是最适合第一个示例的入门数据，包含小时级负荷序列，具有稳定的日周期和周周期。</p>
+      <article class="doc-block" id="example-load" data-title="Power Load Forecasting">
+        <h3>Power Load Forecasting (<code>load.csv</code>)</h3>
+        <p><code>load.csv</code> is the best starter dataset for a first demo. It contains hourly load values with stable daily and weekly cycles.</p>
         <div class="panel-row-3">
           <div class="panel">
-            <h4>数据特征</h4>
-            <p>小时频率，约 1.5 万条样本，强日周期（24h）与周周期（168h），夏冬峰值明显。</p>
+            <h4>Data profile</h4>
+            <p>Hourly frequency, roughly 15,000 samples, strong daily seasonality at 24 hours, strong weekly seasonality at 168 hours, and clear summer and winter peaks.</p>
           </div>
           <div class="panel">
-            <h4>推荐策略</h4>
-            <p>优先 <code>deep_learning</code>（PatchTST、iTransformer）加 <code>foundation</code>（Chronos）组合路线。</p>
+            <h4>Recommended strategy</h4>
+            <p>Start with a combined <code>deep_learning</code> path using PatchTST and iTransformer plus a <code>foundation</code> path using Chronos.</p>
           </div>
           <div class="panel">
-            <h4>预期产物</h4>
-            <p>看到 <code>pre-forecast.md</code>、实验目录与 <code>final-report.md</code>，说明主流程已打通。</p>
-          </div>
-        </div>
-      </article>
-
-      <article class="doc-block" id="example-solar" data-title="光伏发电预测">
-        <h3>光伏发电预测</h3>
-        <p>光伏序列同时具备强日周期、夜间恒零和天气敏感性，是"需要领域知识介入"的典型案例。</p>
-        <div class="panel-row">
-          <div class="panel">
-            <h4>数据特征与诊断重点</h4>
-            <p>GEFCom2014 Solar Track 小时级数据。CastSense 应重点识别夜间零值、天气突变和季节性变化。</p>
-          </div>
-          <div class="panel">
-            <h4>推荐策略与人在回路</h4>
-            <p>从 statistical（Theta）+ foundation（TimesFM、Moirai）入手；人在回路重点在阴雨连续日与天气异常日的人类标注。</p>
+            <h4>Expected outputs</h4>
+            <p>If you see <code>pre-forecast.md</code>, the experiment directories, and <code>final-report.md</code>, the main workflow is running end to end.</p>
           </div>
         </div>
       </article>
 
-      <article class="doc-block" id="example-finance" data-title="金融时序预测">
-        <h3>金融时序预测</h3>
-        <p>金融数据高波动、非平稳，对突发事件敏感，不适合盲目依赖单一深度模型路线，更需要风险意识与外部事件注入。</p>
+      <article class="doc-block" id="example-solar" data-title="Solar Power Forecasting">
+        <h3>Solar Power Forecasting</h3>
+        <p>Solar generation combines strong daily seasonality, fixed nighttime zeros, and strong weather sensitivity. It is a canonical case where domain knowledge needs to intervene.</p>
         <div class="panel-row">
           <div class="panel">
-            <h4>推荐策略</h4>
-            <p><code>statistical + foundation ensemble</code> 的保守组合，避免把所有预算压在单一路线上。</p>
+            <h4>Data profile and diagnostic focus</h4>
+            <p>This is hourly data from the GEFCom2014 Solar Track. CastSense should pay special attention to nighttime zeros, abrupt weather changes, and seasonal shifts.</p>
           </div>
           <div class="panel">
-            <h4>人类介入重点</h4>
-            <p>标注财报、政策发布或宏观冲击等重大事件日期，重点查看 CastSense 的分布漂移与结构断点提醒。</p>
+            <h4>Recommended strategy and Human in the Loop</h4>
+            <p>Start with a statistical plus foundation path using Theta together with TimesFM or Moirai. Human intervention matters most when labeling long cloudy periods and weather-abnormal days.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="doc-block" id="example-finance" data-title="Financial Time-Series Forecasting">
+        <h3>Financial Time-Series Forecasting</h3>
+        <p>Financial series are volatile, non-stationary, and sensitive to external shocks. They are not a good fit for blindly committing to a single deep-learning route and require stronger risk awareness and external-event injection.</p>
+        <div class="panel-row">
+          <div class="panel">
+            <h4>Recommended strategy</h4>
+            <p>Use a conservative <code>statistical + foundation ensemble</code> so the full budget is not concentrated on one path.</p>
+          </div>
+          <div class="panel">
+            <h4>Where humans should step in</h4>
+            <p>Mark earnings releases, policy announcements, and macro shocks, then pay close attention to CastSense alerts on distribution drift and structural breaks.</p>
           </div>
         </div>
       </article>
     </section>
 
-    <!-- ── FAQ ── -->
-    <section class="doc-section" id="faq-troubleshooting" data-group-title="FAQ 与排查">
-      <h2>FAQ 与故障排查</h2>
+    <!-- FAQ -->
+    <section class="doc-section" id="faq-troubleshooting" data-group-title="FAQ & Troubleshooting">
+      <h2>FAQ & Troubleshooting</h2>
 
-      <article class="doc-block" id="common-questions" data-title="常见问题">
-        <h3>常见问题</h3>
+      <article class="doc-block" id="common-questions" data-title="Common Questions">
+        <h3>Common Questions</h3>
         <div class="panel-row">
           <div class="panel">
-            <h4>如何更换 LLM 提供商？</h4>
-            <p>修改 <code>castclaw.json</code> 中的模型配置，或切换对应环境变量即可。</p>
+            <h4>How do I switch LLM providers?</h4>
+            <p>Update the model configuration in <code>castclaw.json</code> or switch the relevant environment variables.</p>
           </div>
           <div class="panel">
-            <h4>人在回路暂停后如何继续？</h4>
-            <p>在 Forecaster 标签页输入反馈并提交，系统会在当前上下文中继续，不需要从头初始化。</p>
+            <h4>How do I continue after a Human-in-the-Loop pause?</h4>
+            <p>Enter feedback in the Forecaster tab and submit it. The system resumes in the current context without reinitializing from scratch.</p>
           </div>
           <div class="panel">
-            <h4>Skill 文件在哪里管理？</h4>
-            <p>默认位于 <code>.forecast/skills/</code> 目录，建议把审核后的稳定 Skill 沉淀到团队共享资产库。</p>
+            <h4>Where are Skill files managed?</h4>
+            <p>They live in <code>.forecast/skills/</code> by default. Stable reviewed Skills should be promoted into a shared team asset library.</p>
           </div>
           <div class="panel">
-            <h4>为什么结果不稳定？</h4>
-            <p>先检查任务定义与预算是否过小，再查是否存在未标注的异常日期，最后才考虑模型优化。</p>
+            <h4>Why are results unstable?</h4>
+            <p>First check whether the task definition or budget is too small, then check for unlabeled anomalous dates, and only after that consider model optimization.</p>
           </div>
         </div>
       </article>
 
-      <article class="doc-block" id="env-troubleshooting" data-title="环境问题排查">
-        <h3>环境问题排查</h3>
+      <article class="doc-block" id="env-troubleshooting" data-title="Environment Troubleshooting">
+        <h3>Environment Troubleshooting</h3>
         <table class="doc-table">
-          <thead><tr><th>现象</th><th>排查建议</th></tr></thead>
+          <thead><tr><th>Symptom</th><th>What to Check</th></tr></thead>
           <tbody>
             <tr>
-              <td>Bun 版本不足</td>
-              <td>升级到 <code>1.3.11</code> 或更高版本后重新打开终端，检查 <code>bun --version</code>。</td>
+              <td>Bun version is too old</td>
+              <td>Upgrade to <code>1.3.11</code> or later, reopen the terminal, and verify with <code>bun --version</code>.</td>
             </tr>
             <tr>
-              <td>Python 后端报错</td>
-              <td>进入 Python 目录执行 <code>uv sync</code>，确认依赖被正确安装。</td>
+              <td>Python backend errors</td>
+              <td>Enter the Python directory and run <code>uv sync</code> to make sure dependencies are installed correctly.</td>
             </tr>
             <tr>
-              <td>API Key 未生效</td>
-              <td>检查环境变量是否已 <code>export</code> 到当前 shell，或确认 <code>castclaw.json</code> 覆盖了模型设置。</td>
+              <td>API key is not taking effect</td>
+              <td>Check whether the environment variable has been <code>export</code>ed in the current shell, or confirm that <code>castclaw.json</code> overrides the model settings.</td>
             </tr>
             <tr>
-              <td>阶段无法推进</td>
-              <td>检查 <code>.forecast/</code> 是否缺失关键文件，尤其是 <code>task.json</code> 和阶段报告产物。</td>
+              <td>A phase will not advance</td>
+              <td>Check whether <code>.forecast/</code> is missing required files, especially <code>task.json</code> and the report artifacts for each phase.</td>
             </tr>
           </tbody>
         </table>
@@ -1549,8 +1549,8 @@ domain_notes: ""</code></pre></div>
     </section>
 
     <div class="footer-note">
-      这份文档站按"先上手，再理解系统，再查细节"的顺序组织。第一次演示 CastClaw 建议直接从
-      <a href="#first-forecast">第一个预测任务</a> 和 <a href="#agentic-workflow">智能体运行流程</a> 开始。
+      This documentation is organized in the order of getting started first, understanding the system second, and checking details last.
+      For a first CastClaw demo, start with <a href="#first-forecast">your first forecasting task</a> and <a href="#agentic-workflow">Agentic Workflow</a>.
     </div>
   </main>
 
@@ -1563,7 +1563,7 @@ domain_notes: ""</code></pre></div>
         <circle cx="11" cy="11" r="7"></circle>
         <path d="M20 20l-3.5-3.5"></path>
       </svg>
-      <input id="searchInput" class="search-input" type="text" placeholder="搜索章节、命令、概念..." />
+      <input id="searchInput" class="search-input" type="text" placeholder="Search sections, commands, concepts..." />
       <span class="search-kbd" style="flex-shrink:0">Esc</span>
     </div>
     <div class="search-body" id="searchResults"></div>
@@ -1610,7 +1610,7 @@ domain_notes: ""</code></pre></div>
 
     if (searchShortcutHint) {
       searchShortcutHint.textContent = isApplePlatform ? "⌘ K" : "Ctrl K";
-      searchShortcutHint.title = "也支持 /";
+      searchShortcutHint.title = "Also supports /";
     }
     if (sloganItems.length > 1 && !reduceMotion) {
       window.setInterval(function () {
@@ -1718,7 +1718,7 @@ domain_notes: ""</code></pre></div>
           });
 
       if (!results.length) {
-        searchResults.innerHTML = '<div class="search-empty">没有找到匹配内容，试试搜索“Skill”“人在回路”“CAST.md”或“castclaw”。</div>';
+        searchResults.innerHTML = '<div class="search-empty">No matching content. Try searching for “Skill”, “human in the loop”, “CAST.md”, or “castclaw”.</div>';
         return;
       }
       searchResults.innerHTML = results.slice(0, 12).map(function (item) {
