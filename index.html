@@ -366,6 +366,50 @@
       border: 1px solid #d9eadf;
       background: linear-gradient(180deg, #fbfefc 0%, #f3faf5 100%);
     }
+    .app-domain-visual {
+      position: relative;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(183, 219, 195, 0.9);
+      background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(244,250,246,0.96) 100%);
+    }
+    .app-domain-visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 45%),
+        radial-gradient(circle at top right, rgba(255,255,255,0.55), rgba(255,255,255,0) 40%);
+      pointer-events: none;
+    }
+    .visual-timeseries {
+      background:
+        linear-gradient(180deg, rgba(251,254,252,0.95) 0%, rgba(238,248,241,0.98) 100%),
+        linear-gradient(90deg, rgba(73, 140, 90, 0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(73, 140, 90, 0.08) 1px, transparent 1px);
+      background-size: auto, 28px 100%, 100% 28px;
+    }
+    .visual-table {
+      background:
+        linear-gradient(180deg, rgba(251,254,252,0.95) 0%, rgba(239,249,243,0.98) 100%),
+        linear-gradient(90deg, rgba(76, 145, 96, 0.1) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(76, 145, 96, 0.1) 1px, transparent 1px);
+      background-size: auto, 72px 100%, 100% 32px;
+    }
+    .visual-literature {
+      background:
+        radial-gradient(circle at 20% 25%, rgba(93, 156, 111, 0.16), transparent 24%),
+        radial-gradient(circle at 78% 28%, rgba(93, 156, 111, 0.12), transparent 22%),
+        linear-gradient(180deg, rgba(251,254,252,0.95) 0%, rgba(239,249,243,0.98) 100%);
+    }
+    .app-domain-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
     .self-learning-card {
       display: flex;
       flex-direction: column;
@@ -845,6 +889,16 @@
           <div class="app-domain-grid">
             <div class="app-domain-card">
               <span class="app-domain-label">时间序列分析</span>
+              <div class="app-domain-visual visual-timeseries" aria-hidden="true">
+                <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+                  <polyline points="18,82 52,70 84,74 116,56 150,64 184,44 214,58 248,30 282,42 306,24"
+                    fill="none" stroke="#1e8449" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="18,94 52,88 84,84 116,82 150,78 184,74 214,70 248,62 282,56 306,48"
+                    fill="none" stroke="#7cc08f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+                  <circle cx="248" cy="30" r="5" fill="#1e8449"/>
+                  <circle cx="306" cy="24" r="5" fill="#1e8449"/>
+                </svg>
+              </div>
               <div class="app-domain-header">
               <span class="app-domain-icon">📈</span>
               <div>
@@ -854,6 +908,19 @@
             </div>
             <div class="app-domain-card">
               <span class="app-domain-label">表格数据挖掘</span>
+              <div class="app-domain-visual visual-table" aria-hidden="true">
+                <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="24" y="20" width="272" height="78" rx="10" fill="#ffffff" stroke="#b7dbc3" stroke-width="2"/>
+                  <rect x="24" y="20" width="272" height="20" rx="10" fill="#eaf7ee"/>
+                  <line x1="92" y1="20" x2="92" y2="98" stroke="#d5e9db" stroke-width="2"/>
+                  <line x1="168" y1="20" x2="168" y2="98" stroke="#d5e9db" stroke-width="2"/>
+                  <line x1="236" y1="20" x2="236" y2="98" stroke="#d5e9db" stroke-width="2"/>
+                  <line x1="24" y1="58" x2="296" y2="58" stroke="#d5e9db" stroke-width="2"/>
+                  <line x1="24" y1="78" x2="296" y2="78" stroke="#d5e9db" stroke-width="2"/>
+                  <rect x="99" y="45" width="62" height="26" rx="6" fill="#dff3e6"/>
+                  <rect x="175" y="65" width="54" height="20" rx="6" fill="#dff3e6"/>
+                </svg>
+              </div>
               <div class="app-domain-header">
               <span class="app-domain-icon">📊</span>
               <div>
@@ -863,6 +930,19 @@
             </div>
             <div class="app-domain-card">
               <span class="app-domain-label">科技文献挖掘</span>
+              <div class="app-domain-visual visual-literature" aria-hidden="true">
+                <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="34" y="28" width="72" height="56" rx="8" fill="#ffffff" stroke="#b7dbc3" stroke-width="2"/>
+                  <rect x="62" y="20" width="72" height="56" rx="8" fill="#f8fcf9" stroke="#b7dbc3" stroke-width="2"/>
+                  <rect x="90" y="34" width="72" height="56" rx="8" fill="#eef8f1" stroke="#b7dbc3" stroke-width="2"/>
+                  <line x1="104" y1="50" x2="146" y2="50" stroke="#8dbc9a" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="104" y1="61" x2="152" y2="61" stroke="#8dbc9a" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="104" y1="72" x2="138" y2="72" stroke="#8dbc9a" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="236" cy="48" r="22" fill="none" stroke="#1e8449" stroke-width="5"/>
+                  <line x1="252" y1="64" x2="276" y2="88" stroke="#1e8449" stroke-width="6" stroke-linecap="round"/>
+                  <circle cx="236" cy="48" r="9" fill="#dff3e6"/>
+                </svg>
+              </div>
               <div class="app-domain-header">
               <span class="app-domain-icon">📚</span>
               <div>
