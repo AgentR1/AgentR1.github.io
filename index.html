@@ -86,17 +86,6 @@
       text-decoration: none;
       transform: translateY(-1px);
     }
-    .nav-links a.nav-primary {
-      color: #fff;
-      background: #c0392b;
-      border-color: #c0392b;
-      box-shadow: 0 6px 14px rgba(192, 57, 43, 0.16);
-    }
-    .nav-links a.nav-primary:hover {
-      color: #fff;
-      background: #a93226;
-      border-color: #a93226;
-    }
     /* ── Header ────────────────────────────────────── */
     header {
       background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
@@ -597,7 +586,7 @@
   <div class="container">
     <a class="nav-brand" href="#hero-header">USTC-AGI <span>Agentic AI</span></a>
     <div class="nav-links">
-      <a href="#hero-header" class="nav-primary">首页</a>
+      <a href="#hero-header">首页</a>
       <a href="#research-tracks">研究方向</a>
       <a href="papers/">论文发表</a>
       <a href="#application-systems">应用系统</a>
@@ -618,7 +607,7 @@
 <main>
   <div class="container">
     <div class="section-intro section-anchor" id="research-tracks">
-      <h2>研究成果</h2>
+      <h2>研究方向</h2>
       <p>用于介绍与展示 USTC-AGI 研究组在 Agentic AI 方向的代表性工作，涵盖训练引擎、基础算法、Agent Runtime 以及应用研究等多个方面。</p>
     </div>
 
@@ -628,7 +617,6 @@
       <div class="project-card">
         <div class="card-accent accent-training"></div>
         <div class="card-body">
-          <span class="card-tag tag-training">Agent Training Engine</span>
           <h3>Agent 训练框架</h3>
           <p class="card-desc">
             面向 LLM Agent 的强化学习训练工具套件。
@@ -745,7 +733,6 @@
       <div class="project-card">
         <div class="card-accent accent-mechanism"></div>
         <div class="card-body">
-          <span class="card-tag tag-mechanism">Agent Mechanism Analysis</span>
           <h3>Agent机理分析</h3>
           <p class="card-desc">
             围绕 LLM Agent 的行为形成机制、推理决策链路与能力涌现规律展开研究，关注训练、推理、工具使用与记忆反思之间的协同关系。
@@ -773,7 +760,6 @@
       <div class="project-card">
         <div class="card-accent accent-evaluation"></div>
         <div class="card-body">
-          <span class="card-tag tag-evaluation">Agentic Evaluation</span>
           <h3>Agentic评测</h3>
           <p class="card-desc">
             面向复杂任务场景构建 Agent 评测体系，关注真实环境中的任务完成质量、可靠性、覆盖度与过程诊断，支撑训练、推理与应用研究的统一分析。
@@ -802,7 +788,6 @@
       <div class="project-card project-card-wide">
         <div class="card-accent accent-selflearn"></div>
         <div class="card-body">
-          <span class="card-tag tag-selflearn">LLM Self-Learning</span>
           <h3>大模型自主交互学习机制及方法</h3>
           <p class="card-desc">
             围绕大模型在真实环境中的自举探索、持续进化与能力增强平台建设，研究减少人工监督依赖的自主学习范式。
@@ -842,12 +827,22 @@
         </div>
       </div>
 
+    </div>
+
+    <hr class="divider" />
+
+    <div class="section-intro section-anchor" id="application-systems">
+      <h2>LLMs and Agentic AI应用研究</h2>
+      <p>面向真实任务流程的可交互 Agent 产品与原型系统。</p>
+    </div>
+
+    <div class="project-grid">
       <!-- Agent 应用 -->
       <div class="project-card project-card-wide">
         <div class="card-accent accent-apps"></div>
         <div class="card-body">
           <span class="card-tag tag-apps">Domain Application Research</span>
-          <h3>领域应用研究</h3>
+          <h3>Agentic领域应用研究</h3>
           <p class="card-desc">
             探索时间序列分析、表格挖掘、科技文献挖掘等场景的 Agentic 应用。
           </p>
@@ -893,16 +888,6 @@
         </div>
       </div>
 
-    </div>
-
-    <hr class="divider" />
-
-    <div class="section-intro section-anchor" id="application-systems">
-      <h2>Agentic 应用系统</h2>
-      <p>面向真实任务流程的可交互 Agent 产品与原型系统。</p>
-    </div>
-
-    <div class="project-grid">
       <!-- TabClaw -->
       <div class="project-card project-card-wide">
         <div class="card-accent accent-tabclaw"></div>
