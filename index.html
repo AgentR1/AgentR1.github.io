@@ -289,6 +289,7 @@
     .accent-mechanism { background: linear-gradient(90deg, #2c3e50, #5d6d7e); }
     .accent-evaluation { background: linear-gradient(90deg, #8e44ad, #c039b3); }
     .accent-rlalgo   { background: linear-gradient(90deg, #b9770e, #f39c12); }
+    .accent-selflearn { background: linear-gradient(90deg, #0f4c81, #1f78b4); }
 
     .project-card-wide {
       grid-column: span 2;
@@ -320,6 +321,7 @@
     .tag-mechanism { background: #edf1f5; color: #2c3e50; border: 1px solid #c7d0da; }
     .tag-evaluation { background: #f8eefc; color: #8e44ad; border: 1px solid #dfc3ed; }
     .tag-rlalgo   { background: #fef5e7; color: #b9770e; border: 1px solid #f8c471; }
+    .tag-selflearn { background: #eef6fc; color: #0f4c81; border: 1px solid #b9d6eb; }
 
     .project-card h3 {
       font-size: 1.25rem;
@@ -360,6 +362,13 @@
       margin-bottom: 22px;
       flex: 1;
     }
+    .self-learning-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+      flex: 1;
+    }
     .app-domain-card {
       display: flex;
       flex-direction: column;
@@ -368,6 +377,15 @@
       border-radius: 12px;
       border: 1px solid #d9eadf;
       background: linear-gradient(180deg, #fbfefc 0%, #f3faf5 100%);
+    }
+    .self-learning-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #d7e6f2;
+      background: linear-gradient(180deg, #fbfdff 0%, #f2f8fd 100%);
     }
     .app-domain-label {
       display: inline-flex;
@@ -381,12 +399,35 @@
       font-weight: 700;
       letter-spacing: 0.04em;
     }
+    .self-learning-label {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #bfd9ec;
+      background: #edf6fc;
+      color: #0f4c81;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
     .app-domain-header {
       display: flex;
       align-items: flex-start;
       gap: 10px;
     }
+    .self-learning-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
     .app-domain-icon {
+      flex-shrink: 0;
+      font-size: 1rem;
+      line-height: 1;
+      margin-top: 3px;
+    }
+    .self-learning-icon {
       flex-shrink: 0;
       font-size: 1rem;
       line-height: 1;
@@ -399,9 +440,21 @@
       line-height: 1.4;
       margin-bottom: 4px;
     }
+    .self-learning-project {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #133a5b;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
     .app-domain-desc {
       font-size: 0.84rem;
       color: #4f6056;
+      line-height: 1.75;
+    }
+    .self-learning-desc {
+      font-size: 0.84rem;
+      color: #50677c;
       line-height: 1.75;
     }
     .card-links {
@@ -531,6 +584,7 @@
       .project-grid { grid-template-columns: 1fr; }
       .project-card-wide { grid-column: auto; }
       .app-domain-grid { grid-template-columns: 1fr; }
+      .self-learning-grid { grid-template-columns: 1fr; }
       main { padding: 40px 0 60px; }
       .container { padding: 0 16px; }
       .team-grid { grid-template-columns: 1fr; }
@@ -736,6 +790,43 @@
             <div class="meta-row">
               <span class="meta-icon">📊</span>
               <span>QRC-Eval · HLE / GAIA · 可解释性分析与误差归因</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <span class="card-btn btn-outline btn-disabled">内容建设中</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 大模型自主学习 -->
+      <div class="project-card project-card-wide">
+        <div class="card-accent accent-selflearn"></div>
+        <div class="card-body">
+          <span class="card-tag tag-selflearn">LLM Self-Learning</span>
+          <h3>大模型自主学习</h3>
+          <p class="card-desc">
+            围绕大模型在真实环境中的自举探索、反馈校正与持续进化，研究减少人工监督依赖的自主学习范式。
+          </p>
+          <div class="self-learning-grid">
+            <div class="self-learning-card">
+              <span class="self-learning-label">自主探索学习</span>
+              <div class="self-learning-header">
+                <span class="self-learning-icon">🧭</span>
+                <div>
+                  <div class="self-learning-project">环境交互与经验积累</div>
+                  <p class="self-learning-desc">面向开放任务环境，通过主动探索、轨迹筛选与经验回放，提升模型自发现有效策略的能力。</p>
+                </div>
+              </div>
+            </div>
+            <div class="self-learning-card">
+              <span class="self-learning-label">自我反馈优化</span>
+              <div class="self-learning-header">
+                <span class="self-learning-icon">🔁</span>
+                <div>
+                  <div class="self-learning-project">反思校正与持续进化</div>
+                  <p class="self-learning-desc">结合自评估、过程验证与错误归因机制，推动模型在多轮迭代中实现稳定改进与能力迁移。</p>
+                </div>
+              </div>
             </div>
           </div>
           <div class="card-links">
