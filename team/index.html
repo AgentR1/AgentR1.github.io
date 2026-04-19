@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>论文发表 | LLMs and Agentic AI</title>
-  <meta name="description" content="USTC-AGI LLMs and Agentic AI 方向论文列表，展示当前页面涉及的代表性论文。" />
+  <title>团队成员 | LLMs and Agentic AI</title>
+  <meta name="description" content="USTC-AGI LLMs and Agentic AI 方向团队成员页面。" />
   <style>
     :root {
       --accent: #c0392b;
@@ -14,10 +14,6 @@
       --text-muted: #5b5b5b;
       --border: #e6e6e2;
       --bg: #f7f7f5;
-      --card: #ffffff;
-      --highlight-bg: #fff1eb;
-      --highlight-text: #c2410c;
-      --highlight-border: #fdba74;
       --shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
               "PingFang SC", "Hiragino Sans GB", sans-serif;
@@ -77,10 +73,12 @@
       align-items: center;
       justify-content: flex-end;
       gap: 8px;
-      overflow: visible;
-      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
       padding: 10px 0;
+      width: 100%;
     }
+    .nav-links::-webkit-scrollbar { display: none; }
     .nav-links a {
       flex-shrink: 0;
       padding: 8px 14px;
@@ -91,29 +89,16 @@
       color: #555;
       transition: color .18s, background .18s, border-color .18s, transform .18s;
     }
-    .nav-links a.nav-primary {
-      color: #fff;
-      background: var(--accent);
-      border-color: var(--accent);
-      box-shadow: 0 6px 14px rgba(192, 57, 43, 0.16);
-    }
-    .nav-links a:hover,
-    .nav-links a:active,
-    .nav-links a.nav-primary:hover {
+    .nav-links a:hover {
       color: var(--accent);
       background: var(--accent-light);
-      border-color: #f1d2ce;
+      border-color: #f2d2ce;
       text-decoration: none;
       transform: translateY(-1px);
     }
-    .nav-links a.nav-primary:hover {
-      color: #fff;
-      background: var(--accent-dark);
-      border-color: var(--accent-dark);
-    }
 
     header {
-      background: linear-gradient(160deg, #ffffff 50%, #fff5f4 100%);
+      background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
       border-bottom: 1px solid #e8e8e8;
       padding: 72px 0 56px;
       text-align: center;
@@ -121,7 +106,7 @@
       transition: background 0.2s ease, transform 0.2s ease;
     }
     header:hover {
-      background: linear-gradient(160deg, #fffdfd 50%, #ffeceb 100%);
+      background: linear-gradient(160deg, #fffdfd 55%, #ffeceb 100%);
     }
     header:active {
       transform: scale(0.997);
@@ -137,7 +122,7 @@
       color: #111;
     }
     header h1 .highlight { color: var(--accent); }
-    header .header-sub {
+    .header-sub {
       margin-top: 14px;
       font-size: 0.97rem;
       color: #666;
@@ -148,8 +133,7 @@
       flex: 1;
       padding: 40px 0 80px;
     }
-
-    .publication-shell {
+    .member-shell {
       max-width: 1120px;
       margin: 0 auto;
       background: #fff;
@@ -158,80 +142,65 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
-    .publication-header {
+    .member-header {
       padding: 28px 28px 18px;
       border-bottom: 1px solid var(--border);
       background: linear-gradient(180deg, #ffffff 0%, #fffaf9 100%);
     }
-    .publication-header h2 {
+    .member-header h2 {
       font-size: 1.5rem;
       font-weight: 800;
       color: #111;
       margin-bottom: 8px;
     }
-    .publication-header p {
+    .member-header p {
       font-size: 0.94rem;
       color: var(--text-muted);
     }
-    .pub-note {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #666;
+    .member-body {
+      padding: 28px;
     }
-    .publication-body {
-      padding: 8px 28px 30px;
-      text-align: justify;
-      text-justify: inter-ideograph;
+    .member-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
     }
-    .pub-year-heading {
-      font-size: 1.03rem;
-      font-weight: 800;
-      color: var(--accent);
-      margin: 24px 0 10px;
-      padding-left: 12px;
-      border-left: 3px solid var(--accent);
-      line-height: 1.3;
+    .member-card,
+    .member-card-static {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     }
-    .pub-list {
-      padding-left: 24px;
-      font-size: 0.95rem;
-      line-height: 1.85;
-      color: var(--text);
-    }
-    .pub-list li {
-      margin-bottom: 10px;
-    }
-    .pub-list a {
-      color: var(--accent);
+    .member-card {
       text-decoration: none;
     }
-    .pub-list a:hover {
-      text-decoration: underline;
+    .member-card:hover {
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     }
-    .paper-highlight {
-      display: inline-block;
-      margin-left: 8px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--highlight-bg);
-      color: var(--highlight-text);
-      border: 1px solid var(--highlight-border);
-      font-size: 0.76rem;
+    .member-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#003087,#2471a3);
+      color: #fff;
+      font-size: 0.98rem;
       font-weight: 700;
-      line-height: 1.55;
-      vertical-align: middle;
-    }
-    .pub-link-disabled {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      padding: 1px 7px;
-      border-radius: 999px;
-      border: 1px solid #e9e9e6;
-      background: #f6f6f4;
-      color: #8a8a8a;
-      font-size: 0.78rem;
-      font-weight: 600;
-      vertical-align: middle;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .member-name {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #111;
     }
 
     footer {
@@ -261,24 +230,21 @@
       .nav-brand { white-space: normal; }
       .nav-links {
         justify-content: flex-start;
-        flex-wrap: wrap;
         padding-top: 2px;
       }
       .nav-links a {
         padding: 7px 12px;
         font-size: 0.81rem;
       }
-      .publication-header,
-      .publication-body {
+      .member-body,
+      .member-header {
         padding-left: 18px;
         padding-right: 18px;
       }
-      .pub-list {
-        padding-left: 20px;
+      .member-grid {
+        grid-template-columns: 1fr;
       }
-      .container {
-        padding: 0 16px;
-      }
+      .container { padding: 0 16px; }
     }
   </style>
 </head>
@@ -301,54 +267,40 @@
 <header id="hero-header" role="button" tabindex="0" aria-label="点击刷新当前页面"
         onclick="location.reload()">
   <div class="container">
-    <h1><span class="highlight">LLMs and Agentic AI Publications</span> 论文发表</h1>
+    <h1><span class="highlight">Team Members</span> 团队成员</h1>
     <p class="header-sub">
       中国科学技术大学 · 认知智能全国重点实验室 AGI 研究组<br>
-      汇集当前页面涉及的代表性工作，保留论文标题、类别与已知的 PDF / Code / 项目页外链
+      展示当前主页所列出的指导教师与核心成员
     </p>
   </div>
 </header>
 
 <main>
   <div class="container">
-    <section id="paper-list" class="publication-shell" aria-labelledby="paper-list-title">
-      <div class="publication-header">
-        <h2 id="paper-list-title">论文列表</h2>
-        <p>集中展示当前首页所覆盖研究方向中的代表性论文与综述。</p>
-        <p class="pub-note">已知链接直接给出；暂未确认的外链不在页面中伪造。</p>
+    <section class="member-shell" aria-labelledby="team-title">
+      <div class="member-header">
+        <h2 id="team-title">团队成员</h2>
+        <p>指导教师与核心成员</p>
       </div>
-
-      <div class="publication-body">
-        <h3 class="pub-year-heading">📘 Research Papers</h3>
-        <ol class="pub-list">
-          <li>
-            Mingyue Cheng, Jie Ouyang, Shuo Yu, Ruiran Yan, Yucong Luo, Zirui Liu, Daoyu Wang, Qi Liu, Enhong Chen,
-            <strong>Agent-r1: Training powerful llm agents with end-to-end reinforcement learning</strong>.
-            <span class="paper-highlight">Highlight: 端到端强化学习训练 LLM Agent</span>
-            (Preprint)
-            [<a href="https://arxiv.org/abs/2511.14460" target="_blank" rel="noopener">PDF</a>]
-            [<a href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">Code</a>]
-            [<a href="../agent-r1/">Project</a>]
-          </li>
-          <li>
-            Tingyue Pan, Jie Ouyang, Mingyue Cheng, Qingchuan Li, Zirui Liu, Mingfan Pan, Shuo Yu, Qi Liu,
-            <strong>PaperScout: An Autonomous Agent for Academic Paper Search with Process-Aware Sequence-Level Policy Optimization</strong>.
-            <span class="paper-highlight">Highlight: 过程感知序列级策略优化</span>
-            (Preprint)
-            [<a href="https://arxiv.org/abs/2601.10029" target="_blank" rel="noopener">PDF</a>]
-            [<a href="../agent-apps/#paperscout">Project</a>]
-          </li>
-        </ol>
-
-        <h3 class="pub-year-heading">📘 Survey</h3>
-        <ol class="pub-list">
-          <li>
-            <strong>A Comprehensive Survey of the LLM-Based Agent: The Contextual Cognition Perspective</strong>.
-            <span class="paper-highlight">Highlight: 从情境认知视角系统梳理 LLM-Based Agent</span>
-            (Survey)
-            <span class="pub-link-disabled">Link Pending</span>
-          </li>
-        </ol>
+      <div class="member-body">
+        <div class="member-grid">
+          <a class="member-card" href="http://staff.ustc.edu.cn/~qiliuql/" target="_blank" rel="noopener">
+            <div class="member-avatar">刘</div>
+            <div class="member-name">刘淇</div>
+          </a>
+          <a class="member-card" href="https://mingyue-cheng.github.io/" target="_blank" rel="noopener">
+            <div class="member-avatar">程</div>
+            <div class="member-name">程明月</div>
+          </a>
+          <div class="member-card-static">
+            <div class="member-avatar">李</div>
+            <div class="member-name">李鑫</div>
+          </div>
+          <div class="member-card-static">
+            <div class="member-avatar">陈</div>
+            <div class="member-name">陈恩红</div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -364,6 +316,24 @@
     </p>
   </div>
 </footer>
+
+<script>
+  const heroHeader = document.getElementById('hero-header');
+
+  if (heroHeader) {
+    const refreshPage = () => {
+      window.location.reload();
+    };
+
+    heroHeader.addEventListener('click', refreshPage);
+    heroHeader.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        refreshPage();
+      }
+    });
+  }
+</script>
 
 </body>
 </html>
