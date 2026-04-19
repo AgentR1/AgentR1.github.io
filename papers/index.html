@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>论文发表 — USTC-AGI</title>
+  <meta name="description" content="USTC-AGI 研究组论文发表子页面，展示本方向代表性论文。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: none; }
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e8e8e8;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    }
+    .top-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 64px;
+    }
+    .nav-brand {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #111;
+      white-space: nowrap;
+    }
+    .nav-brand span { color: #c0392b; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 10px 0;
+    }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-links a {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #555;
+      transition: color .18s, background .18s, border-color .18s, transform .18s;
+      white-space: nowrap;
+    }
+    .nav-links a:hover {
+      color: #c0392b;
+      background: #fff3f2;
+      border-color: #f2d2ce;
+      transform: translateY(-1px);
+    }
+    .nav-links a.nav-primary {
+      color: #fff;
+      background: #c0392b;
+      border-color: #c0392b;
+      box-shadow: 0 6px 14px rgba(192, 57, 43, 0.16);
+    }
+    .hero {
+      background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 68px 0 48px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.15rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #111;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: #5b5b5b;
+      font-size: 0.98rem;
+    }
+    main {
+      flex: 1;
+      padding: 42px 0 80px;
+    }
+    .paper-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .paper-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.05);
+    }
+    .paper-accent {
+      height: 4px;
+      background: linear-gradient(90deg, #c0392b, #e67e22);
+    }
+    .paper-body {
+      padding: 24px 24px 22px;
+    }
+    .paper-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff3f2;
+      color: #b03a2e;
+      border: 1px solid #f1cbc5;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+    }
+    .paper-card h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #111;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+    .paper-desc {
+      color: #5b5b5b;
+      font-size: 0.92rem;
+      line-height: 1.75;
+    }
+    .paper-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .paper-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1.5px solid #d8d8d8;
+      background: #fff;
+      color: #444;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+    .paper-btn:hover {
+      background: #f5f5f5;
+      border-color: #aaa;
+      color: #222;
+    }
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 0.84rem;
+    }
+    @media (max-width: 640px) {
+      .top-nav .container {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      .nav-links {
+        justify-content: flex-start;
+        width: 100%;
+      }
+      .hero h1 { font-size: 1.7rem; }
+      .paper-body { padding: 20px 18px; }
+      .container { padding: 0 16px; }
+      main { padding: 34px 0 64px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav" aria-label="论文页面顶部导航">
+    <div class="container">
+      <a class="nav-brand" href="../">USTC-AGI <span>Agentic AI</span></a>
+      <div class="nav-links">
+        <a href="../">首页</a>
+        <a href="./" class="nav-primary">论文发表</a>
+        <a href="https://github.com/AgentR1" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <h1>论文发表</h1>
+      <p>集中展示本方向当前页面涉及的代表性论文与综述。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="paper-list">
+        <article class="paper-card">
+          <div class="paper-accent"></div>
+          <div class="paper-body">
+            <span class="paper-tag">Agent RL</span>
+            <h2>Agent-r1: Training powerful llm agents with end-to-end reinforcement learning</h2>
+            <p class="paper-desc">聚焦端到端强化学习训练 LLM Agent，系统探索多轮工具调用场景下的策略优化与能力提升问题。</p>
+            <div class="paper-links">
+              <a class="paper-btn" href="../agent-r1/">相关项目页</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="paper-card">
+          <div class="paper-accent"></div>
+          <div class="paper-body">
+            <span class="paper-tag">Academic Search Agent</span>
+            <h2>PaperScout: An Autonomous Agent for Academic Paper Search with Process-Aware Sequence-Level Policy Optimization</h2>
+            <p class="paper-desc">围绕学术论文搜索任务，研究过程感知的序列级策略优化方法，提升多步文献检索与决策效率。</p>
+            <div class="paper-links">
+              <a class="paper-btn" href="../agentic-rag/">相关方向页</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="paper-card">
+          <div class="paper-accent"></div>
+          <div class="paper-body">
+            <span class="paper-tag">Survey</span>
+            <h2>A Comprehensive Survey of the LLM-Based Agent: The Contextual Cognition Perspective</h2>
+            <p class="paper-desc">从情境认知视角系统梳理 LLM-based Agent 的研究脉络、关键能力模块与未来发展方向。</p>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025–2026 Agentic AI Team · <a href="https://ustcagi.github.io/" target="_blank" rel="noopener">USTC-AGI组</a>
+  </footer>
+</body>
+</html>
