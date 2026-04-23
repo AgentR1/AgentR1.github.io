@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Routing-RAG — Meta KDD Cup 2024 CRAG 亚军方案</title>
+  <meta name="description" content="基于 Frontiers of Computer Science 2026 论文整理的 Meta KDD Cup 2024 CRAG 亚军方案主页，重点展示 routing-based RAG 在动态问答中的系统设计、关键技术与实验结果。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee;
+      border: 1px solid #e0e0de;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #c0392b;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    header {
+      background:
+        radial-gradient(circle at top right, rgba(192, 57, 43, 0.10), transparent 30%),
+        linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 60px 0 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #edd7d3;
+      background: #fff8f7;
+      color: #c0392b;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .hero-panel {
+      width: min(100%, 460px);
+      margin: 22px auto 18px;
+      padding: 20px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #fffefe, #fff3f1);
+      border: 1px solid #eedad5;
+      box-shadow: 0 14px 36px rgba(192, 57, 43, 0.08);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 52px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .hero-card {
+      border: 1px solid #ece5e2;
+      border-radius: 16px;
+      background: #fff;
+      padding: 13px 12px;
+    }
+    .hero-card strong {
+      display: block;
+      font-size: 0.84rem;
+      color: #111;
+      margin-bottom: 5px;
+    }
+    .hero-card span {
+      display: block;
+      font-size: 0.76rem;
+      color: #666;
+      line-height: 1.55;
+    }
+    .hero-bridge {
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #dfb4ad, #c0392b);
+      position: relative;
+    }
+    .hero-bridge::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #c0392b;
+      border-right: 2px solid #c0392b;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    .hero-note {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #7a6661;
+    }
+    header h1 {
+      margin-top: 12px;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: #111;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin-top: 14px;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .affiliation {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+    .authors {
+      margin-top: 8px;
+      font-size: 0.87rem;
+      color: #777;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+      text-decoration: none;
+    }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 46px;
+    }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 32px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.02rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: #c0392b; }
+
+    .stat-row {
+      display: flex;
+      gap: 20px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 140px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-box .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.1;
+    }
+    .stat-box .stat-label {
+      font-size: 0.83rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon { font-size: 1.65rem; margin-bottom: 10px; line-height: 1; }
+    .card h4 { font-size: 0.93rem; font-weight: 700; margin-bottom: 7px; color: #111; }
+    .card p { font-size: 0.87rem; color: #555; margin: 0; line-height: 1.65; }
+
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text strong { display: block; font-size: 0.95rem; margin-bottom: 3px; }
+    .pillar-text span { font-size: 0.88rem; color: #555; }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 150px 1fr 1fr;
+      gap: 0;
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e4e4e4;
+      font-size: 0.9rem;
+    }
+    .compare-grid .hd {
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      padding: 11px 14px;
+    }
+    .compare-grid .cell {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      line-height: 1.6;
+    }
+    .compare-grid .label {
+      font-weight: 700;
+      background: #fdf9f9;
+      color: #333;
+      border-right: 1px solid #f0f0f0;
+    }
+    .compare-grid .base-cell {
+      background: #fafafa;
+      border-right: 1px solid #f0f0f0;
+    }
+    .compare-grid .ours-cell {
+      background: #fff;
+    }
+    .compare-grid .last-row .cell { border-bottom: none; }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: #c0392b;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid #e4e4e4; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+    tr:nth-child(even) td { background: #fdf9f9; }
+    tr:last-child td { border-bottom: none; }
+    .bold-result { font-weight: 700; color: #111; }
+
+    .citation-box {
+      background: #f5f5f3;
+      border: 1px solid #e0e0de;
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.82rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    @media (max-width: 700px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-bridge {
+        width: 2px;
+        height: 26px;
+        margin: 0 auto;
+        background: linear-gradient(180deg, #dfb4ad, #c0392b);
+      }
+      .hero-bridge::after {
+        right: 50%;
+        top: auto;
+        bottom: -1px;
+        transform: translateX(50%) rotate(135deg);
+      }
+      .card-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.45rem; }
+      section { padding: 48px 0; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.25rem; }
+      .compare-grid { grid-template-columns: 102px 1fr 1fr; font-size: 0.82rem; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="hero-badge">Meta KDD Cup 2024 CRAG · Runner-up Solution</div>
+    <div class="hero-panel" aria-hidden="true">
+      <div class="hero-grid">
+        <div class="hero-card">
+          <strong>Routing</strong>
+          <span>Domain router + dynamism router 决定查什么、信什么、何时保守拒答。</span>
+        </div>
+        <div class="hero-bridge"></div>
+        <div class="hero-card">
+          <strong>RAG</strong>
+          <span>Web + Mock API 多源证据融合，面向动态事实问答做稳健生成。</span>
+        </div>
+      </div>
+      <div class="hero-note">不是“把内容塞给模型”，而是先判断该检索什么、该展示什么、什么时候不该答。</div>
+    </div>
+    <h1>Routing-Based RAG：<span class="highlight">Meta KDD Cup 2024 CRAG 亚军</span>方案</h1>
+    <p class="subtitle">
+      用两个轻量级路由器驱动 source selection、evidence fusion 与 conservative generation，
+      在动态、异构、多源的真实问答环境中，把 direct RAG 的负分结果拉升为稳定的正分系统。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+    <p class="authors">Jie Ouyang, Yucong Luo, Mingyue Cheng, Daoyu Wang, Shuo Yu, Qi Liu, Enhong Chen</p>
+
+    <div class="btn-row">
+      <a class="btn btn-secondary" href="../" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 12H5"/>
+          <path d="m12 19-7-7 7-7"/>
+        </svg>
+        返回总览
+      </a>
+      <a class="btn btn-secondary" href="https://doi.org/10.1007/s11704-026-51987-z" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        DOI
+      </a>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#intro">简介</a>
+    <a href="#challenge">挑战</a>
+    <a href="#system">系统设计</a>
+    <a href="#retrieval">检索与生成</a>
+    <a href="#results">实验结果</a>
+    <a href="#lessons">经验总结</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      这项工作总结了 USTC 在 <strong>Meta KDD Cup 2024 CRAG</strong> 中的亚军方案。
+      核心不是更复杂的生成器，而是一个 <strong>routing-based RAG</strong> 框架：
+      先判断问题属于哪个 domain、事实变化有多快，再决定调用哪些外部资源、如何融合证据、何时采取保守拒答策略。
+      结果是在 Task 2 / Task 3 上把 baseline 的负分整体指标提升到了 <strong>31.22 / 31.66</strong>。
+    </div>
+
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      CRAG 是一个专门为现实世界动态问答设计的 benchmark。它把问题覆盖到 finance、sports、music、movies 和 open-domain
+      五个领域，并同时提供 web documents、mock knowledge graphs 和 mock APIs。和典型 open-domain QA 不同，
+      这里的难点不只是“找得到相关内容”，而是如何在 <strong>异构来源、时效性差异、噪声网页和部分过期证据</strong> 中做出可靠判断。
+    </p>
+    <p>
+      论文复盘的核心观点很明确：现实 RAG 的瓶颈往往不是模型会不会生成，而是系统是否知道
+      <strong>该查询什么、该展示什么、什么时候不该答</strong>。因此他们没有把重点放在更重的端到端模型上，
+      而是通过轻量级 routing、稳健的 API integration、multi-stage retrieval 和 conservative answer policy
+      去提升整体 correctness-hallucination tradeoff。
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">31.22</div>
+        <div class="stat-label">Task 2 Score</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">31.66</div>
+        <div class="stat-label">Task 3 Score</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">46.75%</div>
+        <div class="stat-label">Task 2 Accuracy</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">15.54%</div>
+        <div class="stat-label">Task 2 Hallucination</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="challenge">
+  <div class="container">
+    <h2 class="section-title">为什么这个比赛难</h2>
+    <p>
+      CRAG 的挑战不在于单一知识源的检索，而在于“动态世界中的多源问答”。同一个问题可能既需要网页证据，也需要结构化 API 返回；
+      有些问题依赖秒级变化的事实，有些问题则是长期稳定知识；还有些问题看似可答，但如果没有可靠实时来源，最好的策略其实是拒答。
+    </p>
+
+    <div class="compare-grid">
+      <div class="hd"></div>
+      <div class="hd">Direct RAG</div>
+      <div class="hd">Routing-Based RAG</div>
+
+      <div class="cell label">对问题的理解</div>
+      <div class="cell base-cell">默认把所有问题都当成统一检索任务</div>
+      <div class="cell ours-cell">先判断 domain 和 dynamism，再进入下游流程</div>
+
+      <div class="cell label">证据来源</div>
+      <div class="cell base-cell">直接拼接 web / API 内容</div>
+      <div class="cell ours-cell">根据领域路由做 source selection 和差异化融合</div>
+
+      <div class="cell label">动态事实处理</div>
+      <div class="cell base-cell">默认静态证据可用</div>
+      <div class="cell ours-cell">对 fast-changing / real-time query 更保守</div>
+
+      <div class="cell label">噪声控制</div>
+      <div class="cell base-cell">容易上下文过长、证据混杂</div>
+      <div class="cell ours-cell">BM25 预筛 + dense retrieval + rerank 多阶段过滤</div>
+
+      <div class="cell label">失败方式</div>
+      <div class="cell base-cell">更容易“有依据但仍然过时或错误”</div>
+      <div class="cell ours-cell">接受更高 missing，换取更低 hallucination</div>
+
+      <div class="last-row cell label">整体目标</div>
+      <div class="last-row cell base-cell">追求能答就答</div>
+      <div class="last-row cell ours-cell">平衡 correctness、hallucination 和 abstention</div>
+    </div>
+  </div>
+</section>
+
+<section id="system" class="alt">
+  <div class="container">
+    <h2 class="section-title">系统设计</h2>
+    <p>
+      整个方案可以概括为一个三阶段 RAG pipeline，加上两个非常关键的轻量级路由器。它们不是重模型，
+      但承担了整个系统的“控制平面”职责，决定下游应该走哪条检索和生成路径。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🧭</div>
+        <h4>Domain Router</h4>
+        <p>将问题划分到 finance、sports、music、movies、open-domain 五个领域，用于控制 API 选择、web-API 融合方式和 prompt 选择。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <h4>Dynamism Router</h4>
+        <p>预测问题底层事实变化速度，划分为 static、slow-changing、fast-changing、real-time，用来决定系统是否应该保守。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h4>Web Retrieval</h4>
+        <p>先用 Newspaper 把 HTML 转纯文本，再走 BM25 预过滤、bge-m3 dense retrieval 和 cross-encoder rerank，显式抑制噪声。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔌</div>
+        <h4>API Extractor</h4>
+        <p>通过实体抽取、实体匹配、时间归一化和 domain-aware API 选择，把 JSON 输出转成可与文本证据自然融合的 Markdown 结构。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">两个 Router 为什么重要</h3>
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>先决定“看哪里”，再决定“怎么答”</strong>
+          <span>open-domain 更依赖 web，finance / sports 更依赖数值一致性更强的 API，movie / music 则采用 web 与 API 结合。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>把时效性建模成显式信号</strong>
+          <span>很多失败不是因为检索不到，而是用静态证据去回答本该实时更新的问题，因此 dynamism 判断直接影响后续是否拒答。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>让“保守”变成系统能力，而非偶然行为</strong>
+          <span>当没有可靠实时 API 时，系统宁愿给出 “I don't know” 风格响应，也避免 grounded-yet-wrong 的高风险错误。</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="retrieval">
+  <div class="container">
+    <h2 class="section-title">检索与生成策略</h2>
+    <p>
+      这篇工作的一个很实用的 insight 是：RAG 真正重要的不是“召回得越多越好”，而是最终允许模型看到什么证据。
+      因此他们把大量工程精力放在 evidence pruning 和 source-aware fusion 上，而不是一味扩大上下文。
+    </p>
+
+    <h3 class="sub-title">Web 侧：先降噪，再做精排</h3>
+    <ul class="feature-list">
+      <li>HTML 先经由 news-style parser 转纯文本，避免原始页面结构噪声直接污染检索。</li>
+      <li>BM25 对大文本块做前置过滤，在 Task 3 多网页场景里显著降低延迟并提升可扩展性。</li>
+      <li>bge-m3 负责 dense retrieval，cross-encoder reranker 最终只留下少量高质量片段给生成器。</li>
+    </ul>
+
+    <h3 class="sub-title">API 侧：真正的瓶颈是参数质量</h3>
+    <div class="card-grid-2">
+      <div class="card">
+        <h4>Entity Matching</h4>
+        <p>从 surface form 对齐到 API 所需 canonical identifier，例如公司名到 ticker symbol。论文显示去掉这一项会明显掉分。</p>
+      </div>
+      <div class="card">
+        <h4>Time Information Extraction</h4>
+        <p>把 “yesterday” 这类相对时间表达转成绝对时间戳。对动态事实问答，这一步几乎是 API 调用是否有效的前提。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">生成侧：Few-shot + CoT + 保守后处理</h3>
+    <p>
+      最终答案生成采用强 instruction-tuned LLM，并结合 chain-of-thought prompting 与少量 domain-specific few-shot。
+      但真正决定稳定性的，是一层非常轻量却有效的后处理规则：对没有实时 API 支撑的 fast-changing / real-time 问题，
+      系统通过硬规则直接映射到 “I don’t know” 风格响应；对精确数值计算超出模型能力的问题同样拒答。
+    </p>
+  </div>
+</section>
+
+<section id="results" class="alt">
+  <div class="container">
+    <h2 class="section-title">实验结果</h2>
+    <p>
+      论文最直接的结论是：在 CRAG 这种 heavily penalize hallucination 的评测里，
+      简单把外部内容拼进 prompt 的 direct RAG 并不够，甚至整体得分仍然是负数。
+      routing、evidence selection 和 conservative answer policy 才是把系统从“能检索”推进到“可靠可用”的关键。
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>System</th>
+            <th>Score</th>
+            <th>Accuracy</th>
+            <th>Hallucination</th>
+            <th>Missing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>LLM Only</td>
+            <td>-7.29</td>
+            <td>28.01</td>
+            <td>35.30</td>
+            <td>36.69</td>
+          </tr>
+          <tr>
+            <td>Direct RAG</td>
+            <td>-6.78</td>
+            <td>34.79</td>
+            <td>41.58</td>
+            <td>23.63</td>
+          </tr>
+          <tr>
+            <td>Task 2</td>
+            <td class="bold-result">31.22</td>
+            <td class="bold-result">46.75</td>
+            <td class="bold-result">15.54</td>
+            <td>37.71</td>
+          </tr>
+          <tr>
+            <td>Task 3</td>
+            <td class="bold-result">31.66</td>
+            <td class="bold-result">48.21</td>
+            <td>16.56</td>
+            <td>35.23</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Ablation Highlights</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Task 2 Variant</th>
+            <th>Score</th>
+            <th>Accuracy</th>
+            <th>Hallucination</th>
+            <th>Missing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>w/o Rerank</td>
+            <td>29.17</td>
+            <td>43.54</td>
+            <td>14.37</td>
+            <td>42.09</td>
+          </tr>
+          <tr>
+            <td>w/o EntityMatch</td>
+            <td>21.44</td>
+            <td>32.31</td>
+            <td>10.87</td>
+            <td>56.82</td>
+          </tr>
+          <tr>
+            <td>w/o TimeInfoExtract</td>
+            <td>18.45</td>
+            <td>28.45</td>
+            <td>9.99</td>
+            <td>61.56</td>
+          </tr>
+          <tr>
+            <td>w/o Fewshot &amp; CoT</td>
+            <td>25.53</td>
+            <td>52.08</td>
+            <td>26.55</td>
+            <td>21.37</td>
+          </tr>
+          <tr>
+            <td>Ours</td>
+            <td class="bold-result">31.22</td>
+            <td>46.75</td>
+            <td>15.54</td>
+            <td>37.71</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📉</div>
+        <h4>把 hallucination 压下来是关键</h4>
+        <p>Task 2 的 hallucination 从 Direct RAG 的 41.58% 降到 15.54%，说明比赛环境里“少错”比“多答”更值钱。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧱</div>
+        <h4>Rerank 是有效而不是可有可无</h4>
+        <p>去掉 rerank 后 score 和 accuracy 都下降，证明高质量、紧凑证据比大量粗糙上下文更重要。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🕰️</div>
+        <h4>时间抽取是动态 QA 的硬需求</h4>
+        <p>去掉 time information extraction 后 score 从 31.22 掉到 18.45，missing 飙升到 61.56%。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h4>Few-shot 与 CoT 影响的是保守性</h4>
+        <p>移除后 accuracy 会升，但 hallucination 明显恶化，说明这些 prompting 技术本质上在帮助模型学会更谨慎地回答。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lessons">
+  <div class="container">
+    <h2 class="section-title">经验总结</h2>
+    <p>
+      论文最后的总结很值得做成方法论。它不是单纯复盘一套比赛技巧，而是在说清楚：<strong>现实 RAG 系统的可靠性控制，应该被放到核心地位</strong>。
+    </p>
+
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>评测必须同时考察 correctness、hallucination 和 missing</strong>
+          <span>如果只看 accuracy，系统会被鼓励做 aggressive guessing；CRAG 的价值就在于把拒答也纳入合理设计空间。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>RAG 的瓶颈常常不是 recall，而是 evidence selection</strong>
+          <span>决定“不让模型看到什么”与决定“检索回来什么”一样重要，甚至在 noisy web setting 下更重要。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>动态事实问答需要显式 temporal awareness</strong>
+          <span>过时网页和静态知识会造成 grounded-yet-incorrect answers，因此需要针对时间维度做单独建模，而不是隐含处理。</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="citation" class="alt">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+    <p>
+      该页面内容依据本地 PDF <code>FCS-251987-update-20260420.pdf</code> 整理，核心来源是 Frontiers of Computer Science 2026 的短文版本。
+    </p>
+    <div class="citation-box">@article{ouyang2026routingrag,
+  title={Routing-Based RAG for Dynamic Question Answering: Lessons from Meta KDD Cup 2024 CRAG},
+  author={Ouyang, Jie and Luo, Yucong and Cheng, Mingyue and Wang, Daoyu and Yu, Shuo and Liu, Qi and Chen, Enhong},
+  journal={Frontiers of Computer Science},
+  year={2026},
+  doi={10.1007/s11704-026-51987-z}
+}</div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 Agentic AI Team · State Key Laboratory of Cognitive Intelligence, USTC</p>
+  <p>Routing-Based RAG · Lessons from Meta KDD Cup 2024 CRAG</p>
+</footer>
+
+</body>
+</html>
