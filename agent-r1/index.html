@@ -87,6 +87,14 @@
       border-bottom: 1px solid #e8e8e8;
       padding: 60px 0 48px;
       text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, filter .16s ease;
+    }
+    header:hover {
+      filter: saturate(1.02);
+    }
+    header:active {
+      transform: scale(0.995);
     }
     .hero-logo {
       width: min(100%, 420px);
@@ -418,6 +426,11 @@
     footer a { color: #e87b6e; }
     footer p + p { margin-top: 6px; }
 
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
     /* ── Responsive ────────────────────────────────── */
     @media (max-width: 640px) {
       .hero-logo { width: min(100%, 300px); margin-bottom: 14px; }
@@ -434,7 +447,7 @@
 <body>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header>
+<header id="top-refresh">
   <div class="container">
     <div class="hero-logo">
       <img src="assets/logo.png" alt="Agent-R1 logo" />
@@ -832,6 +845,21 @@
     </p>
   </div>
 </footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
 
 </body>
 </html>
