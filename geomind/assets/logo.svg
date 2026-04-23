@@ -1,0 +1,17 @@
+<svg width="960" height="260" viewBox="0 0 960 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="260" rx="32" fill="#F4FBF6"/>
+  <rect x="18" y="18" width="924" height="224" rx="24" stroke="#D6EBDD" stroke-width="2"/>
+  <path d="M110 194V86" stroke="#2E8B57" stroke-width="8" stroke-linecap="round"/>
+  <path d="M152 194V110" stroke="#2E8B57" stroke-width="8" stroke-linecap="round"/>
+  <path d="M194 194V134" stroke="#2E8B57" stroke-width="8" stroke-linecap="round"/>
+  <path d="M236 194V158" stroke="#2E8B57" stroke-width="8" stroke-linecap="round"/>
+  <path d="M82 184C106 176 130 164 154 154C178 144 206 140 230 128C254 116 278 102 302 86" stroke="#6EB88A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="302" cy="86" r="11" fill="#2E8B57"/>
+  <path d="M340 88H372L392 64H430L450 88H482" stroke="#1F6A40" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="340" cy="88" r="8" fill="#1F6A40"/>
+  <circle cx="392" cy="64" r="8" fill="#1F6A40"/>
+  <circle cx="450" cy="88" r="8" fill="#1F6A40"/>
+  <text x="520" y="112" fill="#1F6A40" font-size="64" font-family="Arial, Helvetica, sans-serif" font-weight="700">GeoMind</text>
+  <text x="522" y="150" fill="#4D6B59" font-size="24" font-family="Arial, Helvetica, sans-serif">with MA-GRPO</text>
+  <text x="522" y="184" fill="#799787" font-size="20" font-family="Arial, Helvetica, sans-serif">Agentic Workflow for Lithology Classification</text>
+</svg>
