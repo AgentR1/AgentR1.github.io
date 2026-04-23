@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StepPO — Step-Aligned Policy Optimization for Agentic Reinforcement Learning</title>
+  <meta name="description" content="StepPO 提出面向 Agentic Reinforcement Learning 的 step-aligned 优化视角：以 step-level MDP、step-level credit assignment 和 step-native systems 为核心。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --accent: #b9770e;
+      --accent-deep: #9c640c;
+      --accent-soft: #fff6e7;
+      --accent-border: #f3d197;
+      --bg: #f7f7f5;
+      --bg-alt: #ffffff;
+      --text: #171717;
+      --muted: #565656;
+      --line: #e7e3da;
+      --code-bg: #f3efe7;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: var(--code-bg);
+      border: 1px solid #e6dfd1;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: var(--accent-deep);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #5d5d5d;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: var(--accent) !important;
+      border-right: 1px solid var(--line);
+    }
+
+    header {
+      background: linear-gradient(160deg, #ffffff 54%, #fff7eb 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 60px 0 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, filter .16s ease;
+    }
+    header:hover { filter: saturate(1.03); }
+    header:active { transform: scale(0.995); }
+    .hero-logo {
+      width: min(100%, 460px);
+      margin: 0 auto 20px;
+    }
+    .hero-logo img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+    header h1 {
+      margin-top: 8px;
+      font-size: 1.95rem;
+      font-weight: 800;
+      line-height: 1.34;
+      color: #111;
+    }
+    header h1 .highlight { color: var(--accent); }
+    .subtitle {
+      margin-top: 14px;
+      font-size: 1.02rem;
+      color: var(--muted);
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.72;
+    }
+    .affiliation {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #8e8e8e;
+      letter-spacing: 0.02em;
+    }
+    .authors {
+      margin-top: 8px;
+      font-size: 0.87rem;
+      color: #757575;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.11);
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover {
+      background: var(--accent-deep);
+      border-color: var(--accent-deep);
+    }
+    .btn-secondary {
+      background: #fff;
+      color: #222;
+      border-color: #d8d2c7;
+    }
+    .btn-secondary:hover {
+      background: #fbfaf6;
+      border-color: #b7aa90;
+    }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 46px;
+    }
+    section.alt { background: var(--bg-alt); }
+    section + section { border-top: 1px solid var(--line); }
+    h2.section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--accent);
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #202020;
+      margin: 32px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: var(--accent-soft);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.02rem;
+      color: #232323;
+      margin-bottom: 32px;
+      line-height: 1.76;
+    }
+    .tldr strong { color: var(--accent-deep); }
+
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      margin: 28px 0 0;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 155px;
+      background: #fff;
+      border: 1px solid #ece5d8;
+      border-radius: 10px;
+      padding: 18px 18px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-box .stat-num {
+      font-size: 1.95rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.06;
+    }
+    .stat-box .stat-label {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #e7decf;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: var(--accent);
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f4efe6;
+    }
+    tr:nth-child(even) td { background: #fefbf6; }
+    tr:last-child td { border-bottom: none; }
+    .tag-best {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ece3d6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+    }
+    .card .card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .card p {
+      font-size: 0.87rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.66;
+    }
+
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #ece3d6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text { flex: 1; }
+    .pillar-text strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+    }
+    .pillar-text span {
+      font-size: 0.88rem;
+      color: #555;
+    }
+
+    figure { margin: 28px 0; text-align: center; }
+    figure img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid #e3d9ca;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+    figcaption {
+      margin-top: 10px;
+      font-size: 0.84rem;
+      color: #777;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: var(--accent);
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .citation-box {
+      background: #f6f2ea;
+      border: 1px solid #e5dccd;
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.82rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #efb55a; }
+    footer p + p { margin-top: 6px; }
+
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
+    @media (max-width: 640px) {
+      .hero-logo { width: min(100%, 320px); margin-bottom: 14px; }
+      header h1 { font-size: 1.45rem; }
+      section { padding: 48px 0; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.24rem; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="top-refresh">
+  <div class="container">
+    <div class="hero-logo">
+      <img src="assets/logo.svg" alt="StepPO logo" />
+    </div>
+    <h1>StepPO：让 <span class="highlight">Agentic RL</span> 从 token 对齐走向 step 对齐</h1>
+    <p class="subtitle">
+      将 Agent 的强化学习单位从 token 提升到 interaction step，
+      用 <strong>step-level MDP</strong>、<strong>step-level credit assignment</strong> 与
+      <strong>step-native systems</strong> 重新组织多轮交互优化。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室 · arXiv 2604.18401</p>
+    <p class="authors">Daoyu Wang · Qingchuan Li · Mingyue Cheng · Jie Ouyang · Shuo Yu · Qi Liu · Enhong Chen</p>
+
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://arxiv.org/abs/2604.18401" target="_blank" rel="noopener">arXiv</a>
+      <a class="btn btn-secondary" href="https://arxiv.org/pdf/2604.18401" target="_blank" rel="noopener">Paper PDF</a>
+      <a class="btn btn-secondary" href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">Agent-R1</a>
+      <a class="btn btn-secondary" href="https://github.com/AgentR1/Claw-R1" target="_blank" rel="noopener">Claw-R1</a>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#intro">简介</a>
+    <a href="#mismatch">粒度错位</a>
+    <a href="#paradigm">Step 对齐范式</a>
+    <a href="#systems">系统设计</a>
+    <a href="#results">实验结果</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      StepPO 的核心判断是：
+      对于多轮工具调用 Agent，真正有语义意义的动作单位不是 token，而是完整的 interaction step。
+      因此，Agentic RL 需要同时完成四个层面的迁移：
+      <strong>从 token-level MDP 到 step-level MDP</strong>，
+      <strong>从 text replay 到 step-native trajectory</strong>，
+      <strong>从 token / trajectory credit 到 step-level credit</strong>，
+      以及 <strong>从紧耦合同步训练到可扩展的异步系统</strong>。
+    </div>
+
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      StepPO（Step-Aligned Policy Optimization）是一篇面向 Agentic Reinforcement Learning 的方法立场论文，
+      它不是只在传统 PPO 上做局部技巧修补，而是从建模单位出发，重新定义多轮 Agent 应该如何被表示、回放与优化。
+      论文指出：当训练目标从单轮回答转向长程工具使用与环境交互时，token-centric 的 RL 抽象已经不再足够。
+    </p>
+    <p>
+      在这个视角下，StepPO 把一个 Agent 在某轮观察下作出的完整响应、工具调用与环境反馈，
+      统一视为一个 step。策略优化、优势传播、数据表示与训练系统都应围绕这个 step 单位保持一致，
+      这也是 “step-aligned” 的真正含义。
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">Step</div>
+        <div class="stat-label">将 interaction step<br>视为原子动作单位</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">4</div>
+        <div class="stat-label">建模、表示、优化、系统<br>四层同步迁移</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">HotpotQA</div>
+        <div class="stat-label">多步问答场景下<br>验证 StepPO 优势</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2026</div>
+        <div class="stat-label">April 20, 2026<br>arXiv 首版发布</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mismatch">
+  <div class="container">
+    <h2 class="section-title">为什么需要 StepPO</h2>
+    <p>
+      论文首先指出，当前 Agentic RL 的一个核心问题是<strong>粒度错位</strong>：
+      许多方法仍然沿用 token-level MDP，但信用分配却已经开始向 trajectory-level 演进。
+      这会导致决策单位、奖励传播单位与真实 Agent 行为单位彼此不一致。
+    </p>
+    <p>
+      对多轮 Agent 来说，一个重要决定通常体现为一次完整的“观察 → 响应 / 工具调用 → 环境反馈”闭环。
+      如果仍然只把单个 token 视作动作，那么高级决策会被切碎，环境转移也会被埋在长文本序列中，
+      训练信号很难稳定地对齐到真正起作用的中间步骤。
+    </p>
+
+    <h3 class="sub-title">粒度对齐对比</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>方法</th>
+            <th>MDP 建模粒度</th>
+            <th>信用分配粒度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PPO</td>
+            <td>Token-level</td>
+            <td>Token-level</td>
+          </tr>
+          <tr>
+            <td>Reinforce++</td>
+            <td>Token-level</td>
+            <td>Token-level</td>
+          </tr>
+          <tr>
+            <td>GRPO</td>
+            <td>Token-level</td>
+            <td>Trajectory-level</td>
+          </tr>
+          <tr>
+            <td>RLOO</td>
+            <td>Token-level</td>
+            <td>Trajectory-level</td>
+          </tr>
+          <tr>
+            <td>LightningRL</td>
+            <td>Step-level</td>
+            <td>Trajectory-level</td>
+          </tr>
+          <tr>
+            <td><strong>StepPO</strong> <span class="tag-best">对齐</span></td>
+            <td><strong>Step-level</strong></td>
+            <td><strong>Step-level</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="feature-list">
+      <li><strong>Token-level credit</strong> 太局部，常常只能看到局部词元而看不到完整动作。</li>
+      <li><strong>Trajectory-level credit</strong> 又太粗，难以区分中间哪一步真正推动了成功。</li>
+      <li><strong>Step-level credit</strong> 则与 Agent 的真实决策边界一致，更适合长程交互优化。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="paradigm" class="alt">
+  <div class="container">
+    <h2 class="section-title">Step 对齐范式</h2>
+    <p>
+      StepPO 不是单点优化，而是一套从理论到工程的协同视角。论文把 Agentic RL 的迁移总结为四个相互配合的层面，
+      它们共同决定 step-level 优化能否真正落地。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">1</div>
+        <h4>MDP 重构</h4>
+        <p>从 token-level MDP 转向 step-level MDP，把完整交互轮次作为状态转移与动作定义的基本单位。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">2</div>
+        <h4>轨迹表示重构</h4>
+        <p>从 message / text replay 转向 step-native data，保留每一步的 prompt ids、response ids、reward 与 metadata。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">3</div>
+        <h4>信用分配重构</h4>
+        <p>从 token-level 或 trajectory-level 的不匹配传播，转向直接绑定 interaction step 的 reward propagation。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">4</div>
+        <h4>训练系统重构</h4>
+        <p>围绕 step-native replay、异步采样、共享前缀复用和网关化数据管理来搭建可扩展训练系统。</p>
+      </div>
+    </div>
+
+    <figure>
+      <img src="assets/step-mdp.svg" alt="Token-level MDP 和 Step-level MDP 的对比示意图" />
+      <figcaption>
+        从“单 token 追加”转向“完整 interaction step”后，Agent 的观察、行动与环境反馈链条会更清晰。
+      </figcaption>
+    </figure>
+
+    <h3 class="sub-title">Step-level MDP 的核心直觉</h3>
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>动作不再只是下一个 token</strong>
+          <span>在 Agent setting 中，动作可以是一段响应、一次结构化工具调用，或两者的组合。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>环境转移发生在 step 边界</strong>
+          <span>只有完成一步交互并收到 observation / reward 之后，下一状态才真正确定。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>优化必须与决策边界保持一致</strong>
+          <span>如果策略和奖励传播都以 step 为单位，优势估计会更贴近 Agent 的因果决策过程。</span>
+        </div>
+      </li>
+    </ul>
+
+    <h3 class="sub-title">为什么还要强调轨迹表示</h3>
+    <p>
+      StepPO 特别强调，理论上的 step-level MDP 只有在数据层也被如实记录时才成立。
+      如果 rollout 先被解码成文本，再重新 tokenize 回去做训练，就可能出现
+      <code>Tok(Detok(z)) != z</code> 的 retokenization drift。
+      这会破坏 rollout 与 replay 的一致性，进而削弱 step-aligned learning 的稳定性。
+    </p>
+  </div>
+</section>
+
+<section id="systems">
+  <div class="container">
+    <h2 class="section-title">系统设计</h2>
+    <p>
+      论文认为，StepPO 真正成立不仅是算法问题，也是系统问题。
+      只要训练仍然围绕扁平文本、同步执行和单一内部 Agent 组织，就很难把 step-level 优化稳定地扩展到真实工作负载。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">D</div>
+        <h4>Step-Native Data</h4>
+        <p>每个 step 保存 prompt ids、response ids、reward 和元信息，保持 token realization 与语义边界同时可用。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">G</div>
+        <h4>Gateway + DataPool</h4>
+        <p>通过 gateway 吸收异构 Agent 轨迹，再由 datapool 管理奖励、报告、版本与筛选元数据。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">P</div>
+        <h4>Prefix Reuse</h4>
+        <p>长轨迹中大量上下文前缀重复，step-native 存储允许系统做 shared-prefix reuse 与 prefix-tree merging。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">A</div>
+        <h4>Asynchronous Training</h4>
+        <p>rollout engine、training engine、gateway 与 datapool 解耦运行，在保证新鲜度的同时提升吞吐。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">与 Agent-R1 / Claw-R1 的关系</h3>
+    <p>
+      StepPO 也可以被看作一条研究路线的总结。
+      Agent-R1 更强调从训练视角解决 token-space consistency 与多轮 Agent MDP 抽象，
+      Claw-R1 则进一步从数据管理与中间件视角，推动 gateway-centered ingestion、datapool 管理与 heterogeneous-agent support。
+      StepPO 把这两条线索合并成一个更清晰的 step-aligned 叙事。
+    </p>
+  </div>
+</section>
+
+<section id="results" class="alt">
+  <div class="container">
+    <h2 class="section-title">实验结果</h2>
+    <p>
+      论文在 HotpotQA 的多步 Agentic RL 设置下，对 StepPO 与 token-level PPO 做了受控对比。
+      两者使用相同的 base model、数据、rollout pipeline 与大体训练配置，主要差异在于优化粒度。
+    </p>
+
+    <figure>
+      <img src="assets/curve.svg" alt="StepPO 与 token-level PPO 在 HotpotQA 上的训练曲线对比" />
+      <figcaption>
+        训练曲线显示 StepPO 在大部分训练阶段持续高于 token-level PPO，支持 step-level 优化更契合长程 Agent 行为。
+      </figcaption>
+    </figure>
+
+    <h3 class="sub-title">实验设置</h3>
+    <ul class="feature-list">
+      <li>任务基准为 <strong>HotpotQA</strong> 的 multi-step agent setting。</li>
+      <li>Base model 使用 <strong>Qwen2.5-3B-Instruct</strong>。</li>
+      <li>采用 per-step generation，而不是把整条多轮轨迹简单压扁成单序列。</li>
+      <li>评估中使用 shared-step view，对齐两种方法的 interaction steps。</li>
+    </ul>
+
+    <h3 class="sub-title">结果解读</h3>
+    <p>
+      结果趋势非常明确：StepPO 在训练的大多数阶段都稳定高于 token-level PPO，
+      并在中后期维持更好的平台表现。论文据此认为，当任务需要多步证据搜集、工具交互和中间决策时，
+      让 PPO 与 interaction step 对齐，会得到比 token-level credit propagation 更有效的学习信号。
+    </p>
+  </div>
+</section>
+
+<section id="citation">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+    <p>如果这个页面或论文观点对你的研究有帮助，可以引用：</p>
+    <div class="citation-box">@misc{wang2026steppo,
+  title={StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning},
+  author={Daoyu Wang and Qingchuan Li and Mingyue Cheng and Jie Ouyang and Shuo Yu and Qi Liu and Enhong Chen},
+  year={2026},
+  eprint={2604.18401},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  url={https://arxiv.org/abs/2604.18401}
+}</div>
+
+    <h2 class="section-title" style="margin-top: 48px;">相关项目</h2>
+    <p>
+      StepPO 与 <a href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">Agent-R1</a>、
+      <a href="https://github.com/AgentR1/Claw-R1" target="_blank" rel="noopener">Claw-R1</a>
+      共同构成了 USTC-AGI 在 Agentic RL 上从训练抽象到系统基础设施的连续研究脉络。
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2026 StepPO Team &middot; AGI Group · State Key Laboratory of Cognitive Intelligence, USTC
+    </p>
+    <p style="font-size: 0.78rem; color: #6d6d6d; margin-top: 6px;">
+      Built for the Agentic RL community
+    </p>
+  </div>
+</footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
+
+</body>
+</html>

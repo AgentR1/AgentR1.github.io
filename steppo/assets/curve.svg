@@ -1,0 +1,50 @@
+<svg width="1080" height="560" viewBox="0 0 1080 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1080" height="560" rx="24" fill="#FFFDFC"/>
+  <rect x="20" y="20" width="1040" height="520" rx="20" stroke="#E8DDCA" stroke-width="2"/>
+
+  <text x="82" y="74" fill="#2A251D" font-size="28" font-family="Arial, Helvetica, sans-serif" font-weight="700">HotpotQA Training Curves</text>
+  <text x="82" y="108" fill="#706759" font-size="18" font-family="Arial, Helvetica, sans-serif">StepPO vs token-level PPO in a multi-step Agentic RL setting</text>
+
+  <path d="M120 460H970" stroke="#B6AB98" stroke-width="3" stroke-linecap="round"/>
+  <path d="M120 150V460" stroke="#B6AB98" stroke-width="3" stroke-linecap="round"/>
+
+  <path d="M120 150H970" stroke="#EFE6D9" stroke-width="2"/>
+  <path d="M120 212H970" stroke="#EFE6D9" stroke-width="2"/>
+  <path d="M120 274H970" stroke="#EFE6D9" stroke-width="2"/>
+  <path d="M120 336H970" stroke="#EFE6D9" stroke-width="2"/>
+  <path d="M120 398H970" stroke="#EFE6D9" stroke-width="2"/>
+
+  <text x="68" y="466" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">0.40</text>
+  <text x="68" y="404" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">0.45</text>
+  <text x="68" y="342" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">0.50</text>
+  <text x="68" y="280" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">0.55</text>
+  <text x="68" y="218" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">0.60</text>
+  <text x="68" y="156" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">0.65</text>
+
+  <text x="114" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">0</text>
+  <text x="216" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">25</text>
+  <text x="324" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">50</text>
+  <text x="432" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">75</text>
+  <text x="536" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">100</text>
+  <text x="646" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">125</text>
+  <text x="755" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">150</text>
+  <text x="862" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">175</text>
+  <text x="954" y="494" fill="#6A6256" font-size="18" font-family="Arial, Helvetica, sans-serif">200</text>
+
+  <text x="494" y="530" fill="#6A6256" font-size="20" font-family="Arial, Helvetica, sans-serif" font-weight="700">Step</text>
+  <text transform="translate(36 336) rotate(-90)" fill="#6A6256" font-size="20" font-family="Arial, Helvetica, sans-serif" font-weight="700">Score</text>
+
+  <path d="M120 290C155 250 195 220 228 232C260 244 300 214 332 206C365 198 404 182 436 186C468 190 510 176 542 182C575 188 615 168 648 168C680 168 718 172 752 176C786 180 824 168 860 164C896 160 932 170 970 176" stroke="#B9770E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M120 344C154 320 193 300 228 306C261 312 299 288 332 286C365 284 404 260 436 262C469 264 510 248 542 254C575 260 615 242 648 246C681 250 719 252 752 254C785 256 824 242 860 240C896 238 932 250 970 258" stroke="#7B8794" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="860" cy="164" r="7" fill="#B9770E"/>
+  <circle cx="860" cy="240" r="7" fill="#7B8794"/>
+  <path d="M848 164H966" stroke="#D8C9AB" stroke-width="2" stroke-dasharray="6 8"/>
+  <path d="M848 240H966" stroke="#D8C9AB" stroke-width="2" stroke-dasharray="6 8"/>
+
+  <rect x="780" y="122" width="176" height="84" rx="14" fill="#FFF5E5" stroke="#E6CF9C"/>
+  <circle cx="810" cy="152" r="7" fill="#B9770E"/>
+  <text x="828" y="158" fill="#5A4C37" font-size="19" font-family="Arial, Helvetica, sans-serif" font-weight="700">StepPO</text>
+  <circle cx="810" cy="182" r="7" fill="#7B8794"/>
+  <text x="828" y="188" fill="#5A4C37" font-size="19" font-family="Arial, Helvetica, sans-serif" font-weight="700">PPO</text>
+</svg>

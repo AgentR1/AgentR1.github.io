@@ -1,0 +1,14 @@
+<svg width="920" height="260" viewBox="0 0 920 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="920" height="260" rx="32" fill="#FFF8EE"/>
+  <rect x="18" y="18" width="884" height="224" rx="24" stroke="#EEDCC0" stroke-width="2"/>
+  <path d="M108 172H172V196H84C77.3726 196 72 190.627 72 184V120H96V172H108Z" fill="#B9770E"/>
+  <rect x="108" y="148" width="64" height="24" rx="8" fill="#D18A10"/>
+  <rect x="180" y="124" width="64" height="24" rx="8" fill="#E19D1B"/>
+  <rect x="252" y="100" width="64" height="24" rx="8" fill="#F0B63F"/>
+  <path d="M216 196L288 124" stroke="#9C640C" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="96" cy="120" r="10" fill="#9C640C"/>
+  <circle cx="288" cy="124" r="10" fill="#F0B63F"/>
+  <text x="360" y="118" fill="#9C640C" font-size="74" font-family="Arial, Helvetica, sans-serif" font-weight="700" letter-spacing="2">StepPO</text>
+  <text x="362" y="156" fill="#5D5445" font-size="22" font-family="Arial, Helvetica, sans-serif">STEP-ALIGNED POLICY OPTIMIZATION</text>
+  <text x="362" y="188" fill="#8A7A63" font-size="20" font-family="Arial, Helvetica, sans-serif">for Agentic Reinforcement Learning</text>
+</svg>
