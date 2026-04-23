@@ -81,7 +81,6 @@
       color: #c0392b !important;
       border-right: 1px solid #e8e8e8;
     }
-
     /* ── Hero header ───────────────────────────────── */
     header {
       background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
@@ -145,8 +144,6 @@
       text-decoration: none;
       opacity: 1;
     }
-    .btn-primary { background: #c0392b; color: #fff; border-color: #c0392b; }
-    .btn-primary:hover { background: #a93226; border-color: #a93226; }
     .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
     .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
     .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
@@ -428,25 +425,22 @@
 <!-- ═══════════════════ HEADER ═══════════════════ -->
 <header>
   <div class="container">
-    <h1>Agent-R1：<span class="highlight">端到端强化学习</span>训练 LLM Agent</h1>
+    <h1>Agent-R1：<span class="highlight">多轮交互强化学习</span>训练框架</h1>
     <p class="subtitle">
       将 MDP 框架系统性延伸至多轮工具调用场景，<br>
       构建模块化、易扩展的 Agent 强化学习训练框架。
     </p>
-    <p class="authors">
-      Mingyue Cheng &middot; Jie Ouyang &middot; Shuo Yu &middot; Ruiran Yan &middot; Yucong Luo &middot; Zirui Liu &middot; Daoyu Wang &middot; Qi Liu &middot; Enhong Chen
-    </p>
     <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
 
     <div class="btn-row">
-      <a class="btn btn-primary" href="docs/" rel="noopener">
+      <a class="btn btn-secondary" href="docs/" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
           <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
         </svg>
-        文档子页
+        使用文档
       </a>
-      <a class="btn btn-primary" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">
+      <a class="btn btn-secondary" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
             0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
@@ -469,9 +463,6 @@
         </svg>
         Technical Report
       </a>
-      <a class="btn btn-secondary" href="../" rel="noopener">
-        ← 返回主页
-      </a>
     </div>
   </div>
 </header>
@@ -480,8 +471,6 @@
 <nav class="nav-bar">
   <div class="container">
     <a href="../" class="nav-home">Agentic AI</a>
-    <a href="docs/">文档子页</a>
-    <a href="https://agentr1.github.io/Agent-R1/" target="_blank" rel="noopener noreferrer">完整文档</a>
     <a href="#intro">简介</a>
     <a href="#problem">核心问题</a>
     <a href="#mdp">MDP 框架</a>
@@ -511,11 +500,6 @@
       一方面，对 RL 方法论在 LLM Agent 场景下的应用进行梳理与澄清；
       另一方面，提供一个<strong>灵活、易用的端到端训练框架</strong>，开发者只需定义工具和奖励函数即可快速迁移到新场景。
     </p>
-
-    <figure>
-      <img src="assets/agent.png" alt="Workflow vs Agentic Workflow vs Autonomous Agent" />
-      <figcaption>图 1：Workflow、Agentic Workflow 与自主 Agent 的对比。Agent-R1 训练完全自主、无预设工作流的 Agent，通过端到端行动—反馈循环与环境交互。</figcaption>
-    </figure>
 
     <div class="stat-row">
       <div class="stat-box">
