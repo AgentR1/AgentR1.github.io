@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaperScout — PSPO for Agentic Paper Search</title>
+  <meta name="description" content="PaperScout 将学术论文检索建模为多轮 sequential decision making，并提出 PSPO 进行 process-aware、sequence-level policy optimization，在 RealScholarQuery 与 AutoScholarQuery 上验证了 Agentic RL 的有效性。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f1f1ef;
+      border: 1px solid #e2e2df;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #9f2f23;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e5e5e5;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    header {
+      background:
+        radial-gradient(circle at top right, rgba(192, 57, 43, 0.12), transparent 28%),
+        linear-gradient(160deg, #ffffff 54%, #fff6f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 62px 0 50px;
+      text-align: center;
+    }
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #edd4d0;
+      background: #fff8f7;
+      color: #9f2f23;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero-mark {
+      width: min(100%, 430px);
+      margin: 24px auto 20px;
+      padding: 22px 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff, #fff4f2);
+      border: 1px solid #ead8d3;
+      box-shadow: 0 14px 36px rgba(192, 57, 43, 0.10);
+    }
+    .hero-rows {
+      display: grid;
+      grid-template-columns: 1fr 48px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .hero-col {
+      background: #fff;
+      border: 1px solid #ece8e5;
+      border-radius: 18px;
+      padding: 14px 12px;
+    }
+    .hero-col strong {
+      display: block;
+      font-size: 0.82rem;
+      color: #111;
+      margin-bottom: 6px;
+    }
+    .hero-col span {
+      display: block;
+      font-size: 0.76rem;
+      color: #666;
+      line-height: 1.55;
+    }
+    .hero-arrow {
+      height: 2px;
+      background: linear-gradient(90deg, #d9b1ab, #c0392b);
+      position: relative;
+      border-radius: 999px;
+    }
+    .hero-arrow::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #c0392b;
+      border-right: 2px solid #c0392b;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    .hero-note {
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: #7b645f;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: #111;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin: 14px auto 0;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 680px;
+      line-height: 1.75;
+    }
+    .affiliation {
+      margin-top: 12px;
+      font-size: 0.89rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+    .authors {
+      margin-top: 8px;
+      font-size: 0.87rem;
+      color: #777;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: #fff;
+      color: #222;
+      border-color: #d7d7d7;
+    }
+    .btn-secondary:hover {
+      background: #f8f8f8;
+      border-color: #aaa;
+    }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 52px;
+    }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.42rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 30px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.01rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: #c0392b; }
+
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      margin: 24px 0 6px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 150px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 0.83rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon {
+      font-size: 1.65rem;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .card h4 {
+      font-size: 0.94rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.68;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .compare-card {
+      padding: 18px 18px 16px;
+      border-radius: 12px;
+      border: 1px solid #e6e6e6;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .compare-card .label {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      background: #f7f7f7;
+      border: 1px solid #e8e8e8;
+      color: #666;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .compare-card h4 {
+      font-size: 0.97rem;
+      margin-bottom: 8px;
+      color: #111;
+    }
+    .compare-card p {
+      font-size: 0.87rem;
+      color: #555;
+      line-height: 1.68;
+    }
+    .compare-card.highlight {
+      border-color: #e5c0ba;
+      background: linear-gradient(180deg, #fffdfd, #fff7f6);
+    }
+
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+      color: #111;
+    }
+    .pillar-text span {
+      font-size: 0.88rem;
+      color: #555;
+    }
+
+    .mdp-grid {
+      display: grid;
+      grid-template-columns: 150px 1fr 1fr;
+      gap: 0;
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e4e4e4;
+      font-size: 0.9rem;
+    }
+    .mdp-grid .hd {
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      padding: 11px 14px;
+    }
+    .mdp-grid .cell {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      line-height: 1.6;
+    }
+    .mdp-grid .label {
+      font-weight: 700;
+      background: #fdf9f9;
+      color: #333;
+      border-right: 1px solid #f0f0f0;
+    }
+    .mdp-grid .agent-cell {
+      background: #fff;
+    }
+    .mdp-grid .workflow-cell {
+      background: #fafafa;
+      border-right: 1px solid #f0f0f0;
+    }
+    .mdp-grid .last-row .cell { border-bottom: none; }
+
+    .equation-box,
+    .callout-box,
+    .citation-box {
+      background: #f5f5f3;
+      border: 1px solid #e0e0de;
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-top: 16px;
+    }
+    .equation-box {
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.75;
+    }
+    .callout-box {
+      font-size: 0.92rem;
+      color: #444;
+      line-height: 1.72;
+    }
+    .citation-box {
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.82rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.7;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 22px 0;
+      border-radius: 8px;
+      border: 1px solid #e4e4e4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    tr:nth-child(even) td { background: #fdf9f9; }
+    tr:last-child td { border-bottom: none; }
+    .bold-result { font-weight: 700; color: #111; }
+    .underline-result { text-decoration: underline; color: #333; }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: #c0392b;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    @media (max-width: 760px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 50px 0; }
+      .card-grid-2,
+      .compare-grid { grid-template-columns: 1fr; }
+      .mdp-grid {
+        grid-template-columns: 106px 1fr 1fr;
+        font-size: 0.82rem;
+      }
+      .hero-rows { grid-template-columns: 1fr; }
+      .hero-arrow {
+        width: 2px;
+        height: 24px;
+        margin: 0 auto;
+        background: linear-gradient(180deg, #d9b1ab, #c0392b);
+      }
+      .hero-arrow::after {
+        right: 50%;
+        top: auto;
+        bottom: -1px;
+        transform: translateX(50%) rotate(135deg);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.24rem; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="hero-kicker">Agentic RL for Academic Search</div>
+    <div class="hero-mark" aria-hidden="true">
+      <div class="hero-rows">
+        <div class="hero-col">
+          <strong>Paper Search</strong>
+          <span>Search / Expand 多轮交替，检索路径随上下文动态调整。</span>
+        </div>
+        <div class="hero-arrow"></div>
+        <div class="hero-col">
+          <strong>PSPO</strong>
+          <span>把一次完整交互视作原子动作，做 sequence-level policy optimization。</span>
+        </div>
+      </div>
+      <div class="hero-note">从固定 workflow，转向可学习的 sequential decision making。</div>
+    </div>
+    <h1>PaperScout：用 <span class="highlight">PSPO</span> 训练的学术论文搜索 Agent</h1>
+    <p class="subtitle">
+      将 Academic Paper Search 重写为多轮决策问题，让 Agent 自主决定何时 <code>Search</code>、何时 <code>Expand</code>；
+      再用 process-aware、sequence-level 的 <code>PSPO</code> 对这类交互轨迹进行优化。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+    <p class="authors">Tingyue Pan, Jie Ouyang, Mingyue Cheng, Qingchuan Li, Zirui Liu, Daoyu Wang, Mingfan Pan, Shuo Yu, Qi Liu</p>
+
+    <div class="btn-row">
+      <a class="btn btn-secondary" href="../" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 12H5"/>
+          <path d="m12 19-7-7 7-7"/>
+        </svg>
+        返回总览
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/pty12345/PaperScout" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+            -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+            .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+            -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+            1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      <a class="btn btn-secondary" href="https://arxiv.org/abs/2601.10029" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        arXiv
+      </a>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#intro">简介</a>
+    <a href="#framing">问题重构</a>
+    <a href="#agent">Agent 设计</a>
+    <a href="#pspo">PSPO</a>
+    <a href="#results">实验结果</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      PaperScout 的核心价值不只是“做论文搜索”，而是把 <strong>Paper Search</strong> 变成一个适合验证 <strong>Agentic RL</strong> 的多轮交互环境。
+      论文提出的 <strong>PSPO</strong> 通过 sequence-level advantage estimation 和 process rewards，
+      让优化粒度真正对齐 Agent 与环境的交互粒度，在 RealScholarQuery 上把 Recall 做到 <strong>0.574</strong>，
+      超过最佳基线 <strong>0.541</strong>。
+    </div>
+
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      这篇工作关注一个很典型但又经常被低估的 Agent 场景：学术论文搜索。现实查询往往带有细粒度约束、排除条件、
+      研究脉络追踪和逐步收敛需求，难以被一次性 lexical match 或单次 dense retrieval 解决。PaperScout 的关键做法是：
+      不再把检索看成固定 pipeline，而是让 Agent 在每一步基于当前 paper pool 自主决定下一次检索动作。
+    </p>
+    <p>
+      从算法视角看，PaperScout 更重要的意义在于提供了一个天然的 multi-turn tool-use 训练场景。每轮交互都会生成完整响应、
+      触发工具调用、接收新论文、更新候选池，再继续下一轮决策。这正好暴露出传统 token-level RL 在 Agent 场景中的粒度错配问题，
+      也就是 PSPO 要解决的核心。
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">0.574</div>
+        <div class="stat-label">RealScholarQuery Recall</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">0.441</div>
+        <div class="stat-label">RealScholarQuery F1</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2.576</div>
+        <div class="stat-label">LLM-based Relevance Score</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2</div>
+        <div class="stat-label">核心动作：Search / Expand</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="framing">
+  <div class="container">
+    <h2 class="section-title">为什么要重构问题</h2>
+    <p>
+      论文的切入点很清楚：现有 academic search 方法大多卡在两种范式里。第一种是 query-centric 的单轮匹配；
+      第二种是 LLM 驱动但仍然 workflow-driven 的固定流程。前者表达力不够，后者虽然多了 query rewriting、
+      reference expansion 等模块，但真正的“何时做什么”仍然写死在 workflow 里，无法随中间检索结果自适应变化。
+    </p>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="label">Semantic Match</div>
+        <h4>单轮相关性匹配</h4>
+        <p>把问题压缩成一次 query-document 匹配，适合明确查询，不适合带排除条件、层次约束和探索式搜索的问题。</p>
+      </div>
+      <div class="compare-card">
+        <div class="label">Fixed Workflow</div>
+        <h4>模块更多，但顺序固定</h4>
+        <p>虽然能 Search、Rewrite、Expand，但执行逻辑预先定义，缺少对 evolving context 的在线决策能力。</p>
+      </div>
+      <div class="compare-card highlight">
+        <div class="label">PaperScout</div>
+        <h4>把检索变成 sequential decision making</h4>
+        <p>Agent 根据已拿到的论文池动态决定是继续 Search 引入新方向，还是 Expand 沿引用链深入探索。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">从 Agentic RL 视角看，这里难的不是检索，而是信用分配</h3>
+    <p>
+      Multi-turn paper search 的收益往往在几步之后才显现。一个合理的中间 Search 可能不会立即带来最终答案，但会打开新的引用分支；
+      一次无效 Expand 则可能浪费预算并把轨迹引向局部最优。也就是说，训练目标天然依赖交互序列，而不是单个 token。
+    </p>
+
+    <div class="mdp-grid">
+      <div class="hd"></div>
+      <div class="hd">固定 Workflow</div>
+      <div class="hd">PaperScout Agent</div>
+
+      <div class="cell label">决策单位</div>
+      <div class="cell workflow-cell">预先写好的 Search-then-Expand 流程</div>
+      <div class="cell agent-cell">每一轮完整响应对应一次可学习动作</div>
+
+      <div class="cell label">状态来源</div>
+      <div class="cell workflow-cell">有限的中间模块输出</div>
+      <div class="cell agent-cell">累积 paper pool、历史 query、已扩展节点</div>
+
+      <div class="cell label">策略变化</div>
+      <div class="cell workflow-cell">对不同 query 的适配能力有限</div>
+      <div class="cell agent-cell">可根据上下文在 breadth 和 depth 间动态切换</div>
+
+      <div class="cell label">优化对象</div>
+      <div class="cell workflow-cell">模块级启发式或单次排序质量</div>
+      <div class="cell agent-cell">多轮交互轨迹的整体 retrieval utility</div>
+
+      <div class="cell label">适合的 RL 粒度</div>
+      <div class="cell workflow-cell">通常未显式建模</div>
+      <div class="cell agent-cell">sequence-level / turn-level 更自然</div>
+
+      <div class="last-row cell label">核心问题</div>
+      <div class="last-row cell workflow-cell">流程僵硬</div>
+      <div class="last-row cell agent-cell">如何做稳定、对齐的多轮策略优化</div>
+    </div>
+  </div>
+</section>
+
+<section id="agent" class="alt">
+  <div class="container">
+    <h2 class="section-title">PaperScout Agent 设计</h2>
+    <p>
+      PaperScout 将任务形式化为 POMDP。潜在状态是不断扩张的 paper pool，观测则是在上下文预算下对候选论文的摘要视图：
+      既包括已展开论文，也包括仍可继续扩展的高相关候选，同时保留过去的交互历史，避免重复探索。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🗂️</div>
+        <h4>State: Paper Pool</h4>
+        <p>每篇论文都带有内容与元数据、相关性分数 <code>ρ(p)</code>，以及是否已被扩展的标记。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👁️</div>
+        <h4>Observation: Dual-list View</h4>
+        <p>观测由 expanded / unexpanded 两类高分论文组成，让 Agent 同时看到“已探索上下文”和“下一步候选 frontier”。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧰</div>
+        <h4>Action: Search / Expand</h4>
+        <p><code>Search(query)</code> 负责引入新方向，<code>Expand(paper)</code> 沿引用链深入，动作可以单独或组合调用。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h4>Reward: Marginal Utility</h4>
+        <p>每一步只奖励新引入的高相关论文，并惩罚重复调用，让回报更贴近真实检索增益而非表面交互长度。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">它验证的是“动态检索策略”，不是一个写死的 Search-Expand Pipeline</h3>
+    <p>
+      论文里专门分析了工具分布。训练后的 PaperScout 不会一味偏向 Expand，也不会停留在保守的少量调用，
+      而是在 Search 与 Expand 之间形成更均衡、更宽的分布。这一点很关键，因为它说明性能提升来自可学习策略，
+      而不是某个静态配方碰巧更适合某个 benchmark。
+    </p>
+    <ul class="feature-list">
+      <li>Search 用来引入新的检索方向，避免被单一引用簇困住。</li>
+      <li>Expand 用来沿着当前高价值论文继续深挖，提高局部区域的召回。</li>
+      <li>训练后的策略在工具预算相同的情况下获得更高 recall，说明单次调用的边际价值更高。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="pspo">
+  <div class="container">
+    <h2 class="section-title">PSPO：面向多轮 Agent 的 Sequence-Level 优化</h2>
+    <p>
+      这篇论文最有价值的部分是 PSPO。作者指出，标准 PPO 在这里存在一个结构性问题：
+      环境给的是“整轮交互之后”的 step reward，但优化却发生在 token level。
+      一个完整回复里包含 reasoning、工具参数和动作选择，最后只拿到一个 turn-level reward，
+      这会把原本属于一次交互动作的监督信号，稀释到很多 token 上，造成 noisy credit assignment 和 value learning 不稳定。
+    </p>
+
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>把完整响应当作原子动作</strong>
+          <span>PSPO 不再把监督拆散到 token，而是把每轮生成的完整 response 视作一次 interaction-level action。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>sequence-level advantage estimation</strong>
+          <span>优势函数在 turn 级别估计，优化粒度与 agent-environment interaction 粒度对齐。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>显式利用 process rewards</strong>
+          <span>中间步骤引入的有效论文会立即转化为奖励，不必等到整条轨迹结束后再做粗粒度归因。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">4</div>
+        <div class="pillar-text">
+          <strong>稳定 critic，改善 sample efficiency</strong>
+          <span>更合理的奖励目标和更对齐的 value regression，让训练更快收敛，也更不容易在长轨迹下抖动。</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="equation-box">r_t = sum_{p in top-k(V_t)} rho(p) - eta * sum_{c in C_t} I(c in H_{t-1})
+
+其中：
+- V_t: 第 t 步新接纳进 paper pool 的论文集合
+- rho(p): 论文对当前查询的相关性分数
+- 第二项: 对重复调用历史中已执行动作的惩罚</div>
+
+    <div class="callout-box">
+      这个 reward 设计也很“Agentic RL”。
+      它不是直接奖励漂亮的文本输出，而是奖励一次动作给环境带来的 <strong>marginal retrieval gain</strong>。
+      换句话说，PSPO 学的是“哪一步 tool use 真正带来了新的高价值论文”，而不是“模型写得像不像在检索”。
+    </div>
+
+    <h3 class="sub-title">为什么 PSPO 比 PPO / GSPO 更合适</h3>
+    <div class="card-grid-2">
+      <div class="card">
+        <h4>PPO 的问题：粒度错配</h4>
+        <p>Turn-level reward 要回传给一整串 token，导致监督被摊薄。结果是 value fitting 更难，credit assignment 更噪，训练效率更低。</p>
+      </div>
+      <div class="card">
+        <h4>GSPO 的问题：过程信号利用不足</h4>
+        <p>虽然也是 sequence-level，但更依赖粗粒度 trajectory outcome，对中间 retrieval steps 的有效过程奖励利用不充分，容易早早平台化。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results" class="alt">
+  <div class="container">
+    <h2 class="section-title">实验结果</h2>
+    <p>
+      论文在 <strong>RealScholarQuery</strong> 与 <strong>AutoScholarQuery</strong> 两个 benchmark 上做评测。
+      前者更接近真实研究问题，后者是由顶会论文构造的 synthetic benchmark。PaperScout 的结果说明两件事：
+      第一，multi-turn retrieval 显著优于 single-shot baseline；第二，PSPO 训练后的 4B 模型，不仅超过传统 workflow 方法，
+      还能够匹配甚至超过更大的未训练 backbone。
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>RealScholarQuery</th>
+            <th>Precision</th>
+            <th>F1</th>
+            <th>Recall</th>
+            <th>LLM-score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PaSa</td>
+            <td>0.415</td>
+            <td class="underline-result">0.417</td>
+            <td class="underline-result">0.541</td>
+            <td>2.111</td>
+          </tr>
+          <tr>
+            <td>SPAR</td>
+            <td>0.412</td>
+            <td>0.408</td>
+            <td>0.496</td>
+            <td class="underline-result">2.415</td>
+          </tr>
+          <tr>
+            <td>PaperScout-Qwen3-Max</td>
+            <td>0.435</td>
+            <td>0.427</td>
+            <td>0.562</td>
+            <td>2.483</td>
+          </tr>
+          <tr>
+            <td class="bold-result">PaperScout (PSPO)</td>
+            <td class="bold-result">0.442</td>
+            <td class="bold-result">0.441</td>
+            <td class="bold-result">0.574</td>
+            <td class="bold-result">2.576</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🏁</div>
+        <h4>总体性能最好</h4>
+        <p>PaperScout 在 RealScholarQuery 上把 Recall 从最佳基线的 0.541 提升到 0.574，同时 F1 从 0.417 提升到 0.441。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h4>同等工具预算下更高效</h4>
+        <p>论文显示随着 tool calls 累积，PaperScout 在相同步数下始终获得更高 recall，说明策略质量而非调用次数堆出来的结果。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📉</div>
+        <h4>训练更稳</h4>
+        <p>PSPO 的 gradient norm 更小、critic loss 更低、return 上升更快，验证了 sequence-level + process rewards 的组合更适合这类任务。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h4>小模型也能赢</h4>
+        <p>RL 训练后的 4B PaperScout 能匹配甚至超过未训练的 Qwen3-Max，说明优化方法对 Agent 行为本身的价值很高。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">PSPO 对比 PPO / GSPO</h3>
+    <p>
+      在 RealScholarQuery 上，PSPO 取得了表内最佳的 Recall <code>0.574</code>，高于 <code>GSPO 0.557</code> 和 <code>PPO 0.537</code>。
+      论文的训练曲线还显示，PSPO 收敛更快、最终平台更高；去掉过程奖励的 <code>PSPO*</code> 则会明显掉到更低的平台，
+      这说明 sequence-level 对齐本身重要，但 process rewards 同样不可省略。
+    </p>
+  </div>
+</section>
+
+<section id="citation">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+    <p>
+      如果你更关注 Agentic RL 方法本身，可以把这篇论文理解为：
+      选了一个很合适的多轮工具调用环境来验证 <code>sequence-level policy optimization</code>，
+      然后用 Paper Search 这个任务把“动作粒度对齐”和“过程奖励建模”的收益具体量化了出来。
+    </p>
+
+    <div class="citation-box">@article{pan2026paperscout,
+  title={PaperScout: An Autonomous Agent for Academic Paper Search with Process-Aware Sequence-Level Policy Optimization},
+  author={Pan, Tingyue and Ouyang, Jie and Cheng, Mingyue and Li, Qingchuan and Liu, Zirui and Wang, Daoyu and Pan, Mingfan and Yu, Shuo and Liu, Qi},
+  journal={arXiv preprint arXiv:2601.10029},
+  year={2026}
+}</div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 Agentic AI Team · State Key Laboratory of Cognitive Intelligence, USTC</p>
+  <p>PaperScout Homepage · Focused on Agentic RL and PSPO</p>
+</footer>
+
+</body>
+</html>
