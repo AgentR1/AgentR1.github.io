@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agent 训练框架 — Agent-R1 & Claw-R1</title>
-  <meta name="description" content="中国科大认知智能全国重点实验室在 Agent 强化学习训练方向的两大项目：Agent-R1 与 Claw-R1。" />
+  <meta name="description" content="Agent 训练框架总览页：结合 Agent-R1 与 Claw-R1，展示从多轮工具调用强化学习到 Production Runtime RL 的完整技术路线。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -31,265 +31,543 @@
       color: #c0392b;
     }
 
-    .container { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
 
-    /* ── Sticky nav ─────────────────────────────── */
     .nav-bar {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.97);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.97);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid #e4e4e4;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
     }
     .nav-bar .container {
-      display: flex; align-items: center;
-      overflow-x: auto; scrollbar-width: none;
-      gap: 0; padding-top: 0; padding-bottom: 0;
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0;
+      padding-top: 0;
+      padding-bottom: 0;
     }
     .nav-bar .container::-webkit-scrollbar { display: none; }
     .nav-bar a {
       flex-shrink: 0;
       padding: 13px 18px;
-      font-size: 0.87rem; font-weight: 500; color: #555;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
       border-bottom: 2px solid transparent;
-      transition: color .2s, border-color .2s; white-space: nowrap;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
     }
-    .nav-bar a:hover { color: #c0392b; border-bottom-color: #c0392b; text-decoration: none; }
-    .nav-home { font-weight: 700; color: #c0392b !important; border-right: 1px solid #e8e8e8; }
-
-    /* ── Header ─────────────────────────────────── */
-    header {
-      background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
-      border-bottom: 1px solid #e8e8e8;
-      padding: 64px 0 48px; text-align: center;
-    }
-    .cat-badge {
-      display: inline-block;
-      font-size: 0.78rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: #c0392b; background: #fff0ee;
-      border: 1px solid #f5c6c2; border-radius: 20px;
-      padding: 4px 14px; margin-bottom: 16px;
-    }
-    header h1 { font-size: 2rem; font-weight: 800; color: #111; line-height: 1.3; }
-    header h1 .hl { color: #c0392b; }
-    .subtitle {
-      margin-top: 14px; font-size: 1rem; color: #555;
-      max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7;
-    }
-    .affiliation { margin-top: 10px; font-size: 0.88rem; color: #999; }
-    .btn-row {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 10px; margin-top: 24px;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 20px; border-radius: 7px;
-      font-size: 0.88rem; font-weight: 600;
-      border: 1.5px solid transparent; cursor: pointer;
-      transition: transform .18s, box-shadow .18s, background .18s;
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
       text-decoration: none;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); text-decoration: none; }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    header {
+      background: linear-gradient(160deg, #ffffff 48%, #fff5f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 62px 0 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, filter .16s ease;
+    }
+    header:hover { filter: saturate(1.02); }
+    header:active { transform: scale(0.995); }
+    .cat-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #c0392b;
+      background: #fff0ee;
+      border: 1px solid #f5c6c2;
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.3;
+      color: #111;
+    }
+    header h1 .hl { color: #c0392b; }
+    .subtitle {
+      margin-top: 14px;
+      font-size: 1rem;
+      color: #555;
+      max-width: 660px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .affiliation {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+      text-decoration: none;
+    }
     .btn-primary { background: #c0392b; color: #fff; border-color: #c0392b; }
-    .btn-primary:hover { background: #a93226; }
+    .btn-primary:hover { background: #a93226; border-color: #a93226; }
     .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
     .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
-    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-    /* ── Section ────────────────────────────────── */
-    section { padding: 64px 0; scroll-margin-top: 46px; }
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 46px;
+    }
     section.alt { background: #fff; }
     section + section { border-top: 1px solid #e8e8e8; }
     h2.section-title {
-      font-size: 1.4rem; font-weight: 700; color: #111;
-      margin-bottom: 22px; padding-bottom: 10px;
-      border-bottom: 3px solid #c0392b; display: inline-block;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
     }
-    h3.sub-title { font-size: 1.05rem; font-weight: 700; color: #222; margin: 28px 0 10px; }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 28px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
     p { margin-bottom: 14px; }
     p:last-child { margin-bottom: 0; }
 
-    /* ── TL;DR ──────────────────────────────────── */
     .tldr {
-      background: #fff8f7; border-left: 4px solid #c0392b;
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
       border-radius: 0 8px 8px 0;
-      padding: 16px 22px; font-size: 1rem; color: #222;
-      margin-bottom: 32px; line-height: 1.75;
+      padding: 16px 22px;
+      font-size: 1rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
     }
     .tldr strong { color: #c0392b; }
 
-    /* ── Project showcase ───────────────────────── */
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      margin: 26px 0 0;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 150px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .stat-num {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
     .project-showcase {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 28px;
     }
     .showcase-card {
-      background: #fff; border: 1px solid #e6e6e6; border-radius: 14px;
-      padding: 32px 28px; box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-      transition: transform .22s, box-shadow .22s; display: flex; flex-direction: column;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 14px;
+      padding: 28px 24px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+      transition: transform .22s, box-shadow .22s;
+      display: flex;
+      flex-direction: column;
     }
-    .showcase-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
+    .showcase-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
+    }
+    .showcase-card.r1 { border-top: 4px solid #c0392b; }
+    .showcase-card.claw { border-top: 4px solid #2471a3; }
     .sc-badge {
-      display: inline-block; font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      border-radius: 4px; padding: 3px 10px; margin-bottom: 14px; align-self: flex-start;
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 14px;
+      align-self: flex-start;
     }
-    .sc-badge-r1  { background: #fff0ee; color: #c0392b; border: 1px solid #f5c6c2; }
+    .sc-badge-r1 { background: #fff0ee; color: #c0392b; border: 1px solid #f5c6c2; }
     .sc-badge-claw { background: #eef4ff; color: #2471a3; border: 1px solid #b8d4f5; }
-    .showcase-card h3 { font-size: 1.35rem; font-weight: 800; color: #111; margin-bottom: 12px; }
-    .showcase-card .sc-desc { font-size: 0.92rem; color: #555; line-height: 1.7; flex: 1; margin-bottom: 20px; }
-    .sc-meta { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
-    .sc-meta-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.84rem; color: #555; }
-    .sc-meta-icon { font-size: 0.93rem; flex-shrink: 0; margin-top: 2px; }
-    .sc-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .showcase-card h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 10px;
+    }
+    .sc-desc {
+      font-size: 0.92rem;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+    .sc-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .sc-meta-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    .sc-meta-icon {
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .sc-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
     .sc-btn {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 6px 14px; border-radius: 7px;
-      font-size: 0.83rem; font-weight: 600;
-      border: 1.5px solid transparent; transition: transform .16s, box-shadow .16s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .16s, box-shadow .16s, background .16s, border-color .16s;
       text-decoration: none;
     }
-    .sc-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); text-decoration: none; }
-    .sc-btn-r1    { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .sc-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      text-decoration: none;
+    }
+    .sc-btn-r1 { background: #c0392b; color: #fff; border-color: #c0392b; }
     .sc-btn-r1:hover { background: #a93226; }
-    .sc-btn-claw  { background: #2471a3; color: #fff; border-color: #2471a3; }
+    .sc-btn-claw { background: #2471a3; color: #fff; border-color: #2471a3; }
     .sc-btn-claw:hover { background: #1a5c87; }
-    .sc-btn-out   { background: #fff; color: #333; border-color: #d0d0d0; }
+    .sc-btn-out { background: #fff; color: #333; border-color: #d0d0d0; }
     .sc-btn-out:hover { background: #f5f5f5; border-color: #aaa; }
 
-    /* ── Comparison table ───────────────────────── */
-    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 8px; border: 1px solid #e4e4e4; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-    th { background: #c0392b; color: #fff; padding: 11px 16px; text-align: left; font-weight: 600; }
-    td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card-icon {
+      font-size: 1.55rem;
+      margin-bottom: 9px;
+      line-height: 1;
+    }
+    .card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .card p {
+      font-size: 0.87rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #e4e4e4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
     tr:nth-child(even) td { background: #fdf9f9; }
     tr:last-child td { border-bottom: none; }
 
-    /* ── Cards ──────────────────────────────────── */
-    .card-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px; margin-top: 22px;
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 24px;
     }
-    .card {
-      background: #fff; border: 1px solid #e6e6e6; border-radius: 10px;
-      padding: 20px 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      transition: transform .22s, box-shadow .22s;
+    .phase-card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 20px 18px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: relative;
     }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
-    .card .card-icon { font-size: 1.55rem; margin-bottom: 9px; line-height: 1; }
-    .card h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 6px; color: #111; }
-    .card p { font-size: 0.86rem; color: #555; margin: 0; line-height: 1.6; }
+    .phase-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 12px 12px 0 0;
+      background: #c0392b;
+    }
+    .phase-num {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #c0392b;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .phase-card h4 {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 8px;
+    }
+    .phase-card p {
+      font-size: 0.86rem;
+      color: #555;
+      line-height: 1.6;
+      margin: 0;
+    }
 
-    /* ── Stat row ───────────────────────────────── */
-    .stat-row { display: flex; gap: 18px; margin: 24px 0; flex-wrap: wrap; }
-    .stat-box {
-      flex: 1; min-width: 130px; background: #fff;
-      border: 1px solid #e6e6e6; border-radius: 10px;
-      padding: 18px 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    .timeline {
+      margin-top: 28px;
+      display: grid;
+      gap: 16px;
     }
-    .stat-box .stat-num { font-size: 1.9rem; font-weight: 800; color: #c0392b; line-height: 1.1; }
-    .stat-box .stat-label { font-size: 0.82rem; color: #666; margin-top: 5px; }
+    .timeline-item {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 20px 20px 20px 22px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border-left: 4px solid #c0392b;
+    }
+    .timeline-item.blue { border-left-color: #2471a3; }
+    .timeline-item h4 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .timeline-item p {
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.65;
+      margin: 0;
+    }
 
-    /* ── Footer ─────────────────────────────────── */
     footer {
-      background: #1c1c1c; color: #999;
-      text-align: center; padding: 28px 24px; font-size: 0.84rem;
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 0.84rem;
     }
     footer a { color: #e87b6e; }
 
-    /* ── Responsive ─────────────────────────────── */
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
+    @media (max-width: 900px) {
+      .phase-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 640px) {
-      header h1 { font-size: 1.5rem; }
+      header h1 { font-size: 1.55rem; }
       section { padding: 48px 0; }
-      .project-showcase { grid-template-columns: 1fr; }
+      .project-showcase,
+      .card-grid-2,
+      .phase-grid { grid-template-columns: 1fr; }
       .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      .stat-row { gap: 12px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════ HEADER ═══════════════════ -->
-<header>
+<header id="top-refresh">
   <div class="container">
     <div class="cat-badge">Agent Training Framework</div>
-    <h1>Agent <span class="hl">强化学习</span>训练框架</h1>
+    <h1>从 <span class="hl">Agent-R1</span> 到 <span class="hl">Claw-R1</span> 的强化学习训练框架</h1>
     <p class="subtitle">
-      从端到端 RL 训练到 Production Runtime RL，<br>两代框架的系统性探索与突破。
+      将多轮工具调用强化学习、可验证奖励训练和真实运行时数据闭环串成一条完整技术路线，
+      从研究型 Agent RL 走向 Production Runtime RL。
     </p>
     <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
     <div class="btn-row">
-      <a class="btn btn-secondary" href="../">← 返回主页</a>
-      <a class="btn btn-primary" href="../agent-r1/">Agent-R1 详情</a>
-      <a class="btn btn-secondary" href="../claw-r1/">Claw-R1 详情</a>
+      <a class="btn btn-secondary" href="../">返回主页</a>
+      <a class="btn btn-primary" href="../agent-r1/">Agent-R1</a>
+      <a class="btn btn-secondary" href="../claw-r1/">Claw-R1</a>
     </div>
   </div>
 </header>
 
-<!-- ═══════════════════ STICKY NAV ═══════════════════ -->
 <nav class="nav-bar">
   <div class="container">
     <a href="../" class="nav-home">Agentic AI</a>
     <a href="#overview">概览</a>
+    <a href="#stack">训练栈</a>
     <a href="#agent-r1">Agent-R1</a>
     <a href="#claw-r1">Claw-R1</a>
     <a href="#comparison">对比</a>
-    <a href="#roadmap">路线图</a>
+    <a href="#roadmap">演进路线</a>
   </div>
 </nav>
 
-<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
 <section id="overview" class="alt">
   <div class="container">
     <div class="tldr">
-      <strong>研究方向：</strong>
-      本方向聚焦 LLM Agent 的强化学习训练基础设施。
-      <strong>Agent-R1</strong> 构建了端到端的多轮工具调用 RL 训练框架；
-      <strong>Claw-R1</strong> 进一步将真实 Agent Runtime（OpenClaw）与 RLVR 训练深度结合，
-      实现「<strong>边服务边训练</strong>」的 Production RL 新范式。
+      <strong>一句话理解：</strong>
+      <strong>Agent-R1</strong> 解决的是“Agent 如何被端到端地训练起来”，把强化学习从单轮文本生成扩展到<strong>多轮工具调用</strong>；
+      <strong>Claw-R1</strong> 解决的是“训练好的 Agent 如何进入真实系统并持续学习”，把 RL 从实验环境推进到<strong>真实运行时</strong>。
     </div>
 
     <h2 class="section-title">方向概览</h2>
     <p>
-      LLM Agent 的训练正经历一次重要范式演变：从早期依赖人类标注的 SFT，到基于可验证结果的 RLVR，再到以真实 Agent Runtime 为训练环境的 Runtime RL。
-      中国科大认知智能全国重点实验室的工作覆盖了这一演变的后两个阶段。
+      LLM Agent 的训练已经不再只是语言模型层面的 token 预测优化，而是逐步转向
+      <strong>带环境反馈的交互式决策学习</strong>。这类系统既要处理多轮上下文、工具调用、环境随机性，
+      也要面对部署后的真实用户请求分布、服务延迟、数据策划与策略回流等工程问题。
+    </p>
+    <p>
+      在这条路线上，Agent-R1 与 Claw-R1 对应两个连续阶段：前者建立多轮 Agent RL 的
+      <strong>理论抽象与训练机制</strong>，后者建立生产级 Agent 持续学习所需的
+      <strong>数据基础层与运行时桥梁</strong>。
     </p>
 
     <div class="stat-row">
       <div class="stat-box">
-        <div class="stat-num">~3×</div>
-        <div class="stat-label">Agent-R1 优于 RAG 基线<br>（平均 EM）</div>
+        <div class="stat-num">2</div>
+        <div class="stat-label">核心项目<br>覆盖研究与生产两阶段</div>
       </div>
       <div class="stat-box">
         <div class="stat-num">5+</div>
-        <div class="stat-label">支持 RL 算法<br>PPO / GRPO 等</div>
+        <div class="stat-label">RL 算法支持<br>PPO / GRPO / RLOO 等</div>
       </div>
       <div class="stat-box">
         <div class="stat-num">3</div>
-        <div class="stat-label">运行模式<br>白盒/黑盒/在线服务</div>
+        <div class="stat-label">运行模式<br>白盒离线 / 黑盒离线 / 在线服务</div>
       </div>
       <div class="stat-box">
-        <div class="stat-num">0</div>
-        <div class="stat-label">Claw-R1 代码侵入<br>仅需替换 base_url</div>
+        <div class="stat-num">~3×</div>
+        <div class="stat-label">Agent-R1 相比 RAG 基线<br>平均 EM 提升</div>
       </div>
     </div>
 
     <div class="project-showcase">
-
-      <!-- Agent-R1 -->
-      <div class="showcase-card">
-        <span class="sc-badge sc-badge-r1">Agent-R1 · arXiv 2511.14460</span>
+      <div class="showcase-card r1">
+        <span class="sc-badge sc-badge-r1">Agent-R1 · Multi-turn RL</span>
         <h3>Agent-R1</h3>
         <p class="sc-desc">
-          面向 LLM Agent 的端到端强化学习训练框架。将 MDP 框架系统性延伸至多轮工具调用场景，通过 Action Mask 与过程奖励实现精确信用分配。在多跳问答任务上，最优 RL 算法（GRPO）的平均 EM 达到 0.39，比 RAG 基线（0.13）高出约 3 倍。
+          第一代框架，核心问题是如何把标准强化学习训练框架扩展到多轮 Agent 场景。
+          它围绕 MDP 扩展、Action Mask、过程奖励和多算法训练机制，提供了一个
+          可复现实验、可精确信用分配、可支持工具调用的端到端 Agent RL 系统。
         </p>
         <div class="sc-meta">
           <div class="sc-meta-row">
             <span class="sc-meta-icon">🎯</span>
-            <span>端到端 RL · 多轮工具调用 · Process Rewards · Action Mask</span>
+            <span>多轮工具调用 · 端到端 RL · Process Reward · Verifiable Training</span>
           </div>
           <div class="sc-meta-row">
             <span class="sc-meta-icon">🔧</span>
-            <span>PPO · GRPO · REINFORCE++ · RLOO · 多模态支持</span>
+            <span>Tool / ToolEnv / RayAgentTrainer · PPO / GRPO / REINFORCE++</span>
           </div>
         </div>
         <div class="sc-links">
@@ -299,62 +577,144 @@
         </div>
       </div>
 
-      <!-- Claw-R1 -->
-      <div class="showcase-card">
+      <div class="showcase-card claw">
         <span class="sc-badge sc-badge-claw">Claw-R1 · Runtime RL</span>
         <h3>Claw-R1</h3>
         <p class="sc-desc">
-          将真实 Agent Runtime（OpenClaw）与 RLVR 训练深度结合的新一代训练基础设施。通过 base_url 即接入的零侵入方式，让生产级 Agent 在持续提供服务的同时进行强化学习训练，以 Middleware Layer（Gateway + DataPool）为唯一桥梁，实现「部署即训练」。
+          第二代框架，核心问题是如何让真实部署的 Agent 在持续服务的同时继续训练。
+          它以 Middleware Layer 作为 Data Foundation，在 Agent Side 与 Training Side 之间
+          建立统一数据桥梁，让生产交互天然转化为训练数据。
         </p>
         <div class="sc-meta">
           <div class="sc-meta-row">
             <span class="sc-meta-icon">⚡</span>
-            <span>Runtime RL · 边服务边训练 · 零代码侵入 · 黑盒接入</span>
+            <span>Runtime RL · 边服务边训练 · 零侵入接入 · 真实分布数据</span>
           </div>
           <div class="sc-meta-row">
             <span class="sc-meta-icon">🔌</span>
-            <span>Middleware Layer · Gateway + DataPool · Ray Actor · 异步训练</span>
+            <span>Gateway / DataPool / TrainingBackend · Online Data Curation</span>
           </div>
         </div>
         <div class="sc-links">
           <a class="sc-btn sc-btn-claw" href="../claw-r1/">查看详情 →</a>
           <a class="sc-btn sc-btn-out" href="https://github.com/AgentR1/Claw-R1" target="_blank" rel="noopener">GitHub</a>
+          <a class="sc-btn sc-btn-out" href="../claw-r1/docs/">使用文档</a>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════ AGENT-R1 ═══════════════════ -->
-<section id="agent-r1">
+<section id="stack">
   <div class="container">
-    <h2 class="section-title">Agent-R1：端到端 RL 训练框架</h2>
+    <h2 class="section-title">统一训练栈</h2>
     <p>
-      Agent-R1 是本方向的第一代框架，从理论与实现两个维度系统性地回应了将 RL 应用于 LLM Agent 训练的核心挑战。
+      如果把 Agent 强化学习看成一条完整流水线，那么无论是 Agent-R1 还是 Claw-R1，
+      本质上都在回答同一条链路上的不同问题：<strong>环境如何定义、轨迹如何收集、奖励如何计算、策略如何回流</strong>。
     </p>
 
-    <h3 class="sub-title">核心设计</h3>
+    <div class="phase-grid">
+      <div class="phase-card">
+        <div class="phase-num">Phase 01</div>
+        <h4>交互环境建模</h4>
+        <p>把工具调用、多轮上下文与环境反馈纳入状态转移过程，定义 Agent 真正学习的决策空间。</p>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 02</div>
+        <h4>轨迹采集与筛选</h4>
+        <p>采集完整 rollout 轨迹，并对步骤级交互、策略版本、质量信号进行结构化记录与策划。</p>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 03</div>
+        <h4>奖励建模与优化</h4>
+        <p>结合结果奖励、过程奖励与软奖励模型，实现更稳定的信用分配和策略更新。</p>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 04</div>
+        <h4>运行时持续回流</h4>
+        <p>让真实用户交互成为训练数据来源，使训练系统从离线实验闭环走向在线运行闭环。</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>训练环节</th>
+            <th>Agent-R1 重点解决</th>
+            <th>Claw-R1 重点解决</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>环境定义</strong></td>
+            <td>把工具调用和环境反馈纳入 MDP，解决多轮 Agent RL 的状态、动作与奖励定义</td>
+            <td>把真实 Agent Runtime 视为数据来源，建立服务侧与训练侧的统一协议</td>
+          </tr>
+          <tr>
+            <td><strong>数据采集</strong></td>
+            <td>围绕 benchmark 与离线 rollout 采集训练轨迹</td>
+            <td>围绕真实请求、黑盒代理与在线服务持续采集训练数据</td>
+          </tr>
+          <tr>
+            <td><strong>奖励信号</strong></td>
+            <td>结果奖励 + 过程奖励 + Action Mask 对齐的信用分配</td>
+            <td>规则奖励 + 判别式 RM + 生成式 RM + 人类反馈信号整合</td>
+          </tr>
+          <tr>
+            <td><strong>系统目标</strong></td>
+            <td>验证多轮 Agent RL 的可行性与训练收益</td>
+            <td>实现部署即训练、边服务边训练的 Production Runtime RL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="agent-r1" class="alt">
+  <div class="container">
+    <h2 class="section-title">Agent-R1：端到端多轮交互 RL</h2>
+    <p>
+      Agent-R1 的核心贡献，不是简单把 RL 应到 Agent 上，而是把 Agent 的多轮工具调用过程
+      变成一个可以被标准训练器消费、被奖励函数评估、被策略优化器稳定更新的完整 RL 问题。
+    </p>
+
+    <h3 class="sub-title">关键机制</h3>
     <div class="card-grid">
       <div class="card">
         <div class="card-icon">🔄</div>
         <h4>MDP 框架扩展</h4>
-        <p>将标准 MDP 延伸至多轮工具调用：状态空间包含完整交互历史，动作空间覆盖 token 生成与工具调用触发，状态转移包含环境随机性。</p>
+        <p>把交互历史、工具触发、环境随机性和终止条件全部纳入状态转移，让 Agent RL 不再局限于单轮文本生成。</p>
       </div>
       <div class="card">
         <div class="card-icon">🎭</div>
         <h4>Action Mask</h4>
-        <p>精确区分 Agent 生成内容与环境反馈，确保策略梯度损失只计算在 Agent 实际决策的 token 上，避免向 prompt 或环境输出反向传播错误梯度。</p>
+        <p>只在 Agent 真正生成的 token 上计算策略梯度，显式排除环境反馈和 prompt 片段，避免错误反向传播。</p>
       </div>
       <div class="card">
         <div class="card-icon">🏷️</div>
         <h4>过程奖励</h4>
-        <p>除最终结果奖励外，为每次有效工具调用分配过程奖励，大幅缓解稀疏奖励问题，提供更密集的学习信号。</p>
+        <p>为有效工具调用、中间推理路径和任务推进步骤提供更密集的学习信号，缓解仅靠最终答案带来的奖励稀疏问题。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🔧</div>
-        <h4>多算法支持</h4>
-        <p>原生支持 PPO、GRPO、REINFORCE++、REINFORCE++Baseline、RLOO 五种 RL 算法，支持多模态 VLM 训练。</p>
+        <div class="card-icon">🧰</div>
+        <h4>多算法训练器</h4>
+        <p>支持 PPO、GRPO、REINFORCE++、REINFORCE++Baseline、RLOO 等算法，便于系统比较不同优化策略在 Agent 任务上的表现。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">在整体训练栈中的位置</h3>
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-icon">🧱</div>
+        <h4>训练抽象层</h4>
+        <p>通过 <code>Tool</code>、<code>ToolEnv</code> 和训练器，把 Agent 的 rollout、环境更新、奖励计算与梯度更新组织成一致工作流。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>实验验证层</h4>
+        <p>在多跳问答任务上验证多轮 RL 的真实收益，为后续 Runtime RL 提供可复用的训练机制和评估经验。</p>
       </div>
     </div>
 
@@ -373,96 +733,80 @@
         <tbody>
           <tr><td>Naive RAG</td><td>0.1916</td><td>0.1792</td><td>0.0277</td><td>0.1328</td></tr>
           <tr><td>PPO</td><td>0.4136</td><td>0.5468</td><td>0.1552</td><td>0.3719</td></tr>
-          <tr>
-            <td><strong>GRPO（最优）</strong></td>
-            <td><strong>0.4405</strong></td>
-            <td><strong>0.5741</strong></td>
-            <td>0.1485</td>
-            <td><strong>0.3877</strong></td>
-          </tr>
+          <tr><td><strong>GRPO</strong></td><td><strong>0.4405</strong></td><td><strong>0.5741</strong></td><td>0.1485</td><td><strong>0.3877</strong></td></tr>
           <tr><td>REINFORCE++</td><td>0.3768</td><td>0.4796</td><td>0.1336</td><td>0.3300</td></tr>
         </tbody>
       </table>
     </div>
     <p style="color:#666;font-size:.87rem;margin-top:8px;">† 域内；* 域外 · 模型：Qwen2.5-3B-Instruct</p>
-    <p style="margin-top: 14px;">
-      <a class="btn btn-primary" href="../agent-r1/" style="display:inline-flex;padding:8px 18px;font-size:0.87rem;font-weight:600;border-radius:7px;text-decoration:none;background:#c0392b;color:#fff;border:1.5px solid #c0392b;">查看 Agent-R1 完整介绍 →</a>
-    </p>
   </div>
 </section>
 
-<!-- ═══════════════════ CLAW-R1 ═══════════════════ -->
-<section id="claw-r1" class="alt">
+<section id="claw-r1">
   <div class="container">
     <h2 class="section-title">Claw-R1：Production Runtime RL</h2>
     <p>
-      Claw-R1 在 Agent-R1 的基础上，进一步解决了将 RL 训练引入生产级 Agent 系统的核心问题——如何让真实部署的 Agent 在服务用户的同时持续学习。
+      Claw-R1 进一步回答了一个更难的问题：当 Agent 已经部署为真实服务后，
+      如何不打断它的生产流程，同时把真实交互回流为可训练、可评估、可持续迭代的数据资产。
     </p>
 
-    <h3 class="sub-title">三大核心设计</h3>
+    <h3 class="sub-title">三层系统视角</h3>
     <div class="card-grid">
       <div class="card">
-        <div class="card-icon">🌐</div>
-        <h4>base_url 即接入</h4>
-        <p>仅需将 <code>base_url</code> 指向 Gateway，任意黑盒 Agent（包括 TypeScript 实现、容器化部署、自定义 HTTP 客户端）均可零改动接入训练框架。</p>
+        <div class="card-icon">🛰️</div>
+        <h4>Agent Side</h4>
+        <p>白盒 Agent 可直接提交步骤级数据；黑盒 Agent 只需修改 <code>base_url</code> 即可接入；在线服务可直接采集真实用户请求。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🔀</div>
+        <div class="card-icon">🌉</div>
         <h4>Middleware Layer</h4>
-        <p>Gateway + DataPool 是 Agent Side 与 Training Side 的唯一桥梁。Gateway 为 FastAPI 独立进程，DataPool 为 Ray Actor，实现完全异步、互不阻塞。</p>
+        <p><code>Gateway + DataPool</code> 作为核心数据桥梁，负责采集、评估、版本追踪、分流和数据策划，是 Claw-R1 的真正差异化所在。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🏭</div>
-        <h4>Production 场景</h4>
-        <p>支持白盒离线、黑盒离线、黑盒在线服务三种模式。在线模式下，Agent 边为用户服务边训练，真实交互数据自动积累为训练语料，无需数据工程。</p>
+        <div class="card-icon">🏋️</div>
+        <h4>Training Side</h4>
+        <p>可插拔 TrainingBackend 把策划后的数据转换给具体训练引擎，实现训练系统与运行系统的解耦和异步协作。</p>
       </div>
     </div>
 
-    <p style="margin-top: 24px;">
-      <a class="btn btn-secondary" href="../claw-r1/" style="display:inline-flex;padding:8px 18px;font-size:0.87rem;font-weight:600;border-radius:7px;text-decoration:none;background:#2471a3;color:#fff;border:1.5px solid #2471a3;">查看 Claw-R1 完整介绍 →</a>
-    </p>
-  </div>
-</section>
+    <h3 class="sub-title">为什么它比普通训练框架更进一步</h3>
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h4>从离线数据走向真实分布</h4>
+        <p>训练样本不再完全来自预制 benchmark，而是来自真实用户请求、真实环境约束和真实失败模式，训练分布更接近部署分布。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>从实验闭环走向服务闭环</h4>
+        <p>Agent 一边服务、一边积累轨迹、一边进入训练回流，让模型迭代不再是与运行系统割裂的独立流程。</p>
+      </div>
+    </div>
 
-<!-- ═══════════════════ COMPARISON ═══════════════════ -->
-<section id="comparison">
-  <div class="container">
-    <h2 class="section-title">两代框架对比</h2>
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>维度</th><th>Agent-R1</th><th>Claw-R1</th></tr>
+          <tr>
+            <th>运行模式</th>
+            <th>接入方式</th>
+            <th>适用场景</th>
+          </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>定位</strong></td>
-            <td>研究导向的端到端 RL 训练框架</td>
-            <td>生产导向的 Runtime RL 训练基础设施</td>
+            <td><strong>白盒离线</strong></td>
+            <td>Agent 直接提交步骤数据</td>
+            <td>研究验证、算法调试、训练机制开发</td>
           </tr>
           <tr>
-            <td><strong>Agent 接入</strong></td>
-            <td>白盒 AgentFlow，需继承框架接口</td>
-            <td>替换 base_url，任意黑盒 Agent 零改动接入</td>
+            <td><strong>黑盒离线</strong></td>
+            <td>通过 Gateway 代理统一采集</td>
+            <td>外部 Agent 系统接入、低侵入数据回收</td>
           </tr>
           <tr>
-            <td><strong>训练数据来源</strong></td>
-            <td>预设任务数据集（离线 Rollout）</td>
-            <td>真实用户请求（在线服务产生的轨迹）</td>
-          </tr>
-          <tr>
-            <td><strong>服务与训练</strong></td>
-            <td>训练时 Agent 不对外服务</td>
-            <td>训练时 Agent 持续对外服务（边服务边训练）</td>
-          </tr>
-          <tr>
-            <td><strong>核心组件</strong></td>
-            <td>Tool + ToolEnv + RayAgentTrainer</td>
-            <td>Gateway + DataPool + RayAgentTrainer</td>
-          </tr>
-          <tr>
-            <td><strong>奖励信号</strong></td>
-            <td>Verifiable 任务结果奖励 + 过程奖励</td>
-            <td>真实环境反馈 + Reward Model（软奖励）</td>
+            <td><strong>黑盒在线服务</strong></td>
+            <td>替换 <code>base_url</code>，服务时实时采集</td>
+            <td>部署即训练、Production Runtime RL</td>
           </tr>
         </tbody>
       </table>
@@ -470,35 +814,106 @@
   </div>
 </section>
 
-<!-- ═══════════════════ ROADMAP ═══════════════════ -->
-<section id="roadmap" class="alt">
+<section id="comparison" class="alt">
+  <div class="container">
+    <h2 class="section-title">两代框架对比</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>Agent-R1</th>
+            <th>Claw-R1</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>目标问题</strong></td>
+            <td>多轮 Agent 如何被端到端 RL 训练</td>
+            <td>真实 Agent 如何在运行时持续学习</td>
+          </tr>
+          <tr>
+            <td><strong>系统边界</strong></td>
+            <td>训练环境内部的 rollout 与优化闭环</td>
+            <td>服务系统、数据中间层与训练系统的跨边界闭环</td>
+          </tr>
+          <tr>
+            <td><strong>数据来源</strong></td>
+            <td>任务数据集与离线交互轨迹</td>
+            <td>真实请求、白盒/黑盒 Agent、在线服务轨迹</td>
+          </tr>
+          <tr>
+            <td><strong>核心机制</strong></td>
+            <td>MDP 扩展、Action Mask、过程奖励、多算法训练</td>
+            <td>Gateway、DataPool、Reward 评估、Data Curation、TrainingBackend</td>
+          </tr>
+          <tr>
+            <td><strong>典型价值</strong></td>
+            <td>证明多轮 Agent RL 可行且有效</td>
+            <td>证明 Agent 训练可以真正走进生产运行时</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
   <div class="container">
     <h2 class="section-title">演进路线</h2>
-    <p>本方向的两个项目共同构成一条从「研究场景 RL」到「生产场景 RL」的完整技术路线：</p>
-    <div class="card-grid" style="margin-top: 28px;">
-      <div class="card" style="border-left: 4px solid #c0392b;">
-        <div class="card-icon">1️⃣</div>
-        <h4>Agent-R1：奠定理论与工程基础</h4>
-        <p>构建 MDP 扩展框架，验证多轮 RL 训练的可行性，提供 PPO/GRPO 等多算法支持，确立 Action Mask + 过程奖励的信用分配机制。</p>
+    <p>
+      从 Agent-R1 到 Claw-R1，不是两个孤立项目，而是一条持续推进的研究路线：
+      先把训练问题定义清楚，再把训练系统接入真实世界。
+    </p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>阶段一：建立 Agent RL 的基本训练抽象</h4>
+        <p>围绕多轮工具调用场景定义状态、动作、奖励与 rollout 机制，建立可稳定训练的 Agent RL 基础设施。</p>
       </div>
-      <div class="card" style="border-left: 4px solid #2471a3;">
-        <div class="card-icon">2️⃣</div>
-        <h4>Claw-R1：迈向 Production Runtime RL</h4>
-        <p>以 Agent-R1 为底层训练引擎，引入 Middleware Layer 解耦服务与训练，通过 base_url 接入真实 Agent，实现「以真实交互为训练数据」的闭环学习。</p>
+      <div class="timeline-item">
+        <h4>阶段二：验证训练收益与算法适配</h4>
+        <p>在可验证任务上比较 PPO、GRPO、REINFORCE++、RLOO 等算法，沉淀面向 Agent 的信用分配与实验范式。</p>
+      </div>
+      <div class="timeline-item blue">
+        <h4>阶段三：打通运行时与训练系统</h4>
+        <p>引入 Data Foundation，把服务请求、策略版本、奖励评估和训练消费组织成统一数据管线，降低接入成本。</p>
+      </div>
+      <div class="timeline-item blue">
+        <h4>阶段四：迈向持续在线优化</h4>
+        <p>让真实部署的 Agent 在服务中不断积累高价值轨迹，形成长期在线学习闭环，推动 Agentic RL 从研究走向生产。</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════ FOOTER ═══════════════════ -->
 <footer>
   <div class="container">
     <p>&copy; 2025–2026 Agentic AI Team · AGI Group · State Key Laboratory of Cognitive Intelligence, USTC</p>
     <p style="font-size:0.78rem;color:#555;margin-top:6px;">
-      <a href="../">← 返回主页</a>
+      <a href="../">返回主页</a>
+      &nbsp;·&nbsp;
+      <a href="../agent-r1/">Agent-R1</a>
+      &nbsp;·&nbsp;
+      <a href="../claw-r1/">Claw-R1</a>
     </p>
   </div>
 </footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
 
 </body>
 </html>
