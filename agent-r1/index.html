@@ -88,6 +88,16 @@
       padding: 60px 0 48px;
       text-align: center;
     }
+    .hero-logo {
+      width: min(100%, 420px);
+      margin: 0 auto 18px;
+    }
+    .hero-logo img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
     header h1 {
       margin-top: 12px;
       font-size: 1.95rem;
@@ -410,6 +420,7 @@
 
     /* ── Responsive ────────────────────────────────── */
     @media (max-width: 640px) {
+      .hero-logo { width: min(100%, 300px); margin-bottom: 14px; }
       header h1 { font-size: 1.45rem; }
       section { padding: 48px 0; }
       .card-grid-2 { grid-template-columns: 1fr; }
@@ -425,6 +436,9 @@
 <!-- ═══════════════════ HEADER ═══════════════════ -->
 <header>
   <div class="container">
+    <div class="hero-logo">
+      <img src="assets/logo.png" alt="Agent-R1 logo" />
+    </div>
     <h1>Agent-R1：<span class="highlight">多轮交互强化学习</span>训练框架</h1>
     <p class="subtitle">
       将 MDP 框架系统性延伸至多轮工具调用场景，<br>
