@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic RL 基础算法 — Foundations of Agentic Reinforcement Learning</title>
+  <meta name="description" content="Agentic RL 基础算法总览页：基于 agentic RL survey，系统梳理从 RLHF / RLVR 到多轮环境耦合策略学习的核心范式、轨迹表示、信用分配、训练基础设施与开放问题。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f0f0ee;
+      border: 1px solid #e0e0de;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #c0392b;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e4e4e4;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    header {
+      background: linear-gradient(160deg, #ffffff 50%, #fff5f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 60px 0 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, filter .16s ease;
+    }
+    header:hover { filter: saturate(1.02); }
+    header:active { transform: scale(0.995); }
+    .cat-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #c0392b;
+      background: #fff0ee;
+      border: 1px solid #f5c6c2;
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.32;
+      color: #111;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin-top: 14px;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.72;
+    }
+    .affiliation {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+      text-decoration: none;
+    }
+    .btn-primary { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .btn-primary:hover { background: #a93226; border-color: #a93226; }
+    .btn-secondary { background: #fff; color: #222; border-color: #d0d0d0; }
+    .btn-secondary:hover { background: #f8f8f8; border-color: #aaa; }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 46px;
+    }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 32px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.02rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: #c0392b; }
+
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      margin: 26px 0 0;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 155px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .stat-box .stat-num {
+      font-size: 1.95rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.08;
+    }
+    .stat-box .stat-label {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #e4e4e4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fdf9f9; }
+    tr:last-child td { border-bottom: none; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon {
+      font-size: 1.55rem;
+      margin-bottom: 9px;
+      line-height: 1;
+    }
+    .card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .card p {
+      font-size: 0.87rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .showcase-card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 14px;
+      padding: 26px 24px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+      transition: transform .22s, box-shadow .22s;
+      display: flex;
+      flex-direction: column;
+    }
+    .showcase-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
+    }
+    .showcase-step { border-top: 4px solid #b9770e; }
+    .showcase-pspo { border-top: 4px solid #2471a3; }
+    .sc-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+    .sc-badge-step { background: #fff6e7; color: #b9770e; border: 1px solid #f3d197; }
+    .sc-badge-pspo { background: #eef4ff; color: #2471a3; border: 1px solid #b8d4f5; }
+    .showcase-card h3 {
+      font-size: 1.28rem;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 10px;
+    }
+    .showcase-card .sc-desc {
+      font-size: 0.91rem;
+      color: #555;
+      line-height: 1.7;
+      flex: 1;
+      margin-bottom: 18px;
+    }
+    .sc-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .sc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .16s, box-shadow .16s, background .16s, border-color .16s;
+      text-decoration: none;
+    }
+    .sc-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      text-decoration: none;
+    }
+    .sc-btn-step { background: #b9770e; color: #fff; border-color: #b9770e; }
+    .sc-btn-step:hover { background: #9c640c; border-color: #9c640c; }
+    .sc-btn-pspo { background: #2471a3; color: #fff; border-color: #2471a3; }
+    .sc-btn-pspo:hover { background: #1a5c87; border-color: #1a5c87; }
+    .sc-btn-out { background: #fff; color: #333; border-color: #d0d0d0; }
+    .sc-btn-out:hover { background: #f5f5f5; border-color: #aaa; }
+
+    .citation-box {
+      background: #111;
+      color: #f3f3f3;
+      border-radius: 10px;
+      padding: 18px 20px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.84rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      margin-top: 14px;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.52rem; }
+      section { padding: 48px 0; }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      .card-grid-2,
+      .showcase-grid { grid-template-columns: 1fr; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="top-refresh">
+  <div class="container">
+    <div class="cat-badge">Agentic RL Foundations</div>
+    <h1><span class="highlight">Agentic RL</span>：基础算法、训练范式与系统问题</h1>
+    <p class="subtitle">
+      从 <strong>RLHF / RLVR</strong> 过渡到 <strong>多轮环境耦合策略学习</strong>，
+      统一梳理 Agentic RL 的问题建模、轨迹表示、信用分配、训练基础设施、应用场景与开放挑战。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室 · Survey Report 2026</p>
+
+    <div class="btn-row">
+      <a class="btn btn-primary" href="agentic_rl_survey.pdf" target="_blank" rel="noopener">Technical Report</a>
+      <a class="btn btn-secondary" href="../steppo/">StepPO</a>
+      <a class="btn btn-secondary" href="../paperscout/">PSPO / PaperScout</a>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#intro">简介</a>
+    <a href="#shift">范式转变</a>
+    <a href="#trajectory">轨迹与信用分配</a>
+    <a href="#algorithms">算法谱系</a>
+    <a href="#systems">训练基础设施</a>
+    <a href="#applications">应用与基准</a>
+    <a href="#frontier">前沿问题</a>
+    <a href="#citation">引用</a>
+  </div>
+</nav>
+
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>核心判断：</strong>
+      Agentic RL 不是把 RLHF 或 RLVR 机械地搬到多轮场景里，而是把训练问题从
+      <strong>单轮反馈优化</strong> 重构为 <strong>多轮、部分可观测、环境耦合的策略学习</strong>。
+      这会同时改变算法设计、轨迹数据结构和训练系统组织方式。
+    </div>
+
+    <h2 class="section-title">页面定位</h2>
+    <p>
+      这页不是单篇论文主页，而是一个面向整个 <strong>Agentic RL 基础算法方向</strong> 的总览入口。
+      它基于《A Survey of Agentic Reinforcement Learning for Large Language Models:
+      Foundations, Paradigms, and Challenges》整理而成，重点提炼三个问题：
+      <strong>Agentic RL 在建模上与 RLHF / RLVR 有什么本质不同</strong>、
+      <strong>多轮轨迹该如何表示与分配信用</strong>、
+      以及 <strong>为什么训练基础设施已成为算法同等重要的一部分</strong>。
+    </p>
+    <p>
+      在当前主页体系里，`StepPO` 和 `PSPO / PaperScout` 对应的是这个方向上的代表性方法与场景化实例；
+      这页本身则提供了一个更高层的基础算法视角，用来串联 credit locus、trajectory schema、
+      training infrastructure 和 benchmark landscape 这些共同问题。
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">3</div>
+        <div class="stat-label">三代范式<br>RLHF → RLVR → Agentic RL</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">3</div>
+        <div class="stat-label">轨迹表示<br>Message / TITO / Step-based</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">5</div>
+        <div class="stat-label">信用层级<br>Token / Step / Turn / Trajectory / Agent</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">4</div>
+        <div class="stat-label">开放问题簇<br>监督、效率、系统、理论</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="shift">
+  <div class="container">
+    <h2 class="section-title">从 RLHF / RLVR 到 Agentic RL</h2>
+    <p>
+      Survey 给出的总框架很清晰：Agentic RL 最好被理解为从
+      <strong>single-turn feedback optimization</strong> 走向
+      <strong>multi-turn environment-coupled policy learning</strong>。
+      也就是说，模型不再只对一个完整回答打分，而是要在带状态的环境中持续行动、观察、更新上下文。
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>范式</th>
+            <th>交互结构</th>
+            <th>奖励来源</th>
+            <th>主要难点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>RLHF</strong></td>
+            <td>单轮回答</td>
+            <td>人类偏好 / Reward Model</td>
+            <td>偏好建模与对齐质量</td>
+          </tr>
+          <tr>
+            <td><strong>RLVR</strong></td>
+            <td>单轮回答</td>
+            <td>可验证结果奖励</td>
+            <td>Verifier 设计与结果正确性</td>
+          </tr>
+          <tr>
+            <td><strong>Agentic RL</strong></td>
+            <td>多轮环境交互</td>
+            <td>延迟环境奖励 + 局部反馈</td>
+            <td>长程信用分配、轨迹表示、系统吞吐、环境随机性</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">为什么这个转变很关键</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🧭</div>
+        <h4>问题从 bandit 变成 POMDP</h4>
+        <p>Agentic RL 更自然地被建模为 POMDP：状态不可完全观测，动作改变环境，观察在每一步到来，奖励常常延迟。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛠️</div>
+        <h4>工具调用进入策略本体</h4>
+        <p>搜索、代码执行、网页点击和结构化 API 调用不再只是 workflow 模块，而成为策略必须学习的决策对象。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏳</div>
+        <h4>早期决策改变后续可见信息</h4>
+        <p>一次检索、一次点击或一次错误工具调用，都会改变后续可用证据和状态空间，因此早期步骤的因果价值显著上升。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏗️</div>
+        <h4>系统不再是实现细节</h4>
+        <p>Rollout-as-a-Service、异步采样、sandbox、trainer-worker decoupling 直接影响训练稳定性和可扩展性。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trajectory" class="alt">
+  <div class="container">
+    <h2 class="section-title">轨迹表示与信用分配</h2>
+    <p>
+      Survey 把 <strong>trajectory</strong> 视为 Agentic RL 的中心接口。
+      环境、数据结构、优化器和基础设施不是各自孤立的模块，而是都通过轨迹这个对象耦合在一起。
+      因此，很多算法问题其实首先是“数据应该怎样被记录和回放”的问题。
+    </p>
+
+    <h3 class="sub-title">三种轨迹表示范式</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>表示方式</th>
+            <th>优势</th>
+            <th>主要代价</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Message-based</strong></td>
+            <td>兼容对话模板，assistant / tool / user 角色结构天然清晰</td>
+            <td>重序列化会产生 re-tokenization drift，精确 token 对齐较弱</td>
+          </tr>
+          <tr>
+            <td><strong>TITO</strong></td>
+            <td>直接回放 token id，能最大限度保持 rollout 与 training 的 token 一致性</td>
+            <td>政策 token 与环境 token 混在同一流中，必须显式做 token masking</td>
+          </tr>
+          <tr>
+            <td><strong>Step-based</strong></td>
+            <td>把交互 step 作为原子决策单位，更自然对齐环境边界与局部 credit</td>
+            <td>需要额外定义 step 边界和更结构化的 trace schema</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">五层信用分配视角</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔤</div>
+        <h4>Token</h4>
+        <p>最细粒度，能精确控制 loss scope，但高方差且强依赖轨迹是否准确区分 policy-authored spans。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🪜</div>
+        <h4>Step</h4>
+        <p>把推理段、工具调用段或一轮交互作为基本单位，是当前 Agentic RL 中最常见的折中方案。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔁</div>
+        <h4>Turn</h4>
+        <p>适合多轮对话或协作环境，把整轮 interaction 作为奖励分配边界，常见于长上下文与协作型任务。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h4>Trajectory</h4>
+        <p>最容易扩展，常见于 GRPO 类 group-relative whole-trajectory comparison，但本地因果定位能力最弱。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👥</div>
+        <h4>Agent</h4>
+        <p>在多智能体系统里，除了轨迹内 credit，还要处理跨 agent 协同和团队奖励带来的额外结构。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">核心难点</h3>
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-icon">📏</div>
+        <h4>长程信用分配</h4>
+        <p>奖励通常在多轮交互后才出现，而训练更新却必须回溯到早期关键步骤，这会直接决定局部监督是否可靠。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧩</div>
+        <h4>部分可观测与环境非确定性</h4>
+        <p>网页、代码仓库、检索结果和外部接口都会变化，导致相同策略在不同 rollout 中未必重现相同观察与结果。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="algorithms">
+  <div class="container">
+    <h2 class="section-title">基础算法谱系</h2>
+    <p>
+      Survey 的一个重要观点是：在 Agentic RL 中，先问“哪一个优化器最好”往往太早；
+      更基本的问题是 <strong>credit 被附着在哪个单位上</strong>。因此算法更适合按
+      <strong>trajectory-level</strong>、<strong>step-level</strong> 和 <strong>token-level</strong>
+      三种 credit locus 来理解。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🧱</div>
+        <h4>Trajectory-Level</h4>
+        <p>以 GRPO 为代表，把整条 rollout 的结果做相对比较后广播回去。优点是易扩展，缺点是难回答“到底哪一步导致成功”。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🪄</div>
+        <h4>Step-Level</h4>
+        <p>以 interaction step 为局部 credit 边界，在 locality 和稳健性之间取得较好平衡，是 Agent 场景下最自然的设计中心。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h4>Token-Level</h4>
+        <p>更常见的作用不是做完整 token-specific reward，而是精确定义 loss scope，避免环境 token 获得错误梯度。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌿</div>
+        <h4>Structured Exploration</h4>
+        <p>Agentic RL 的探索越来越偏向有结构地在高不确定性节点分枝，而不是均匀提高采样随机性。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">代表性研究页</h3>
+    <div class="showcase-grid">
+      <div class="showcase-card showcase-step">
+        <span class="sc-badge sc-badge-step">Step-Level Optimization</span>
+        <h3>StepPO</h3>
+        <p class="sc-desc">
+          把 Agentic RL 的基本决策单位从 token 提升到 interaction step，
+          强调 <strong>step-level MDP</strong>、<strong>step-level credit assignment</strong>
+          与 <strong>step-native systems</strong> 的整体对齐，是这条基础算法线上的代表性立场论文。
+        </p>
+        <div class="sc-links">
+          <a class="sc-btn sc-btn-step" href="../steppo/">查看主页 →</a>
+          <a class="sc-btn sc-btn-out" href="https://arxiv.org/abs/2604.18401" target="_blank" rel="noopener">arXiv</a>
+        </div>
+      </div>
+
+      <div class="showcase-card showcase-pspo">
+        <span class="sc-badge sc-badge-pspo">Sequence-Level Optimization</span>
+        <h3>PSPO / PaperScout</h3>
+        <p class="sc-desc">
+          在学术论文检索 Agent 中，把多轮 search-and-expand 过程建模为顺序决策，
+          通过 <strong>process-aware</strong>、<strong>sequence-level</strong> 的优化方式，
+          展示了场景化 Agentic RL 方法如何利用更贴近交互边界的 credit。
+        </p>
+        <div class="sc-links">
+          <a class="sc-btn sc-btn-pspo" href="../paperscout/">查看主页 →</a>
+          <a class="sc-btn sc-btn-out" href="../paperscout/#pspo">PSPO</a>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">与当前方法页的关系</h3>
+    <p>
+      这个总览页负责回答“Agentic RL 的共同基础问题是什么”，而
+      <a href="../steppo/">StepPO</a> 和 <a href="../paperscout/">PSPO / PaperScout</a>
+      则分别展示了 <strong>step-level</strong> 与 <strong>sequence-level</strong>
+      的代表性方法如何在具体任务中落地这些基础思想。
+    </p>
+  </div>
+</section>
+
+<section id="systems" class="alt">
+  <div class="container">
+    <h2 class="section-title">训练基础设施</h2>
+    <p>
+      Survey 特别强调，Agentic RL 的基础设施故事可以分成两个连续抬升：
+      第一层是从普通 LLM training / inference 升级到 LLM RL training / inference；
+      第二层是从 single-turn LLM RL 升级到 <strong>multi-turn agentic RL</strong>。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>Rollout-as-a-Service</h4>
+        <p>Rollout 从一次简单的生成调用，变成由 agent runtime、工具执行器、sandbox 和环境状态共同组成的服务系统。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h4>Trainer-Worker 解耦</h4>
+        <p>采样和训练必须解耦扩展，才能分别优化 wall-clock-bound interaction 和 GPU-bound policy update。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧪</div>
+        <h4>Sandbox 与可复现性</h4>
+        <p>代码执行、网页交互和复杂工具调用要求系统提供可控 sandbox、日志留存、轨迹重放与评估稳定性保障。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <h4>Replay 与数据新鲜度</h4>
+        <p>历史轨迹、warm start、negative mining 和 freshness-aware curation 直接影响训练收益与偏差累积。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">为什么系统设计与算法同等重要</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>系统问题</th>
+            <th>影响</th>
+            <th>典型应对方向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>采样极慢</strong></td>
+            <td>多轮网页 / 代码 / GUI 交互往往比文本生成慢几个数量级</td>
+            <td>异步 rollout、批处理、优先队列、elastic workers</td>
+          </tr>
+          <tr>
+            <td><strong>轨迹很长</strong></td>
+            <td>上下文溢出、重放成本高、值函数更难稳定</td>
+            <td>压缩、截断、step-native schema、prefix reuse</td>
+          </tr>
+          <tr>
+            <td><strong>环境复杂</strong></td>
+            <td>需要真实浏览器、代码执行、状态追踪与失败恢复</td>
+            <td>sandbox、deterministic replay、标准化运行时接口</td>
+          </tr>
+          <tr>
+            <td><strong>数据质量差异大</strong></td>
+            <td>正样本稀缺，坏轨迹会显著拖累训练稳定性</td>
+            <td>quality filtering、negative mining、policy-version tracking</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="applications">
+  <div class="container">
+    <h2 class="section-title">应用与基准</h2>
+    <p>
+      Agentic RL 正在多个任务族中扩展。真正统一这些任务的不是语义主题，而是
+      <strong>交互结构</strong>：Agent 需要搜集信息、采取环境动作，并在延迟反馈下改善多轮策略。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔎</div>
+        <h4>Agentic RAG / Deep Research</h4>
+        <p>搜索、阅读、证据扩展与综合写作都进入同一策略循环，早期检索决策直接改变后续可用证据。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h4>Web Navigation</h4>
+        <p>动态界面、长 horizon 与脆弱评估协议让网页智能体成为最典型的 fully interactive agentic RL 场景。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h4>Coding Agents</h4>
+        <p>代码编辑、测试执行和调试提供了相对可验证的回报，是 Agentic RL 当前最重要的高价值应用之一。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖱️</div>
+        <h4>GUI / Computer Use</h4>
+        <p>部分可观测更强、动作空间更复杂，点击、输入、滚动和界面错误恢复都要纳入决策链条。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>Structured Data</h4>
+        <p>结构化表格和分析任务通常具备较可验证的奖励，因此很适合研究 step-level credit 与过程奖励塑形。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👥</div>
+        <h4>Collaborative Multi-Agent</h4>
+        <p>一旦多智能体并发行动，除了长程 credit 之外，还要处理跨 agent 的协作、团队奖励和异步 rollout。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">典型 benchmark 维度</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Benchmark 家族</th>
+            <th>代表任务</th>
+            <th>Agentic RL 含义</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Web</strong></td>
+            <td>WebArena、Mind2Web</td>
+            <td>检验长程交互、界面随机性和轨迹质量过滤</td>
+          </tr>
+          <tr>
+            <td><strong>Coding</strong></td>
+            <td>SWE-bench、HumanEval</td>
+            <td>检验执行可验证奖励与多轮调试闭环</td>
+          </tr>
+          <tr>
+            <td><strong>Open-Ended Assistant</strong></td>
+            <td>GAIA</td>
+            <td>检验异构工具、长程规划与运行时基础设施</td>
+          </tr>
+          <tr>
+            <td><strong>Deep Research</strong></td>
+            <td>多跳检索、论文搜索、证据综合</td>
+            <td>检验 retrieval、selection、synthesis 之间不均匀的 step credit</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="frontier" class="alt">
+  <div class="container">
+    <h2 class="section-title">前沿问题</h2>
+    <p>
+      Survey 把开放挑战归纳为四个互相关联的问题簇。它们分别覆盖监督信号、训练起点与样本效率、
+      评估与训练系统，以及理论与 scaling。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <h4>学习信号与监督</h4>
+        <p>如何把 trajectory-level judgment、step correction、selective oversight 与自动奖励有机组合，而不是互相冲突。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h4>初始化与样本效率</h4>
+        <p>冷启动策略很难自然碰到高奖励轨迹，如何用 staged training、curriculum 和历史轨迹 warm start 提高起步效率。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧰</div>
+        <h4>评估与训练系统</h4>
+        <p>需要更稳定的环境、更可重放的工具链、更可靠的 efficiency-adjusted evaluation，而不只是单次成功率。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📐</div>
+        <h4>理论与 Scaling</h4>
+        <p>Agentic RL 的性能同时取决于模型规模、rollout 预算、环境复杂度和监督强度，尚缺少统一 scaling law。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="citation">
+  <div class="container">
+    <h2 class="section-title">引用</h2>
+    <p>如果这个方向页或 Survey 对你的研究有帮助，可以引用对应技术报告：</p>
+    <div class="citation-box">@misc{ustcagi2026agenticrlsurvey,
+  title={A Survey of Agentic Reinforcement Learning for Large Language Models: Foundations, Paradigms, and Challenges},
+  author={USTC-AGI Research Group},
+  year={2026},
+  month={apr},
+  note={Technical report},
+  url={./agentic_rl_survey.pdf}
+}</div>
+
+    <h2 class="section-title" style="margin-top: 48px;">相关页面</h2>
+    <p>
+      这个方向页与 <a href="../steppo/">StepPO</a>、<a href="../paperscout/">PaperScout / PSPO</a>
+      一起构成当前站内的 Agentic RL 基础算法脉络。
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Agentic RL Survey Page · AGI Group · State Key Laboratory of Cognitive Intelligence, USTC</p>
+    <p style="font-size:0.78rem;color:#555;margin-top:6px;">
+      <a href="../">返回主页</a>
+      &nbsp;·&nbsp;
+      <a href="../steppo/">StepPO</a>
+      &nbsp;·&nbsp;
+      <a href="../paperscout/">PaperScout</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -56,8 +56,22 @@
       color: #111;
       letter-spacing: 0.01em;
       white-space: nowrap;
+      transition: color .18s, transform .18s, opacity .18s;
     }
     .nav-brand span { color: #c0392b; }
+    .nav-brand:hover {
+      color: #c0392b;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+    .nav-brand:active {
+      transform: scale(0.985);
+    }
+    .nav-brand:focus-visible {
+      outline: 3px solid rgba(192, 57, 43, 0.18);
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
     .nav-links {
       display: flex;
       align-items: center;
@@ -104,6 +118,10 @@
     header:focus-visible {
       outline: 3px solid rgba(192, 57, 43, 0.2);
       outline-offset: -6px;
+    }
+    body.page-refreshing .nav-brand,
+    body.page-refreshing header {
+      opacity: 0.74;
     }
     header h1 {
       font-size: 2.3rem;
@@ -634,12 +652,12 @@
 <!-- ═══════════════════ TOP NAV ═══════════════════ -->
 <nav class="top-nav" aria-label="首页顶部导航">
   <div class="container">
-    <a class="nav-brand" href="#hero-header">USTC-AGI <span>Agentic AI</span></a>
+    <a class="nav-brand" id="nav-refresh" href="#hero-header" aria-label="点击刷新当前页面">USTC-AGI <span>Agentic AI</span></a>
     <div class="nav-links">
       <a href="#hero-header">首页</a>
       <a href="#research-tracks">研究方向</a>
       <a href="papers/">论文列表</a>
-      <a href="#application-systems">应用系统</a>
+      <a href="#application-systems">应用研究</a>
       <a href="team/">团队成员</a>
       <a href="https://github.com/AgentR1" target="_blank" rel="noopener">GitHub</a>
     </div>
@@ -717,7 +735,7 @@
             </div>
           </div>
           <div class="card-links">
-            <a class="card-btn btn-enter-rlalgo" href="steppo/">查看主页 →</a>
+            <a class="card-btn btn-enter-rlalgo" href="agentic-rl/">查看主页 →</a>
             <a class="card-btn btn-outline" href="steppo/">StepPO </a>
             <a class="card-btn btn-outline" href="paperscout/">PSPO </a>
           </div>
@@ -1114,13 +1132,30 @@
 </footer>
 
 <script>
+  const navRefresh = document.getElementById('nav-refresh');
   const heroHeader = document.getElementById('hero-header');
 
-  if (heroHeader) {
-    const refreshPage = () => {
+  const refreshPage = () => {
+    document.body.classList.add('page-refreshing');
+    window.setTimeout(() => {
       window.location.reload();
-    };
+    }, 120);
+  };
 
+  if (navRefresh) {
+    navRefresh.addEventListener('click', (event) => {
+      event.preventDefault();
+      refreshPage();
+    });
+    navRefresh.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        refreshPage();
+      }
+    });
+  }
+
+  if (heroHeader) {
     heroHeader.addEventListener('click', refreshPage);
     heroHeader.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
