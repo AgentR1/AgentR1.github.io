@@ -83,6 +83,14 @@
       border-bottom: 1px solid #e8e8e8;
       padding: 60px 0 48px;
       text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, filter .16s ease;
+    }
+    header:hover {
+      filter: saturate(1.02);
+    }
+    header:active {
+      transform: scale(0.995);
     }
     .logo-wrap img {
       height: 90px;
@@ -385,6 +393,11 @@
     footer a { color: #e87b6e; }
     footer p + p { margin-top: 6px; }
 
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
     /* ── Responsive ────────────────────────────────── */
     @media (max-width: 640px) {
       header h1 { font-size: 1.45rem; }
@@ -400,7 +413,7 @@
 <body>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header>
+<header id="top-refresh">
   <div class="container">
     <div class="logo-wrap">
       <img src="../assets/logo.jpeg" alt="CLAW-R1 Logo" />
@@ -426,7 +439,7 @@
         </svg>
         GitHub (Claw-R1)
       </a>
-      <a class="btn btn-secondary" href="https://agentr1.github.io/Claw-R1/" target="_blank" rel="noopener">
+      <a class="btn btn-secondary" href="docs/" rel="noopener">
         项目文档
       </a>
       <a class="btn btn-secondary" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">
@@ -1040,6 +1053,21 @@ RayAgentTrainer 持续消费 DataPool，更新模型权重
     </p>
   </div>
 </footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
 
 </body>
 </html>
