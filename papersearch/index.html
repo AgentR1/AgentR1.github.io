@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaperSearch — Academic Literature Search for Humans and Agents</title>
+  <meta name="description" content="PaperSearch 是面向科技文献场景的搜索与智能体能力套件，连接 Lewen-API、academic-search、PaperScout、Lewen-Agent 与学术鲁班。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f1f1ef;
+      border: 1px solid #e2e2df;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #9f2f23;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background:
+        radial-gradient(circle at top right, rgba(192, 57, 43, 0.12), transparent 28%),
+        linear-gradient(160deg, #ffffff 54%, #fff6f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 58px 0 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, filter .16s ease;
+    }
+    header:hover { filter: saturate(1.02); }
+    header:active { transform: scale(0.996); }
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #edd4d0;
+      background: #fff8f7;
+      color: #9f2f23;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero-mark {
+      width: min(100%, 560px);
+      margin: 24px auto 20px;
+      padding: 22px 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff, #fff4f2);
+      border: 1px solid #ead8d3;
+      box-shadow: 0 14px 36px rgba(192, 57, 43, 0.10);
+    }
+    .hero-system {
+      display: grid;
+      grid-template-columns: 1fr 42px 1fr 42px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+    .hero-node {
+      min-height: 112px;
+      background: #fff;
+      border: 1px solid #ece8e5;
+      border-radius: 18px;
+      padding: 14px 12px;
+      text-align: left;
+    }
+    .hero-node strong {
+      display: block;
+      color: #111;
+      font-size: 0.86rem;
+      margin-bottom: 6px;
+    }
+    .hero-node span {
+      display: block;
+      color: #666;
+      font-size: 0.76rem;
+      line-height: 1.55;
+    }
+    .hero-arrow {
+      height: 2px;
+      background: linear-gradient(90deg, #d9b1ab, #c0392b);
+      position: relative;
+      border-radius: 999px;
+    }
+    .hero-arrow::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #c0392b;
+      border-right: 2px solid #c0392b;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    .hero-note {
+      margin-top: 14px;
+      color: #7b645f;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: #111;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin: 14px auto 0;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 700px;
+      line-height: 1.75;
+    }
+    .affiliation {
+      margin-top: 12px;
+      font-size: 0.89rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: #fff;
+      color: #222;
+      border-color: #d7d7d7;
+    }
+    .btn-secondary:hover {
+      background: #f8f8f8;
+      border-color: #aaa;
+    }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e5e5e5;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 52px;
+    }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.42rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 30px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.01rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: #c0392b; }
+
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      margin: 24px 0 6px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 150px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 0.83rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon {
+      font-size: 1.65rem;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .card h4 {
+      font-size: 0.94rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.68;
+    }
+
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+      color: #111;
+    }
+    .pillar-text span {
+      font-size: 0.88rem;
+      color: #555;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .system-panel {
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .system-panel .label {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      background: #f7f7f7;
+      border: 1px solid #e8e8e8;
+      color: #666;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .system-panel h3 {
+      font-size: 1rem;
+      color: #111;
+      margin-bottom: 8px;
+    }
+    .system-panel p {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.72;
+    }
+    .system-panel.highlight {
+      border-color: #e5c0ba;
+      background: linear-gradient(180deg, #fffdfd, #fff7f6);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 22px 0;
+      border-radius: 8px;
+      border: 1px solid #e4e4e4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fdf9f9; }
+    tr:last-child td { border-bottom: none; }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: #c0392b;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    @media (max-width: 760px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 50px 0; }
+      .card-grid-2,
+      .system-grid { grid-template-columns: 1fr; }
+      .hero-system { grid-template-columns: 1fr; }
+      .hero-arrow {
+        width: 2px;
+        height: 24px;
+        margin: 0 auto;
+        background: linear-gradient(180deg, #d9b1ab, #c0392b);
+      }
+      .hero-arrow::after {
+        right: 50%;
+        top: auto;
+        bottom: -1px;
+        transform: translateX(50%) rotate(135deg);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.24rem; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="top-refresh">
+  <div class="container">
+    <div class="hero-kicker">Academic Search Infrastructure</div>
+    <div class="hero-mark" aria-hidden="true">
+      <div class="hero-system">
+        <div class="hero-node">
+          <strong>Lewen-API</strong>
+          <span>论文对象、检索对象与引用关系的统一底座。</span>
+        </div>
+        <div class="hero-arrow"></div>
+        <div class="hero-node">
+          <strong>PaperScout / Skills</strong>
+          <span>从检索工具升级为可决策、可复用的 Agent 能力。</span>
+        </div>
+        <div class="hero-arrow"></div>
+        <div class="hero-node">
+          <strong>Lewen-Agent / Luban</strong>
+          <span>面向研究者使用与科研 Skills 共建的平台化入口。</span>
+        </div>
+      </div>
+      <div class="hero-note">Human-centric 与 Agent-centric 两条路线，共用同一套科技文献能力底座。</div>
+    </div>
+    <h1>PaperSearch：面向 <span class="highlight">研究者与 Agent</span> 的科技文献搜索系统</h1>
+    <p class="subtitle">
+      连接文献检索基础设施、强化学习学术搜索 Agent、科研 Skills 与真实研究工作流，
+      让论文搜索从一次性查询走向可扩展、可调用、可沉淀的科研能力体系。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+
+    <div class="btn-row">
+      <a class="btn btn-secondary" href="../" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 12H5"/>
+          <path d="m12 19-7-7 7-7"/>
+        </svg>
+        返回总览
+      </a>
+      <a class="btn btn-secondary" href="https://lewen.bdaa.pro/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="m20 20-3.5-3.5"/>
+        </svg>
+        学术乐问
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/ustc-ai4science/academic-search" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+            -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+            .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+            -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+            1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        academic-search
+      </a>
+      <a class="btn btn-secondary" href="https://mp.weixin.qq.com/s/CO33MLXibrgfULX3qL-eUA" target="_blank" rel="noopener">
+        微信介绍
+      </a>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#intro">简介</a>
+    <a href="#routes">两条主线</a>
+    <a href="#infrastructure">基础设施</a>
+    <a href="#agent">PaperScout</a>
+    <a href="#workflow">工作流</a>
+    <a href="#resources">资源</a>
+  </div>
+</nav>
+
+<section id="intro" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      PaperSearch 不是单一的论文搜索框，而是一套面向科技文献场景的能力系统：
+      底层由 <strong>Lewen-API</strong> 承载检索与引用关系，
+      中层由 <strong>academic-search</strong> 与 <strong>PaperScout</strong> 提供 Agent 能力，
+      上层通过 <strong>Lewen-Agent / 学术乐问</strong> 和 <strong>学术鲁班</strong> 进入真实科研工作流。
+    </div>
+
+    <h2 class="section-title">项目简介</h2>
+    <p>
+      在 AI4Science 场景中，科技文献处理远不止“搜一下论文”。研究者需要筛选、比对、追踪引用、组织证据并串联研究脉络；
+      Agent 则需要把这些动作转化为可调用、可决策、可复用的能力。
+    </p>
+    <p>
+      PaperSearch 将这些能力组织成同一套系统：既服务研究者的日常文献发现与调研，也服务 Claude Code 等 Agent 的工具调用与科研任务执行。
+      它把文献检索从独立工具推进到基础设施、算法和应用系统共同构成的科研能力栈。
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">300 万+</div>
+        <div class="stat-label">论文元数据<br>支撑检索底座</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">3000 万+</div>
+        <div class="stat-label">引用关系<br>支撑扩展与追踪</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2</div>
+        <div class="stat-label">核心路线<br>Human / Agent</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">MCP</div>
+        <div class="stat-label">面向 Agent 生态<br>持续开放</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="routes">
+  <div class="container">
+    <h2 class="section-title">Human-centric 与 Agent-centric</h2>
+    <p>
+      PaperSearch 的核心组织方式是同时面向“人”和“Agent”建设科技文献能力生态。
+      两条路线并不是彼此割裂的产品线，而是共用同一套文献对象、检索接口、引用关系和能力封装。
+    </p>
+
+    <div class="system-grid">
+      <article class="system-panel highlight">
+        <span class="label">Human-centric</span>
+        <h3>让研究者真正把科技文献搜索用起来</h3>
+        <p>
+          <code>Lewen-API</code> 提供开发者能力底座，<code>Lewen-Agent</code> 与
+          <code>学术乐问</code> 则把这些能力组织成研究者可以直接体验的文献检索 Agent。
+        </p>
+      </article>
+      <article class="system-panel">
+        <span class="label">Agent-centric</span>
+        <h3>让 Agent 真正把科技文献能力调起来</h3>
+        <p>
+          <code>academic-search</code> 将学术搜索封装为 Claude Code 可加载的科研 Skill；
+          <code>Lewen-API MCP</code> 与 <code>学术鲁班</code> 继续向 Agent 生态开放能力管理与分发。
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="infrastructure" class="alt">
+  <div class="container">
+    <h2 class="section-title">基础设施：让文献检索可服务于系统</h2>
+    <p>
+      Lewen-API 承担科技文献检索基础设施角色，统一论文对象、检索对象与引用关系，
+      支持语义检索、关键词过滤以及引用/被引用关系建模。
+    </p>
+    <p>
+      技术栈采用 <code>SQLite</code>、<code>FTS5</code>、<code>Qdrant</code>、
+      <code>BGE-M3</code> 与 <code>RRF</code> 的组合：稀疏检索和元数据管理保证轻量稳定，
+      向量检索负责语义召回，多路结果通过融合策略形成更可靠的论文候选集。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📚</div>
+        <h4>统一论文对象</h4>
+        <p>把标题、摘要、作者、年份、来源、引用关系等信息组织为稳定的文献对象，方便系统和 Agent 共同使用。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔎</div>
+        <h4>混合检索</h4>
+        <p>结合关键词、语义向量与结果融合，兼顾精确匹配、概念召回与复杂科研问题的表达能力。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h4>引用扩展</h4>
+        <p>通过引用与被引用关系追踪上下游工作，让文献搜索可以从列表检索升级为研究脉络探索。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="agent">
+  <div class="container">
+    <h2 class="section-title">算法创新：从固定流程到自主决策</h2>
+    <p>
+      真正困难的学术搜索不是把几个工具调用顺序串起来，而是持续判断：
+      搜什么、扩什么、何时停止、下一步沿哪条文献链路继续。
+    </p>
+    <p>
+      PaperScout 将学术搜索建模为多轮决策问题，并通过 PSPO 对 sequence-level 的 Agent 行为进行优化。
+      它关注完整检索轨迹的质量，而不是只优化局部 token 输出。
+    </p>
+
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>Search</strong>
+          <span>根据研究问题生成检索查询，围绕候选论文逐步建立初始证据池。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>Expand</strong>
+          <span>沿引用、被引与相关工作关系扩展候选集合，让 Agent 能主动追踪研究谱系。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>Stop</strong>
+          <span>在证据足够或继续搜索收益下降时收束检索，把开放探索转化为可交付结果。</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="workflow" class="alt">
+  <div class="container">
+    <h2 class="section-title">智能体应用：进入真实研究工作流</h2>
+    <p>
+      当底层 API 和搜索 Agent 具备可复用能力后，关键问题变成如何进入研究者日常工作。
+      Lewen-Agent / 学术乐问 将 Lewen-API 与 PaperScout 组织成可直接使用的科技文献检索 Agent，
+      让算法和 API 变成研究者可以操作的实际系统。
+    </p>
+    <p>
+      学术鲁班则面向科研 Skills 的管理、上传、下载与共建。当前已有
+      <code>academic-search</code>、<code>figure-plot</code> 等代表性科研 Skills，
+      后续可继续扩展论文阅读、论文写作和更多面向科研流程的能力单元。
+    </p>
+
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-icon">🧑‍🔬</div>
+        <h4>研究者入口：学术乐问</h4>
+        <p>面向真实用户提供科技文献检索体验，支持围绕研究问题进行论文发现、证据组织和文献脉络追踪。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧰</div>
+        <h4>Agent 入口：科研 Skills</h4>
+        <p>把检索策略、工具脚本、接口资源和任务规则封装成可加载能力，让 Agent 不再只依赖泛化网页浏览。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <h2 class="section-title">项目资源</h2>
+    <p>以下资源共同构成 PaperSearch 的能力栈，可分别服务开发者、研究者和 Agent 工作流。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>模块</th>
+            <th>定位</th>
+            <th>链接</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>academic-search</strong></td>
+            <td>面向 Claude Code 等 Agent 的科研搜索 Skill。</td>
+            <td><a href="https://github.com/ustc-ai4science/academic-search" target="_blank" rel="noopener">GitHub</a></td>
+          </tr>
+          <tr>
+            <td><strong>Lewen-API</strong></td>
+            <td>科技文献检索 API 与文献对象基础设施。</td>
+            <td><a href="https://github.com/ustc-ai4science/Lewen-API" target="_blank" rel="noopener">GitHub</a> · <a href="https://ustc-ai4science.github.io/Lewen-API/" target="_blank" rel="noopener">Docs</a></td>
+          </tr>
+          <tr>
+            <td><strong>Lewen-Agent</strong></td>
+            <td>基于 Lewen-API 与 PaperScout 的文献检索 Agent。</td>
+            <td><a href="https://github.com/ustc-ai4science/Lewen-Agent" target="_blank" rel="noopener">GitHub</a> · <a href="https://lewen.bdaa.pro/" target="_blank" rel="noopener">学术乐问</a></td>
+          </tr>
+          <tr>
+            <td><strong>学术鲁班</strong></td>
+            <td>面向科研场景的 Skills 管理、分发与共建平台。</td>
+            <td><a href="https://luban.bdaa.pro/" target="_blank" rel="noopener">luban.bdaa.pro</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2026 PaperSearch Team &middot; AGI Group · State Key Laboratory of Cognitive Intelligence, USTC
+    </p>
+    <p style="font-size: 0.78rem; color: #555; margin-top: 6px;">
+      Built for academic search, research agents, and reusable scientific Skills.
+    </p>
+  </div>
+</footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
+
+</body>
+</html>
