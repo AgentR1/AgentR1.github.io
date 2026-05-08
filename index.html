@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agentic AI 研究方向工作介绍 — 中国科学技术大学认知智能全国重点实验室 AGI 研究组</title>
-  <meta name="description" content="中国科学技术大学认知智能全国重点实验室 AGI 研究组：Agent Runtime、Agentic RL、垂直领域智能体应用等方向工作介绍。" />
+  <meta name="description" content="中国科学技术大学认知智能全国重点实验室 AGI 研究组：Coding-based Agentic AI、Agentic RL、垂直领域智能体应用等方向工作介绍。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -297,6 +297,7 @@
     .accent-apps     { background: linear-gradient(90deg, #1e8449, #27ae60); }
     .accent-tabclaw  { background: linear-gradient(90deg, #d35400, #e67e22); }
     .accent-castclaw { background: linear-gradient(90deg, #0f766e, #14b8a6); }
+    .accent-neocast  { background: linear-gradient(90deg, #c0392b, #0f766e); }
     .accent-luban    { background: linear-gradient(90deg, #1a56db, #3b82f6); }
     .accent-mechanism { background: linear-gradient(90deg, #2c3e50, #5d6d7e); }
     .accent-evaluation { background: linear-gradient(90deg, #8e44ad, #c039b3); }
@@ -574,6 +575,8 @@
     .btn-enter-tabclaw:hover { background: #b94600; border-color: #b94600; }
     .btn-enter-castclaw { background: #0f766e; color: #fff; border-color: #0f766e; }
     .btn-enter-castclaw:hover { background: #0b5f59; border-color: #0b5f59; }
+    .btn-enter-neocast { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .btn-enter-neocast:hover { background: #a93226; border-color: #a93226; }
     .btn-enter-luban    { background: #1a56db; color: #fff; border-color: #1a56db; }
     .btn-enter-luban:hover    { background: #1447c0; border-color: #1447c0; }
     .btn-enter-rlalgo  { background: #b9770e; color: #fff; border-color: #b9770e; }
@@ -701,7 +704,7 @@
   <div class="container">
     <div class="section-intro section-anchor" id="research-tracks">
       <h2>研究方向</h2>
-      <p>用于介绍与展示 USTC-AGI 研究组在 Agentic AI 方向的代表性工作，涵盖训练引擎、基础算法、Agent Runtime 以及应用研究等多个方面。</p>
+      <p>用于介绍与展示 USTC-AGI 研究组在 Agentic AI 方向的代表性工作，涵盖训练引擎、基础算法、Coding-based Agentic AI 以及应用研究等多个方面。</p>
     </div>
 
     <div class="project-grid">
@@ -767,44 +770,13 @@
         </div>
       </div>
 
-      <!-- Agent Runtime Framework -->
-      <div class="project-card">
-        <div class="card-accent accent-runtime"></div>
-        <div class="card-body">
-          <h3>Agent Runtime</h3>
-          <p class="card-desc">
-            面向复杂科学任务的 LLM Agent 推理与运行基础设施。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🎯</span>
-              <span>Science-Star · ReAct · Deep Research</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔧</span>
-              <span>HLE / GAIA · RICO · 动态记忆 · 多维反思 · 工具检索</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📄</span>
-              <span>Science-Star · CrabShrimp 项目</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-runtime" href="agent-runtime/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="agent-runtime/#science-star">Science-Star </a>
-            <a class="card-btn btn-outline" href="crabshrimp/">CrabShrimp </a>
-            <a class="card-btn btn-outline" href="papersearch/">Paper Search</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Agentic RAG -->
+      <!-- Retrieval-based Agentic AI -->
       <div class="project-card">
         <div class="card-accent accent-rag"></div>
         <div class="card-body">
-          <h3>Agentic RAG</h3>
+          <h3>Retrieval-based Agentic AI</h3>
           <p class="card-desc">
-            检索增强生成、Deep Research 与 Deep Search 的系列工作介绍。
+            Memory、Agentic RAG、Deep Research 与 Paper Search 的系列工作介绍。
           </p>
           <div class="card-meta">
             <div class="meta-row">
@@ -824,6 +796,36 @@
             <a class="card-btn btn-enter-rag" href="agentic-rag/">查看主页 →</a>
             <a class="card-btn btn-outline" href="crag-kdd-cup/">KDD Cup亚军 </a>
             <a class="card-btn btn-outline" href="mind2report/">Mind2Report </a>
+            <a class="card-btn btn-outline" href="papersearch/">Paper Search</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coding-based Agentic AI -->
+      <div class="project-card">
+        <div class="card-accent accent-runtime"></div>
+        <div class="card-body">
+          <h3>Coding-based Agentic AI</h3>
+          <p class="card-desc">
+            代码生成、沙箱执行与结构化表格数据推理Agent的系列工作介绍。
+          </p>
+          <div class="card-meta">
+            <div class="meta-row">
+              <span class="meta-icon">🎯</span>
+              <span>Coding Generation · Data Agent · TableMind</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🔧</span>
+              <span>Coding Sandbox · Tool Use · Execution Feedback</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">📄</span>
+              <span>TableMind · 表格理解 · 数据分析代码生成</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-runtime" href="agent-runtime/">查看主页 →</a>
+            <a class="card-btn btn-outline" href="https://github.com/ustc-table-mining/TableMind" target="_blank" rel="noopener">TableMind</a>
           </div>
         </div>
       </div>
@@ -1067,6 +1069,34 @@
               </svg>
               GitHub
             </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- NeoResearch -->
+      <div class="project-card project-card-wide">
+        <div class="card-accent accent-neocast"></div>
+        <div class="card-body">
+          <h3>NeoResearch</h3>
+          <p class="card-desc">
+            面向时间序列预测小模型研发的自主研究智能体系统。NeoResearch 将研究假设、模块级 CandidateRecipe、受控实验、结果归因与研究记忆串成闭环，帮助研究员在固定数据、评估、预算和代码协议下持续发现更稳、更小、更可复现的预测模型。
+          </p>
+          <div class="card-meta">
+            <div class="meta-row">
+              <span class="meta-icon">🧪</span>
+              <span>Forecast Research Operating System · 假设生成 · 受控实验 · keep / discard 闭环</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🧩</span>
+              <span>CandidateRecipe DSL · action registry · preprocessing / embedding / backbone / fusion / head 搜索</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🧠</span>
+              <span>TaskFingerprint · Champion / Challenger · 研究记忆 · Blind Test 治理</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-neocast" href="neocast/">Coming Soon</a>
           </div>
         </div>
       </div>
