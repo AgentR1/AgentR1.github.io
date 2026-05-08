@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agentic AI 研究方向工作介绍 — 中国科学技术大学认知智能全国重点实验室 AGI 研究组</title>
-  <meta name="description" content="中国科学技术大学认知智能全国重点实验室 AGI 研究组：Coding-based Agentic AI、Agentic RL、垂直领域智能体应用等方向工作介绍。" />
+  <meta name="description" content="中国科学技术大学认知智能全国重点实验室 AGI 研究组：Coding-based Agentic AI（Table Mining）、Agentic RL、垂直领域智能体应用等方向工作介绍。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -368,6 +368,34 @@
       border: 1px solid #f0f0ee;
     }
     .meta-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 1px; }
+    .forecast-module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 22px;
+      flex: 1;
+    }
+    .forecast-module {
+      min-height: 116px;
+      padding: 14px 13px;
+      border-radius: 8px;
+      border: 1px solid #ececec;
+      background: #f9f9f8;
+      color: #444;
+    }
+    .forecast-module strong {
+      display: block;
+      color: #111;
+      font-size: 0.92rem;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .forecast-module span {
+      display: block;
+      color: #555;
+      font-size: 0.82rem;
+      line-height: 1.65;
+    }
     .app-domain-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -666,6 +694,7 @@
       header h1 { font-size: 1.7rem; }
       .project-grid { grid-template-columns: 1fr; }
       .project-card-wide { grid-column: auto; }
+      .forecast-module-grid { grid-template-columns: 1fr; }
       .app-domain-grid { grid-template-columns: 1fr; }
       .self-learning-grid { grid-template-columns: 1fr; }
       main { padding: 40px 0 60px; }
@@ -704,7 +733,7 @@
   <div class="container">
     <div class="section-intro section-anchor" id="research-tracks">
       <h2>研究方向</h2>
-      <p>用于介绍与展示 USTC-AGI 研究组在 Agentic AI 方向的代表性工作，涵盖训练引擎、基础算法、Coding-based Agentic AI 以及应用研究等多个方面。</p>
+      <p>用于介绍与展示 USTC-AGI 研究组在 Agentic AI 方向的代表性工作，涵盖训练引擎、基础算法、Coding-based Agentic AI（Table Mining）以及应用研究等多个方面。</p>
     </div>
 
     <div class="project-grid">
@@ -770,13 +799,13 @@
         </div>
       </div>
 
-      <!-- Retrieval-based Agentic AI -->
+      <!-- Retrieval-based Agentic AI（Memory and Agentic RAG） -->
       <div class="project-card">
         <div class="card-accent accent-rag"></div>
         <div class="card-body">
-          <h3>Retrieval-based Agentic AI</h3>
+          <h3>Retrieval-based Agentic AI（Memory and Agentic RAG）</h3>
           <p class="card-desc">
-            Memory、Agentic RAG、Deep Research 与 Paper Search 的系列工作介绍。
+            KDD Cup、Paper Search 与 DeepResearch 的系列工作介绍。
           </p>
           <div class="card-meta">
             <div class="meta-row">
@@ -784,28 +813,28 @@
               <span>KDD Cup 2024 CRAG 银牌 · Task 2&3 第二名</span>
             </div>
             <div class="meta-row">
-              <span class="meta-icon">✂️</span>
-              <span>PruningRAG · 多源知识剪枝 · CIKM 2025</span>
+              <span class="meta-icon">📚</span>
+              <span>Paper Search · 科技文献检索 · 结构化证据获取</span>
             </div>
             <div class="meta-row">
               <span class="meta-icon">🗞️</span>
-              <span>Mind2Report · Deep Research · QRC-Eval</span>
+              <span>DeepResearch · 多步检索 · 报告生成</span>
             </div>
           </div>
           <div class="card-links">
             <a class="card-btn btn-enter-rag" href="agentic-rag/">查看主页 →</a>
             <a class="card-btn btn-outline" href="crag-kdd-cup/">KDD Cup亚军 </a>
-            <a class="card-btn btn-outline" href="mind2report/">Mind2Report </a>
             <a class="card-btn btn-outline" href="papersearch/">Paper Search</a>
+            <a class="card-btn btn-outline" href="mind2report/">DeepResearch</a>
           </div>
         </div>
       </div>
 
-      <!-- Coding-based Agentic AI -->
+      <!-- Coding-based Agentic AI（Table Mining） -->
       <div class="project-card">
         <div class="card-accent accent-runtime"></div>
         <div class="card-body">
-          <h3>Coding-based Agentic AI</h3>
+          <h3>Coding-based Agentic AI（Table Mining）</h3>
           <p class="card-desc">
             代码生成、沙箱执行与结构化表格数据推理Agent的系列工作介绍。
           </p>
@@ -826,6 +855,40 @@
           <div class="card-links">
             <a class="card-btn btn-enter-runtime" href="agent-runtime/">查看主页 →</a>
             <a class="card-btn btn-outline" href="https://github.com/ustc-table-mining/TableMind" target="_blank" rel="noopener">TableMind</a>
+            <a class="card-btn btn-outline" href="https://arxiv.org/abs/2603.07528" target="_blank" rel="noopener">TableMind++</a>
+            <a class="card-btn btn-outline" href="tab-claw/">TabClaw</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agentic Time Series Forecasting -->
+      <div class="project-card project-card-wide">
+        <div class="card-accent accent-neocast"></div>
+        <div class="card-body">
+          <h3>Agentic Time Series Forecasting</h3>
+          <p class="card-desc">
+            面向时间序列预测、预测模型研发与实验闭环的 Agentic AI 系列工作介绍。
+          </p>
+          <div class="forecast-module-grid">
+            <div class="forecast-module">
+              <strong>CastClaw</strong>
+              <span>观星阁：自主交互时间序列预测智能体</span>
+            </div>
+            <div class="forecast-module">
+              <strong>NeoResearch</strong>
+              <span>智多星：时间序列预测自主科研智能体</span>
+            </div>
+            <div class="forecast-module">
+              <strong>CastMind</strong>
+              <span>星思：慢思考推理式时序基础模型</span>
+            </div>
+            <div class="forecast-module">
+              <strong>FutureCast</strong>
+              <span>天星台：情境感知的时间序列预测评估基准</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-neocast" href="https://ustc-time-series.github.io/" target="_blank" rel="noopener">查看主页 →</a>
           </div>
         </div>
       </div>
