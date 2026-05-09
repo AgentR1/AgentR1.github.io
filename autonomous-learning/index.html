@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大模型自主交互学习 — Autonomous Interactive Learning for Large Language Models</title>
+  <meta name="description" content="大模型自主交互学习：让大模型在与环境、同行模型和人类专家的持续交互中主动学习、持续进化。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+      overflow-x: hidden;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f1f1ef;
+      border: 1px solid #e2e2df;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #9f2f23;
+    }
+
+    .container {
+      width: 100%;
+      max-width: min(920px, 100vw);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background:
+        radial-gradient(circle at top right, rgba(192, 57, 43, 0.12), transparent 28%),
+        linear-gradient(160deg, #ffffff 54%, #fff6f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 58px 0 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, filter .16s ease;
+    }
+    header:hover { filter: saturate(1.02); }
+    header:active { transform: scale(0.996); }
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #edd4d0;
+      background: #fff8f7;
+      color: #9f2f23;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-mark {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto 20px;
+      padding: 22px 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff, #fff4f2);
+      border: 1px solid #ead8d3;
+      box-shadow: 0 14px 36px rgba(192, 57, 43, 0.10);
+    }
+    .hero-stack {
+      display: grid;
+      gap: 8px;
+    }
+    .stack-layer {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 14px;
+      align-items: center;
+      background: #fff;
+      border: 1px solid #ece8e5;
+      border-radius: 16px;
+      padding: 14px 16px;
+      text-align: left;
+    }
+    .stack-layer.platform {
+      background: #fff8f7;
+      border-color: #e6c1bb;
+    }
+    .stack-layer.human {
+      background: #fff8f7;
+      border-color: #e6c1bb;
+    }
+    .stack-layer.peer {
+      background: #fffdfc;
+      border-color: #ead8d3;
+    }
+    .stack-layer.env {
+      background: #f8f8f6;
+    }
+    .layer-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #ead8d3;
+      color: #9f2f23;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .stack-layer strong {
+      display: block;
+      color: #111;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+    .stack-layer span {
+      display: block;
+      color: #666;
+      font-size: 0.76rem;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+    .stack-connect {
+      width: 2px;
+      height: 14px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #d9b1ab, #c0392b);
+      border-radius: 999px;
+    }
+    .hero-note {
+      margin-top: 14px;
+      color: #7b645f;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: clamp(1rem, 3.8vw, 2rem);
+      font-weight: 800;
+      line-height: 1.35;
+      color: #111;
+      max-width: 860px;
+      width: min(100%, calc(100vw - 48px), 860px);
+      margin: 0 auto;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin: 14px auto 0;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 700px;
+      line-height: 1.75;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .affiliation {
+      margin-top: 12px;
+      font-size: 0.89rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+      width: min(100%, calc(100vw - 48px));
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: #fff;
+      color: #222;
+      border-color: #d7d7d7;
+    }
+    .btn-secondary:hover {
+      background: #f8f8f8;
+      border-color: #aaa;
+    }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e5e5e5;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 52px;
+    }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.42rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 30px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.01rem;
+      color: #222;
+      margin-bottom: 32px;
+      width: min(100%, calc(100vw - 48px));
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.75;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .tldr strong { color: #c0392b; }
+
+    .quote-block {
+      margin: 26px 0 4px;
+      padding: 22px 24px;
+      border-radius: 12px;
+      background: #1f2933;
+      color: #f8fafc;
+      line-height: 1.75;
+      font-size: 1.02rem;
+      text-align: left;
+    }
+    .quote-block strong { color: #ffd7d2; }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+    .tag-cloud span {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      color: #555;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      margin: 24px 0 6px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 150px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 0.83rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon {
+      font-size: 1.65rem;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .card h4 {
+      font-size: 0.94rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.68;
+    }
+
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+      color: #111;
+    }
+    .pillar-text span {
+      font-size: 0.88rem;
+      color: #555;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .system-panel {
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .system-panel .label {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      background: #f7f7f7;
+      border: 1px solid #e8e8e8;
+      color: #666;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .system-panel h3 {
+      font-size: 1rem;
+      color: #111;
+      margin-bottom: 8px;
+    }
+    .system-panel p {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.72;
+    }
+    .system-panel.highlight {
+      border-color: #e5c0ba;
+      background: linear-gradient(180deg, #fffdfd, #fff7f6);
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: #c0392b;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .layer-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .layer-card::before {
+      content: attr(data-layer);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      height: 26px;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      background: #fff1ef;
+      color: #c0392b;
+      border: 1px solid #f0cbc6;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    @media (max-width: 760px) {
+      header { padding: 42px 0 40px; }
+      header h1 { font-size: 1.36rem; }
+      .hero-mark {
+        width: 100%;
+        max-width: calc(100vw - 48px);
+        margin-top: 18px;
+        padding: 16px 14px;
+        border-radius: 18px;
+      }
+      .btn-row {
+        flex-direction: column;
+        align-items: center;
+      }
+      .btn {
+        width: min(100%, 260px);
+        justify-content: center;
+      }
+      .tldr { font-size: 0.92rem; }
+      section { padding: 50px 0; }
+      .card-grid-2,
+      .system-grid { grid-template-columns: 1fr; }
+      .stack-layer { grid-template-columns: 1fr; gap: 8px; }
+      .layer-index { justify-self: start; padding: 0 12px; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.24rem; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="top-refresh">
+  <div class="container">
+    <div class="hero-kicker">Autonomous Interactive Learning · LLMs</div>
+
+    <h1>大模型<span class="highlight">自主交互学习</span></h1>
+    <p class="subtitle">
+      让大模型在与环境、同行模型和人类专家的持续交互中主动学习、持续进化。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室 · AGI研究组</p>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">研究总览</a>
+    <a href="#goal">研究目标</a>
+    <a href="#env">环境交互</a>
+    <a href="#peer">模型交互</a>
+    <a href="#human">专家交互</a>
+    <a href="#platform">开发平台</a>
+    <a href="#stack">技术体系</a>
+  </div>
+</nav>
+
+<section id="goal" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      大模型自主交互学习旨在探索大模型如何通过与环境、同行模型和人类专家的多源交互，
+      主动获取反馈信号、形成可学习轨迹、沉淀任务经验，并结合<strong>强化学习、蒸馏学习、偏好优化和记忆增强</strong>等机制，
+      实现认知能力的持续学习与演化。
+    </div>
+
+    <h2 class="section-title">研究目标</h2>
+    <p>
+      本项目面向下一代智能体系统，系统研究大模型自主交互学习的理论、方法与平台技术。
+      随着 Agentic AI 从通用问答走向专业领域问题求解，模型能力的持续演化不再仅依赖大规模静态语料的一次性训练，
+      而需要在与外部世界的交互中持续获取反馈、修正行为、积累经验。
+    </p>
+    <p>
+      三类交互来源对应四类核心学习机制：与外部环境的直接交互驱动<strong>强化学习</strong>与策略优化；
+      与同行模型的协作交互形成<strong>蒸馏学习</strong>与能力迁移；
+      与人类专家的主动交互形成<strong>偏好优化</strong>与领域知识获取；
+      <strong>记忆增强</strong>机制则贯穿三类学习过程，将交互轨迹沉淀为跨任务可复用的经验。
+      平台层为三类学习范式提供统一的工程支撑。
+    </p>
+
+    <div class="quote-block">
+      <strong>大模型自主交互学习的核心转变：</strong>
+      从依赖静态数据的一次性监督学习，走向在真实交互中持续获取反馈、主动修正行为、
+      自我进化的交互型智能——每一次与环境、模型或专家的交互，都成为能力成长的来源。
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">Agentic RL</div>
+        <div class="stat-label">强化学习<br>环境交互策略优化</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">蒸馏</div>
+        <div class="stat-label">蒸馏学习<br>同行模型知识迁移</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-num">记忆</div>
+        <div class="stat-label">记忆增强<br>轨迹沉淀经验复用</div>
+      </div>
+    </div>
+
+    <div class="tag-cloud" aria-label="研究关键词">
+      <span>强化学习</span>
+      <span>蒸馏学习</span>
+      <span>偏好优化</span>
+      <span>记忆增强</span>
+      <span>Agentic RL</span>
+      <span>过程奖励建模</span>
+      <span>步骤级信用分配</span>
+      <span>同行模型蒸馏</span>
+      <span>主动提问</span>
+      <span>人机协同学习</span>
+      <span>工具增强推理</span>
+      <span>长程任务优化</span>
+      <span>可学习轨迹</span>
+    </div>
+  </div>
+</section>
+
+<section id="env">
+  <div class="container">
+    <h2 class="section-title">1. 大模型的环境自主交互学习</h2>
+    <p>
+      面向复杂任务求解场景，研究大模型如何在外部环境中通过多轮交互、工具调用、状态观测和结果反馈进行自主学习。
+      该方向重点探索 Agentic RL 方法，使大模型能够在"感知—推理—行动—反馈"的闭环中学习更优的行动策略。
+    </p>
+
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>交互轨迹表示与过程奖励建模</strong>
+          <span>将多轮交互过程表示为可优化的轨迹，设计稳定、可解释的过程奖励信号，
+          支撑 step-level 的策略评估与改进。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>步骤级信用分配与长程任务优化</strong>
+          <span>解决稀疏最终奖励下的信用分配问题，在长程任务中将结果反馈有效分配到关键决策步骤。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>工具增强推理与环境反馈驱动策略更新</strong>
+          <span>使大模型学会根据工具返回结果动态调整推理路径，并利用环境反馈持续更新行动策略。</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-icon">🔁</div>
+        <h4>闭环学习范式</h4>
+        <p>大模型在"感知 → 推理 → 行动 → 观测 → 反馈 → 策略更新"的完整闭环中自主进化，
+        不依赖人工标注完成策略改进。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h4>核心研究目标</h4>
+        <p>提升大模型在真实复杂任务中的可执行性、可靠性和自我改进能力，
+        使其能够在陌生环境中快速适应并优化行为。</p>
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content: flex-start; margin-top: 24px;">
+      <a class="btn btn-secondary" href="../agentic-rl/">查看 Agentic RL 主页</a>
+    </div>
+  </div>
+</section>
+
+<section id="peer" class="alt">
+  <div class="container">
+    <h2 class="section-title">2. 大模型与同行模型的自主交互学习</h2>
+    <p>
+      面向多模型协同与能力迁移场景，研究大模型如何通过与同行模型的自主交互实现知识蒸馏、能力互补与行为优化。
+      大模型不再仅从人工标注数据中学习，而是通过与不同能力、不同角色、不同专长的模型进行交互，
+      获取解题轨迹、推理策略、错误反馈和偏好信号。
+    </p>
+
+    <div class="system-grid">
+      <article class="system-panel highlight">
+        <span class="label">Distillation</span>
+        <h3>同行模型蒸馏机制</h3>
+        <p>
+          通过讨论、批判、修正与蒸馏，从强模型向弱模型、从专才模型向通才模型高效迁移能力，
+          形成更加高效的模型间知识传递机制。
+        </p>
+      </article>
+      <article class="system-panel">
+        <span class="label">Interaction</span>
+        <h3>模型间协作交互</h3>
+        <p>
+          模型通过互相提问、互相批判、协商讨论和策略互补，在无人工干预的情况下实现相互改进，
+          形成自驱动的能力增强生态。
+        </p>
+      </article>
+    </div>
+
+    <h3 class="sub-title">核心研究内容</h3>
+    <ul class="feature-list">
+      <li>解题轨迹与推理策略的跨模型获取与迁移</li>
+      <li>错误反馈信号的识别、理解与利用</li>
+      <li>偏好信号学习与 RLHF 范式的模型间扩展</li>
+      <li>复杂推理、工具使用、规划决策任务中的泛化能力提升</li>
+      <li>多角色模型（提问者、回答者、评审者）的协作范式设计</li>
+    </ul>
+  </div>
+</section>
+
+<section id="human">
+  <div class="container">
+    <h2 class="section-title">3. 大模型向人类专家的自主交互学习</h2>
+    <p>
+      面向高价值专业场景，研究大模型如何主动向人类专家请教、澄清任务目标、获取领域知识，
+      并将专家反馈转化为可学习的经验。该方向强调大模型与人类专家之间的<strong>双向交互</strong>：
+      模型需要主动发现自身认知缺口，提出高质量问题，理解专家反馈，并在后续任务中持续利用这些反馈。
+      专家的判断、纠正与示范形成偏好信号，通过<strong>偏好优化</strong>机制内化为模型行为约束，
+      并经由<strong>记忆增强</strong>沉淀为跨会话可复用的任务经验。
+    </p>
+
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">1</div>
+        <div class="pillar-text">
+          <strong>主动认知缺口识别</strong>
+          <span>大模型主动分析当前任务的不确定性与知识边界，识别需要向专家求助的关键节点。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">2</div>
+        <div class="pillar-text">
+          <strong>高质量问题生成</strong>
+          <span>围绕认知缺口设计有效问题，使专家能够以最小代价提供最高价值的领域知识与判断依据。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>专家反馈的理解与内化</strong>
+          <span>将专家给出的反馈、纠正和示范转化为可复用的经验，在后续相似任务中持续发挥作用。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">4</div>
+        <div class="pillar-text">
+          <strong>人机协同知识增强范式</strong>
+          <span>构建科学研究、医疗健康、工程设计、数据分析等高专业性场景下可信、可控、可解释的人机协同学习机制。</span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔬</div>
+        <h4>科学研究</h4>
+        <p>向领域专家请教实验设计、方法选择和结果解释，获取难以从文献中直接提取的隐性知识。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏥</div>
+        <h4>医疗健康</h4>
+        <p>在临床场景中向医学专家主动学习诊断规则、治疗偏好和风险判断，提升决策可信度。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>数据分析</h4>
+        <p>与数据专家协同探索，将领域先验知识转化为分析约束与评价标准，减少无效探索。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="platform" class="alt">
+  <div class="container">
+    <h2 class="section-title">4. 大模型能力增强开发平台</h2>
+    <p>
+      面向自主交互学习的工程落地，研发大模型能力增强开发平台，支撑三类学习范式的统一研发、实验与评估。
+      平台为 Agentic RL、同行模型蒸馏和人类专家交互学习提供统一的实验与开发基础设施，
+      支持多任务、多模型、多工具和多环境的闭环训练与评估。
+    </p>
+
+    <div class="card-grid-2">
+      <div class="card layer-card" data-layer="环境层">
+        <h4>交互环境构建</h4>
+        <p>支持多类型交互环境的快速搭建，包括工具调用环境、代码执行沙箱、多模型对话环境和人机交互界面。</p>
+      </div>
+      <div class="card layer-card" data-layer="数据层">
+        <h4>轨迹采集与记忆增强</h4>
+        <p>标准化采集交互轨迹、工具调用记录、奖励信号和专家反馈，通过记忆增强机制将轨迹沉淀为跨任务可复用的经验资产。</p>
+      </div>
+      <div class="card layer-card" data-layer="训练层">
+        <h4>奖励建模与模型训练</h4>
+        <p>支持过程奖励模型训练、偏好学习、蒸馏训练和 Agentic RL 策略优化的统一训练流程。</p>
+      </div>
+      <div class="card layer-card" data-layer="评估层">
+        <h4>评测诊断与持续优化</h4>
+        <p>覆盖任务完成率、过程行为质量、能力迁移效果和人机协同效率的多维评估与可视化诊断。</p>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <strong>平台化建设的价值：</strong>
+      通过统一平台降低大模型自主交互学习的研发门槛，提升方法复现、系统集成和应用验证能力，
+      使研究者能够专注于算法创新而非工程基础设施的重复建设。
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="container">
+    <h2 class="section-title">四层技术体系</h2>
+    <p>
+      大模型自主交互学习可以概括为四层技术体系，从底层环境交互到顶层平台支撑，
+      形成完整的技术闭环。
+    </p>
+
+    <div class="hero-mark" aria-label="四层自主交互学习技术体系" style="margin-top: 0;">
+      <div class="hero-stack">
+        <div class="stack-layer platform">
+          <div class="layer-index">Layer 4</div>
+          <div>
+            <strong>能力增强开发平台</strong>
+            <span>交互环境构建、轨迹采集、奖励建模、模型训练、评测诊断，支撑三类学习范式的闭环研发基础设施。</span>
+          </div>
+        </div>
+        <div class="stack-connect"></div>
+        <div class="stack-layer human">
+          <div class="layer-index">Layer 3</div>
+          <div>
+            <strong>向人类专家的自主交互学习</strong>
+            <span>主动发现认知缺口、提出高质量问题、获取领域知识，将专家反馈转化为可学习的可复用经验。</span>
+          </div>
+        </div>
+        <div class="stack-connect"></div>
+        <div class="stack-layer peer">
+          <div class="layer-index">Layer 2</div>
+          <div>
+            <strong>与同行模型的自主交互学习</strong>
+            <span>通过讨论、批判、修正与蒸馏，从不同能力与专长的模型获取解题轨迹、推理策略和偏好信号。</span>
+          </div>
+        </div>
+        <div class="stack-connect"></div>
+        <div class="stack-layer env">
+          <div class="layer-index">Layer 1</div>
+          <div>
+            <strong>环境自主交互学习（Agentic RL）</strong>
+            <span>在"感知—推理—行动—反馈"闭环中学习最优行动策略，覆盖过程奖励建模与步骤级信用分配。</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-note">从静态监督走向持续自主进化——三类交互来源 × 一套平台基础设施。</div>
+    </div>
+
+    <div class="system-grid">
+      <article class="system-panel highlight">
+        <span class="label">Before</span>
+        <h3>静态监督学习范式</h3>
+        <p>
+          依赖大规模高质量人工标注数据，一次性训练后部署使用，难以在动态环境中持续适应和自我改进。
+        </p>
+      </article>
+      <article class="system-panel">
+        <span class="label">Now</span>
+        <h3>自主交互学习范式</h3>
+        <p>
+          在与环境、模型和专家的持续交互中主动学习，每次交互都成为能力成长的来源，
+          实现从"回答型"到"行动型、演化型"智能的转变。
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2026 大模型自主交互学习 &middot; AGI Group · State Key Laboratory of Cognitive Intelligence, USTC
+    </p>
+    <p style="font-size: 0.78rem; color: #555; margin-top: 6px;">
+      Autonomous Interactive Learning via Environment, Peer Models, and Human Experts.
+    </p>
+  </div>
+</footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
+
+</body>
+</html>
