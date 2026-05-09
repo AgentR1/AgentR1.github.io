@@ -178,6 +178,33 @@
       font-size: 0.9rem;
       color: #666;
     }
+    .label-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .paper-label {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid #ead4cf;
+      background: #fff7f4;
+      color: #8f3d2c;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.4;
+      vertical-align: middle;
+    }
+    .paper-labels {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
     .publication-body {
       padding: 8px 28px 30px;
       text-align: justify;
@@ -314,6 +341,13 @@
     <section id="paper-list" class="publication-shell" aria-labelledby="paper-list-title">
       <div class="publication-header">
         <h2 id="paper-list-title">论文列表</h2>
+        <p>按研究重点整理当前页面涉及的代表性论文，并补充统一的 Label 分类。</p>
+        <div class="label-group" aria-label="论文分类标签">
+          <span class="paper-label">Slow-thinking Reasoning</span>
+          <span class="paper-label">Agent Runtime</span>
+          <span class="paper-label">Agentic RL</span>
+          <span class="paper-label">Agentic AI Applications</span>
+        </div>
       </div>
 
       <div class="publication-body">
@@ -323,6 +357,7 @@
             Daoyu Wang, Qingchuan Li, Mingyue Cheng, Jie Ouyang, Shuo Yu, Qi Liu, Enhong Chen,
             <strong>StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning</strong>.
             <span class="paper-highlight">Highlight: 面向 Agentic RL 的 step-aligned 策略优化</span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span></span>
             (Preprint)
             [<a href="https://arxiv.org/abs/2604.18401" target="_blank" rel="noopener">PDF</a>]
             [<a href="../steppo/">Project</a>]
@@ -331,6 +366,7 @@
             Mingyue Cheng, Jie Ouyang, Shuo Yu, Ruiran Yan, Yucong Luo, Zirui Liu, Daoyu Wang, Qi Liu, Enhong Chen,
             <strong>Agent-r1: Training powerful llm agents with end-to-end reinforcement learning</strong>.
             <span class="paper-highlight">Highlight: 端到端强化学习训练 LLM Agent</span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agent Runtime</span></span>
             (Preprint)
             [<a href="https://arxiv.org/abs/2511.14460" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">Code</a>]
@@ -340,6 +376,7 @@
             Tingyue Pan, Jie Ouyang, Mingyue Cheng, Qingchuan Li, Zirui Liu, Mingfan Pan, Shuo Yu, Qi Liu,
             <strong>PaperScout: An Autonomous Agent for Academic Paper Search with Process-Aware Sequence-Level Policy Optimization</strong>.
             <span class="paper-highlight">Highlight: 过程感知序列级策略优化</span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/abs/2601.10029" target="_blank" rel="noopener">PDF</a>]
             [<a href="../agent-apps/#paperscout">Project</a>]
@@ -348,6 +385,7 @@
             Xiaoyu Tao, Mingyue Cheng, Chuang Jiang, Tian Gao, Huanjian Zhang, Yaguo Liu,
             <strong>Cast-R1: Learning Tool-Augmented Sequential Decision Policies for Time Series Forecasting</strong>.
             <span class="paper-highlight">Highlight: 首个基于序贯决策学习优化的时间序列预测智能体。</span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2602.13802" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/Xiaoyu-Tao/Cast-R1-TS" target="_blank" rel="noopener">Code</a>]
@@ -355,6 +393,7 @@
           <li>
             Xiaoyu Tao, Mingyue Cheng*, Ze Guo, Shuo Yu, Yaguo Liu, Qi Liu, Shijin Wang,
             <strong>MemCast: Memory-Driven Time Series Forecasting with Experience-Conditioned Reasoning</strong>.
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2602.03164" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/ustc-time-series/MemCast" target="_blank" rel="noopener">Code</a>]
@@ -362,6 +401,7 @@
           <li>
             Yitong Zhou, Yucong Luo, Mingyue Cheng*, Jiahao Wang, Daoyu Wang, Tingyue Pan, Jintao Zhang, Qi Liu,
             <strong>Time Series Forecasting as Reasoning: A Slow-Thinking Approach with Reinforced LLMs</strong>.
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2506.10630" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/ustc-time-series/Time-R1" target="_blank" rel="noopener">Code</a>]
@@ -369,12 +409,14 @@
           <li>
             Xiaoyu Tao, Yuchong Wu, Mingyue Cheng, Ze Guo, Tian Gao,
             <strong>AnomaMind: Agentic Time Series Anomaly Detection with Tool-Augmented Reasoning</strong>.
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2602.13807" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Xiaohan Zhang, Tian Gao, Mingyue Cheng*, Bokai Pan, Ze Guo, Yaguo Liu, Xiaoyu Tao,
             <strong>AlphaCast: A Human Wisdom-LLM Intelligence Co-Reasoning Framework for Interactive Time Series Forecasting</strong>.
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2511.08947" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/ustc-time-series/AlphaCast" target="_blank" rel="noopener">Code</a>]
@@ -383,6 +425,7 @@
             Chuang Jiang, Mingyue Cheng*, Xiaoyu Tao, Qingyang Mao, Jie Ouyang and Qi Liu,
             <strong>TableMind: An Autonomous Programmatic Agent for Tool-Augmented Table Reasoning</strong>.
             <span class="paper-highlight">Highlight: 率先探索基于多轮强化学习的智能体式表格推理范式。</span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>ACM WSDM2026</em>: 260–270, Feb 2026.
             [<a href="https://arxiv.org/pdf/2509.06278" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/lennendd/TableMind-Repo" target="_blank" rel="noopener">Code</a>]
@@ -390,24 +433,28 @@
           <li>
             Qingyang Mao, Qi Liu, Zhi Li, Mingyue Cheng, Zheng Zhang, Rui Li,
             <strong>PoTable: Programming Standardly on Table-based Reasoning Like a Human Analyst</strong>.
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>IEEE TKDE Accepted</em>.
             [<a href="https://arxiv.org/pdf/2412.04272" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Shuo Yu, Mingyue Cheng*, Daoyu Wang, Qi Liu, Zirui Liu, Ze Guo, Xiaoyu Tao,
             <strong>MemWeaver: A Hierarchical Memory from Textual Interactive Behaviors for Personalized Generation</strong>.
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>ACM WWW2026</em>.
             [<a href="https://arxiv.org/abs/2510.07713" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Zhiding Liu, Ben Chen, Mingyue Cheng*, Enhong Chen, Li Li, Chenyi Lei*, Wenwu Ou, Han Li and Kun Gai,
             <strong>Towards Context-aware Reasoning-enhanced Generative Searching in E-commerce</strong>.
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>ACM WWW2026</em>.
             [<a href="https://arxiv.org/pdf/2510.16925" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Daoyu Wang, Mingyue Cheng*, Shuo Yu, Zirui Liu, Ze Guo, Qi Liu,
             <strong>PaperArena: An Evaluation Benchmark for Tool-Augmented Agentic Reasoning on Scientific Literature</strong>.
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2510.10909" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/Melmaphother/PaperArena" target="_blank" rel="noopener">Code</a>]
@@ -420,6 +467,7 @@
             Mingyue Cheng, Daoyu Wang, Shuo Yu, Qingchuan Li, Jie Ouyang, Yucong Luo, Yiju Zhang, Qi Liu, Enhong Chen,
             <strong>A Comprehensive Survey of the LLM-Based Agent: The Contextual Cognition Perspective</strong>.
             <span class="paper-highlight">Highlight: 从情境认知视角系统梳理 LLM-Based Agent</span>
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             (Survey Preprint)
             [<a href="https://www.preprints.org/manuscript/202604.0935" target="_blank" rel="noopener">Preprint</a>]
             [<a href="https://doi.org/10.20944/preprints202604.0935.v1" target="_blank" rel="noopener">DOI</a>]
@@ -428,6 +476,7 @@
             Mingyue Cheng, Yucong Luo, Jie Ouyang, Qi Liu*, Huijie Liu, Li Li, Shuo Yu, Bohou Zhang, Jiawei Cao, Jie Ma, Daoyu Wang, Enhong Chen,
             <strong>A Survey on Knowledge-Oriented Retrieval-Augmented Generation</strong>.
             <span class="paper-highlight">Highlight: 面向知识导向 RAG 的系统性综述</span>
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2503.10677" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/USTCAGI/Awesome-Papers-Retrieval-Augmented-Generation" target="_blank" rel="noopener">Code</a>]

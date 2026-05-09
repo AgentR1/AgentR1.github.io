@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScoutBench — A Process-Reward Benchmark for Agentic Paper Search</title>
+  <meta name="description" content="ScoutBench 是一个面向 Agentic Paper Search 的过程奖励评测与训练基准，将科技文献检索建模为可交互、可反馈、可训练的多轮智能体环境。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: #f7f7f5;
+      color: #1a1a1a;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+    }
+    a { color: #c0392b; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #f1f1ef;
+      border: 1px solid #e2e2df;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 0.85em;
+      color: #9f2f23;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background:
+        radial-gradient(circle at top right, rgba(192, 57, 43, 0.12), transparent 28%),
+        linear-gradient(160deg, #ffffff 54%, #fff6f4 100%);
+      border-bottom: 1px solid #e8e8e8;
+      padding: 58px 0 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, filter .16s ease;
+    }
+    header:hover { filter: saturate(1.02); }
+    header:active { transform: scale(0.996); }
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #edd4d0;
+      background: #fff8f7;
+      color: #9f2f23;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero-mark {
+      width: min(100%, 640px);
+      margin: 24px auto 20px;
+      padding: 22px 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff, #fff4f2);
+      border: 1px solid #ead8d3;
+      box-shadow: 0 14px 36px rgba(192, 57, 43, 0.10);
+    }
+    .hero-pipeline {
+      display: grid;
+      grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .hero-node {
+      min-height: 100px;
+      background: #fff;
+      border: 1px solid #ece8e5;
+      border-radius: 16px;
+      padding: 12px 10px;
+      text-align: left;
+    }
+    .hero-node strong {
+      display: block;
+      color: #111;
+      font-size: 0.82rem;
+      margin-bottom: 5px;
+    }
+    .hero-node span {
+      display: block;
+      color: #666;
+      font-size: 0.72rem;
+      line-height: 1.5;
+    }
+    .hero-node.accent {
+      border-color: #e5c0ba;
+      background: linear-gradient(180deg, #fffdfd, #fff7f6);
+    }
+    .hero-arrow {
+      height: 2px;
+      background: linear-gradient(90deg, #d9b1ab, #c0392b);
+      position: relative;
+      border-radius: 999px;
+    }
+    .hero-arrow::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      border-top: 2px solid #c0392b;
+      border-right: 2px solid #c0392b;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    .hero-note {
+      margin-top: 14px;
+      color: #7b645f;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: #111;
+    }
+    header h1 .highlight { color: #c0392b; }
+    .subtitle {
+      margin: 14px auto 0;
+      font-size: 1.02rem;
+      color: #555;
+      max-width: 700px;
+      line-height: 1.75;
+    }
+    .affiliation {
+      margin-top: 12px;
+      font-size: 0.89rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: 1.5px solid transparent;
+      transition: transform .18s, box-shadow .18s, background .18s, border-color .18s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: #fff;
+      color: #222;
+      border-color: #d7d7d7;
+    }
+    .btn-secondary:hover {
+      background: #f8f8f8;
+      border-color: #aaa;
+    }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e5e5e5;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      color: #555;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: #c0392b;
+      border-bottom-color: #c0392b;
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 700;
+      color: #c0392b !important;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 52px;
+    }
+    section.alt { background: #fff; }
+    section + section { border-top: 1px solid #e8e8e8; }
+    h2.section-title {
+      font-size: 1.42rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #c0392b;
+      display: inline-block;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #222;
+      margin: 30px 0 10px;
+    }
+    h3.sub-title:first-of-type { margin-top: 0; }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .tldr {
+      background: #fff8f7;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.01rem;
+      color: #222;
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: #c0392b; }
+
+    .quote-block {
+      margin: 26px 0 4px;
+      padding: 22px 24px;
+      border-radius: 12px;
+      background: #1f2933;
+      color: #f8fafc;
+      line-height: 1.75;
+      font-size: 1.02rem;
+      text-align: left;
+    }
+    .quote-block strong { color: #ffd7d2; }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+    .tag-cloud span {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      color: #555;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 18px;
+      margin: 24px 0 6px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 150px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #c0392b;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 0.83rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    }
+    .card .card-icon {
+      font-size: 1.65rem;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .card h4 {
+      font-size: 0.94rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #111;
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.68;
+    }
+    .card .card-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #fff1ef;
+      color: #c0392b;
+      border: 1px solid #f0cbc6;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .pillar-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .pillar-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .pillar-text strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+      color: #111;
+    }
+    .pillar-text span {
+      font-size: 0.88rem;
+      color: #555;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .system-panel {
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .system-panel .label {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      background: #f7f7f7;
+      border: 1px solid #e8e8e8;
+      color: #666;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .system-panel h3 {
+      font-size: 1rem;
+      color: #111;
+      margin-bottom: 8px;
+    }
+    .system-panel p {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.72;
+    }
+    .system-panel.highlight {
+      border-color: #e5c0ba;
+      background: linear-gradient(180deg, #fffdfd, #fff7f6);
+    }
+
+    .reward-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .reward-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-left: 4px solid #c0392b;
+      border-radius: 0 9px 9px 0;
+      padding: 14px 18px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .reward-list li .rw-label {
+      flex-shrink: 0;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #c0392b;
+      min-width: 72px;
+      padding-top: 2px;
+    }
+    .reward-list li .rw-desc {
+      font-size: 0.9rem;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .tool-item {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .tool-item code {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+    }
+    .tool-item p {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.65;
+      margin: 0;
+    }
+    .tool-item .tool-bias {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f7f7f7;
+      border: 1px solid #e5e5e5;
+      font-size: 0.72rem;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .metric-panel {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .metric-panel h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 12px;
+    }
+    .metric-panel .label {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      margin-bottom: 12px;
+      border-radius: 999px;
+      background: #f7f7f7;
+      border: 1px solid #e8e8e8;
+      color: #666;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.92rem;
+      color: #333;
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: #c0392b;
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 22px 0;
+      border-radius: 8px;
+      border: 1px solid #e4e4e4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th {
+      background: #c0392b;
+      color: #fff;
+      padding: 11px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fdf9f9; }
+    tr:last-child td { border-bottom: none; }
+
+    .contribution-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      counter-reset: contrib;
+    }
+    .contribution-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 9px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      counter-increment: contrib;
+    }
+    .contrib-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #1f2933;
+      color: #ffd7d2;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .contrib-text strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 3px;
+      color: #111;
+    }
+    .contrib-text span {
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    @media (max-width: 760px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 50px 0; }
+      .card-grid-2,
+      .card-grid-3,
+      .system-grid,
+      .metric-row { grid-template-columns: 1fr; }
+      .hero-pipeline {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+      .hero-arrow {
+        width: 2px;
+        height: 20px;
+        margin: 0 auto;
+        background: linear-gradient(180deg, #d9b1ab, #c0392b);
+      }
+      .hero-arrow::after {
+        right: 50%;
+        top: auto;
+        bottom: -1px;
+        transform: translateX(50%) rotate(135deg);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      h2.section-title { font-size: 1.24rem; }
+      .stat-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="top-refresh">
+  <div class="container">
+    <div class="hero-kicker">Process-Reward Benchmark · Agentic Paper Search</div>
+    <div class="hero-mark" aria-hidden="true">
+      <div class="hero-pipeline">
+        <div class="hero-node">
+          <strong>Complex Query</strong>
+          <span>多约束学术检索需求：主题、方法、领域、时间、代码可用性……</span>
+        </div>
+        <div class="hero-arrow"></div>
+        <div class="hero-node accent">
+          <strong>Multi-turn Agent</strong>
+          <span>Search · Expand · Read · Filter · Rerank · Stop</span>
+        </div>
+        <div class="hero-arrow"></div>
+        <div class="hero-node">
+          <strong>Step Reward</strong>
+          <span>每步工具调用获得即时过程奖励，而非仅评价最终结果。</span>
+        </div>
+        <div class="hero-arrow"></div>
+        <div class="hero-node">
+          <strong>Evidence Set</strong>
+          <span>高质量、高覆盖、满足约束的结构化科学证据集合。</span>
+        </div>
+      </div>
+      <div class="hero-note">将论文检索从一次性排序任务升级为具有过程奖励的多轮智能体环境。</div>
+    </div>
+    <h1>ScoutBench：面向 Agentic Paper Search 的<span class="highlight">过程奖励基准</span></h1>
+    <p class="subtitle">
+      将科技文献检索建模为可交互、可反馈、可训练的多轮序列决策过程，
+      为过程奖励建模、工具调用策略学习、信用分配研究提供标准化 Agentic RL 环境。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+
+    <div class="btn-row">
+      <a class="btn btn-secondary" href="../" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 12H5"/>
+          <path d="m12 19-7-7 7-7"/>
+        </svg>
+        返回总览
+      </a>
+      <a class="btn btn-secondary" href="../knowledge_memory/">
+        Paper Search Agent
+      </a>
+      <a class="btn btn-secondary" href="../paperscout/">
+        PaperScout
+      </a>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="container">
+    <a href="../" class="nav-home">Agentic AI</a>
+    <a href="#motivation">背景与动机</a>
+    <a href="#position">核心定位</a>
+    <a href="#task">任务定义</a>
+    <a href="#tools">工具环境</a>
+    <a href="#reward">过程奖励</a>
+    <a href="#metrics">评估指标</a>
+    <a href="#trajectory">数据与轨迹</a>
+    <a href="#contribution">预期贡献</a>
+  </div>
+</nav>
+
+<section id="motivation" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>TL;DR：</strong>
+      ScoutBench 是面向 Agentic Paper Search 的<strong>过程奖励评测与训练基准</strong>。
+      它的核心出发点是：科技文献检索天然具有过程奖励——Agent 每一步工具调用都产生可观测的中间结果，
+      因而 Paper Search 不只是应用任务，更是研究 Agentic RL 的天然训练场。
+    </div>
+
+    <h2 class="section-title">背景与动机</h2>
+    <p>
+      随着 Agentic AI 从通用问答走向专业领域问题求解，智能体对科学知识获取能力的依赖越来越强。
+      Science Agent、Medical Agent、Chemistry Agent、Materials Agent、Time Series Research Agent、
+      NeoResearch 和 CastClaw 等领域智能体，在执行复杂任务时都需要持续获取最新、可信、可引用的专业知识。
+      科技文献是这些知识最重要的载体之一，因此 Paper Search Agent 将成为未来领域智能体的重要基础技能。
+    </p>
+    <p>
+      然而，现有论文检索基准大多关注最终检索结果——给定 query 返回论文列表，再计算 Recall、Precision 或 nDCG。
+      这类设置难以评估一个 Agent 在多轮检索过程中的行为质量，也难以支持过程奖励、工具调用策略和信用分配研究。
+      另一方面，现有 Agentic RL benchmark 往往依赖稀疏最终奖励，难以提供稳定、可解释的 step-level feedback。
+    </p>
+
+    <div class="quote-block">
+      <strong>科技文献检索天然具有过程奖励。</strong>
+      一次 Search 可以返回新的候选论文，一次 Expand 可以沿引用网络发现相关工作，
+      一次 Filter 可以剔除不满足约束的论文，一次 Rerank 可以提升结果排序质量。
+      这些中间行为都可以根据新增论文的相关性、新颖性、约束满足程度和工具调用成本进行量化评价。
+      因此，Paper Search 是研究 Agentic RL 的天然训练场。
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-num">Multi-turn</div>
+        <div class="stat-label">多轮序列决策<br>动态工具调用</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">Step</div>
+        <div class="stat-label">每步即时过程奖励<br>不依赖稀疏终态</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">RL</div>
+        <div class="stat-label">策略优化与信用分配<br>标准化训练环境</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">Evidence</div>
+        <div class="stat-label">结构化科学证据<br>支撑领域智能体</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="position">
+  <div class="container">
+    <h2 class="section-title">核心定位</h2>
+    <p>
+      ScoutBench 的定位不是普通的 paper retrieval benchmark，而是同时服务两个研究社区：
+      对于信息检索和科技文献挖掘社区，提供复杂约束下的多轮学术检索评测环境；
+      对于 Agentic RL 和 LLM Agent 社区，提供一个具有自然过程奖励的交互式环境，
+      可用于研究 process reward、tool-use policy、sequence-level optimization、credit assignment 和 long-horizon exploration。
+    </p>
+
+    <div class="system-grid">
+      <article class="system-panel highlight">
+        <span class="label">IR Community</span>
+        <h3>复杂约束多轮检索评测</h3>
+        <p>
+          超越一次性关键词检索，提供含方法约束、领域约束、排除条件、时间范围等复杂语义需求的多轮检索评测场景。
+        </p>
+      </article>
+      <article class="system-panel">
+        <span class="label">Agentic RL Community</span>
+        <h3>自然过程奖励训练环境</h3>
+        <p>
+          利用文献检索中天然存在的 step-level 可观测中间结果，为过程监督、信用分配和长程探索提供稳定训练信号。
+        </p>
+      </article>
+    </div>
+
+    <div class="tag-cloud" aria-label="Research directions">
+      <span>Process Reward Modeling</span>
+      <span>Tool-Use Policy</span>
+      <span>Sequence-Level Optimization</span>
+      <span>Credit Assignment</span>
+      <span>Long-Horizon Exploration</span>
+      <span>Agentic RL</span>
+      <span>Multi-Turn Retrieval</span>
+      <span>Citation Graph Traversal</span>
+    </div>
+  </div>
+</section>
+
+<section id="task" class="alt">
+  <div class="container">
+    <h2 class="section-title">任务定义</h2>
+    <p>
+      在 ScoutBench 中，每个任务实例由一个复杂学术检索需求组成。
+      该需求不是简单关键词，而是包含研究主题、方法约束、领域约束、排除条件、时间范围、数据集偏好或应用场景等复杂语义。
+      Agent 需要在多轮交互中维护当前 paper pool，根据已有结果决定下一步行动，
+      并在有限工具调用预算下动态决定搜索什么、扩展哪篇论文、是否继续探索、是否切换方向、何时停止。
+    </p>
+
+    <h3 class="sub-title">典型任务示例</h3>
+    <ul class="pillar-list">
+      <li>
+        <div class="pillar-num">Q1</div>
+        <div class="pillar-text">
+          <strong>领域约束 + 架构排除</strong>
+          <span>找出将强化学习用于蛋白质设计、但不依赖 Transformer 架构的代表性论文。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">Q2</div>
+        <div class="pillar-text">
+          <strong>时效性 + 代码可用性</strong>
+          <span>找出非平稳时间序列预测中显式建模分布漂移的近年工作，并优先关注有公开代码的论文。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">Q3</div>
+        <div class="pillar-text">
+          <strong>多模态 + 可解释性</strong>
+          <span>找出医学时序中用于术后 AKI 早期预警的深度学习方法，重点关注多模态 EHR 数据和可解释性建模。</span>
+        </div>
+      </li>
+    </ul>
+
+    <p>
+      任务结束后，Agent 需要提交最终论文集合，或进一步提交结构化 evidence——核心论文、
+      方法谱系、数据集、实验结论、局限性和引用链条。系统不仅评价最终结果，也评价每一步检索行为是否有效。
+    </p>
+  </div>
+</section>
+
+<section id="tools">
+  <div class="container">
+    <h2 class="section-title">标准化工具环境</h2>
+    <p>
+      ScoutBench 提供标准化的交互环境，包括论文语料库、引用图、工具接口、状态表示、奖励函数和评估协议。
+      Agent 的核心能力体现在它能否根据当前状态动态组合这些工具，而不是机械执行固定流程。
+    </p>
+
+    <div class="tool-grid">
+      <div class="tool-item">
+        <code>Search(query)</code>
+        <p>根据自然语言 query 检索候选论文，建立或扩充初始 paper pool。</p>
+        <span class="tool-bias">全局探索</span>
+      </div>
+      <div class="tool-item">
+        <code>Expand(paper_id)</code>
+        <p>沿某篇论文的参考文献或被引论文进行扩展，追踪研究谱系。</p>
+        <span class="tool-bias">局部深挖</span>
+      </div>
+      <div class="tool-item">
+        <code>Read(paper_id)</code>
+        <p>读取论文摘要、引言、方法、实验或结论等结构化内容，理解证据。</p>
+        <span class="tool-bias">证据理解</span>
+      </div>
+      <div class="tool-item">
+        <code>Filter(condition)</code>
+        <p>根据任务约束过滤候选论文，剔除不满足条件的结果。</p>
+        <span class="tool-bias">结果优化</span>
+      </div>
+      <div class="tool-item">
+        <code>Rerank(criterion)</code>
+        <p>按照给定标准重新排序当前 paper pool，提升结果排序质量。</p>
+        <span class="tool-bias">结果优化</span>
+      </div>
+      <div class="tool-item">
+        <code>Stop()</code>
+        <p>结束检索并提交最终结果，决定何时停止是 Agent 的核心能力之一。</p>
+        <span class="tool-bias">停止决策</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reward" class="alt">
+  <div class="container">
+    <h2 class="section-title">过程奖励设计</h2>
+    <p>
+      ScoutBench 的关键特色是过程奖励。每一步工具调用后，环境都根据新增信息质量给出 step-level reward，
+      奖励由多个部分构成。这种设计使 ScoutBench 不仅评价最终结果，还能评价 Agent 的检索轨迹质量。
+    </p>
+
+    <ul class="reward-list">
+      <li>
+        <span class="rw-label">相关性</span>
+        <span class="rw-desc">
+          新增相关论文奖励：若某步工具调用发现了此前未出现、且与用户需求高度相关的论文，给予正奖励。
+          相关性由人工标注、检索标签、专家规则或 LLM-as-a-Judge 共同确定。
+        </span>
+      </li>
+      <li>
+        <span class="rw-label">新颖性</span>
+        <span class="rw-desc">
+          新颖性奖励：若 Agent 重复搜索相同 query、重复扩展同一篇论文，或持续返回已发现的论文，
+          不给奖励或给予惩罚，鼓励 Agent 避免无效探索。
+        </span>
+      </li>
+      <li>
+        <span class="rw-label">约束满足</span>
+        <span class="rw-desc">
+          约束满足奖励：复杂学术 query 往往包含细粒度限制，Agent 找到的论文不仅要主题相关，
+          还要满足排除条件、数据集偏好、代码可用性等约束。
+        </span>
+      </li>
+      <li>
+        <span class="rw-label">引用覆盖</span>
+        <span class="rw-desc">
+          引用图覆盖奖励：高质量检索不仅要找到单篇论文，还需覆盖关键研究分支、经典基础工作、
+          代表性后续工作和不同方法路线。基于 citation cluster 或 method lineage 设计覆盖奖励。
+        </span>
+      </li>
+      <li>
+        <span class="rw-label">工具成本</span>
+        <span class="rw-desc">
+          工具成本惩罚：每次工具调用都有一定成本，鼓励 Agent 在有限预算下高效检索，
+          而不是无限调用工具以提升召回。
+        </span>
+      </li>
+      <li>
+        <span class="rw-label">停止决策</span>
+        <span class="rw-desc">
+          停止决策奖励：在充分覆盖后及时停止可获得奖励；过早停止导致召回不足，
+          或过晚停止造成成本浪费，均应受到惩罚。
+        </span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="metrics">
+  <div class="container">
+    <h2 class="section-title">评估指标</h2>
+    <p>
+      ScoutBench 的评估指标包括最终结果质量和过程行为质量两类，
+      后者更能体现 ScoutBench 区别于传统 IR benchmark 的独特价值。
+    </p>
+
+    <div class="metric-row">
+      <div class="metric-panel">
+        <span class="label">Final Result Quality</span>
+        <h4>最终结果质量</h4>
+        <ul class="feature-list">
+          <li>Recall / Precision / F1</li>
+          <li>Recall@k · nDCG</li>
+          <li>LLM Relevance Score</li>
+          <li>Constraint Satisfaction Rate</li>
+          <li>Citation Coverage</li>
+        </ul>
+      </div>
+      <div class="metric-panel">
+        <span class="label">Process Behavior Quality</span>
+        <h4>过程行为质量</h4>
+        <ul class="feature-list">
+          <li>Tool-Call Efficiency</li>
+          <li>Average Reward per Action</li>
+          <li>Redundant Action Ratio</li>
+          <li>Search-Expand Balance</li>
+          <li>Trajectory Diversity</li>
+          <li>Early-Stage Recall Gain</li>
+          <li>Stopping Quality</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="sub-title">面向 Agentic RL 研究的分析维度</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-badge">RL</div>
+        <h4>Sample Efficiency</h4>
+        <p>比较不同优化方法在相同交互预算下的收益曲线，评估学习效率。</p>
+      </div>
+      <div class="card">
+        <div class="card-badge">RL</div>
+        <h4>Credit Assignment</h4>
+        <p>分析 token-level、step-level、sequence-level、trajectory-level 不同优化粒度对策略的影响。</p>
+      </div>
+      <div class="card">
+        <div class="card-badge">RL</div>
+        <h4>Training Stability</h4>
+        <p>评估 reward signal 的稳定性、方差及对策略梯度估计的影响。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trajectory" class="alt">
+  <div class="container">
+    <h2 class="section-title">数据与轨迹资源</h2>
+    <p>
+      为了支持 Agentic RL 研究，ScoutBench 不仅发布静态 query 和 ground truth，
+      还提供标准化 trajectory logs——每条轨迹包含完整的检索过程记录，可直接用于多种训练范式。
+    </p>
+
+    <div class="system-grid">
+      <article class="system-panel highlight">
+        <span class="label">Trajectory Format</span>
+        <h3>标准化轨迹格式</h3>
+        <p>
+          每条轨迹包含：user query · observation · Agent reasoning · tool call · 工具返回结果 ·
+          新增论文集合 · step reward · 当前 paper pool · 最终提交结果 · 最终 reward。
+        </p>
+      </article>
+      <article class="system-panel">
+        <span class="label">Research Use Cases</span>
+        <h3>支持多种研究范式</h3>
+        <p>
+          SFT：学习高质量检索行为。Offline RL：利用已有轨迹优化策略。
+          Reward Modeling：学习过程奖励模型。Process Supervision：研究中间反馈对多轮智能体训练的提升效果。
+        </p>
+      </article>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>轨迹字段</th>
+            <th>内容说明</th>
+            <th>主要用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>query</code></td>
+            <td>用户提出的复杂学术检索需求，包含多维约束。</td>
+            <td>SFT · Reward Modeling</td>
+          </tr>
+          <tr>
+            <td><code>observation</code></td>
+            <td>每步工具调用后环境返回的可观测结果。</td>
+            <td>Offline RL · Credit Assignment</td>
+          </tr>
+          <tr>
+            <td><code>tool_call</code></td>
+            <td>Agent 当前步骤的行动：Search / Expand / Read / Filter / Rerank / Stop。</td>
+            <td>Tool-Use Policy Learning</td>
+          </tr>
+          <tr>
+            <td><code>step_reward</code></td>
+            <td>环境对当前步骤的即时过程奖励，多维度构成。</td>
+            <td>Process Supervision · Reward Modeling</td>
+          </tr>
+          <tr>
+            <td><code>paper_pool</code></td>
+            <td>当前已发现的候选论文集合及其状态。</td>
+            <td>State Representation Learning</td>
+          </tr>
+          <tr>
+            <td><code>final_reward</code></td>
+            <td>最终提交结果的综合质量评分。</td>
+            <td>Offline RL · SFT 过滤</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="contribution">
+  <div class="container">
+    <h2 class="section-title">预期贡献</h2>
+    <p>
+      ScoutBench 的预期贡献覆盖 benchmark 设计范式、Agentic RL 基础设施和领域智能体知识获取能力三个层面。
+    </p>
+
+    <ul class="contribution-list">
+      <li>
+        <div class="contrib-num">01</div>
+        <div class="contrib-text">
+          <strong>新的 Benchmark 视角</strong>
+          <span>
+            将科技文献检索建模为具有过程奖励的多轮智能体任务，而不是一次性检索排序任务。
+            突破了传统 IR benchmark 仅评价最终结果的局限。
+          </span>
+        </div>
+      </li>
+      <li>
+        <div class="contrib-num">02</div>
+        <div class="contrib-text">
+          <strong>标准化 Agentic RL 环境</strong>
+          <span>
+            使研究者能够系统研究过程奖励、工具调用策略、序列级优化、信用分配和长程探索，
+            提供稳定、可解释的 step-level 训练信号。
+          </span>
+        </div>
+      </li>
+      <li>
+        <div class="contrib-num">03</div>
+        <div class="contrib-text">
+          <strong>科学知识获取基础设施</strong>
+          <span>
+            为未来 Science Agent、Medical Agent、NeoResearch、CastClaw 等领域智能体
+            提供可训练、可评测、可复用的 Paper Search Skill 基座，支撑 Agentic AI 时代的知识获取能力建设。
+          </span>
+        </div>
+      </li>
+    </ul>
+
+    <div class="quote-block">
+      <strong>一句话总结：</strong>
+      ScoutBench 旨在将 Paper Search 从静态信息检索任务升级为可交互、可反馈、可训练的 Agentic RL 环境。
+      它利用科技文献检索天然存在的过程奖励，为多轮工具调用智能体的过程监督、信用分配和策略优化提供标准化 benchmark，
+      并进一步支撑 Agentic AI 时代的科学知识获取基础设施建设。
+    </div>
+
+    <h3 class="sub-title">相关项目</h3>
+    <div class="system-grid">
+      <article class="system-panel highlight">
+        <span class="label">PaperScout</span>
+        <h3>Agentic Paper Search 起点</h3>
+        <p>
+          将学术搜索建模为多轮序列决策过程，PSPO 以 sequence-level 方式训练 Agentic Search 行为，
+          是 ScoutBench 的直接前驱工作。
+        </p>
+      </article>
+      <article class="system-panel">
+        <span class="label">Paper Search Agent</span>
+        <h3>科学知识获取基础设施</h3>
+        <p>
+          面向 Agentic AI 的科学知识入口，ScoutBench 为其提供标准化的评测环境和可训练的 benchmark 支撑。
+        </p>
+      </article>
+    </div>
+
+    <div class="btn-row" style="margin-top: 32px; justify-content: flex-start;">
+      <a class="btn btn-secondary" href="../paperscout/">查看 PaperScout</a>
+      <a class="btn btn-secondary" href="../knowledge_memory/">Paper Search Agent</a>
+      <a class="btn btn-secondary" href="../agent-apps/#paperscout">相关论文</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2026 ScoutBench Team &middot; AGI Group · State Key Laboratory of Cognitive Intelligence, USTC
+    </p>
+    <p style="font-size: 0.78rem; color: #555; margin-top: 6px;">
+      A process-reward benchmark for agentic paper search, multi-turn tool-use policy, and scientific knowledge acquisition.
+    </p>
+  </div>
+</footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -268,6 +268,12 @@
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
+    .application-grid {
+      grid-template-columns: 1fr;
+    }
+    .application-grid .project-card-wide {
+      grid-column: auto;
+    }
     .project-card {
       background: #fff;
       border: 1px solid #e8e8e8;
@@ -739,7 +745,6 @@
   <div class="container">
     <div class="section-intro section-anchor" id="research-tracks">
       <h2>研究方向</h2>
-      <p>用于介绍与展示 USTC-AGI 研究组在 Agentic AI 方向的代表性工作，涵盖训练引擎、基础算法、Coding-based Agentic AI（Table Mining）以及应用研究等多个方面。</p>
     </div>
 
     <div class="project-grid">
@@ -861,7 +866,7 @@
       <div class="project-card">
         <div class="card-accent accent-rag"></div>
         <div class="card-body">
-          <h3>Retrieval-based Agentic AI（Agentic RAG）</h3>
+          <h3>Retrieval-based Agentic AI</h3>
           <p class="card-desc">
             KDD Cup、Paper Search 与 DeepResearch 的系列工作介绍。
           </p>
@@ -892,7 +897,7 @@
       <div class="project-card">
         <div class="card-accent accent-runtime"></div>
         <div class="card-body">
-          <h3>Coding-based Agentic AI（Table Mining）</h3>
+          <h3>Coding-based Agentic AI</h3>
           <p class="card-desc">
             代码生成、沙箱执行与结构化表格数据推理Agent的系列工作介绍。
           </p>
@@ -920,75 +925,7 @@
       </div>
 
       <!-- Agentic Time Series Forecasting -->
-      <div class="project-card project-card-wide">
-        <div class="card-accent accent-neocast"></div>
-        <div class="card-body">
-          <h3>Agentic Time Series Forecasting</h3>
-          <p class="card-desc">
-            星思启时序认知之智，铸星坊铸预测之器，智多星谋自主之研，观星阁观未来之势，天星台立评测之尺。
-          </p>
-          <div class="forecast-module-grid">
-            <div class="forecast-module">
-              <strong>CastClaw</strong>
-              <span>观星阁：基于自主交互的时间序列预测智能体</span>
-            </div>
-            <div class="forecast-module">
-              <strong>NeoResearch</strong>
-              <span>智多星：面向时间序列预测的自主科研智能体</span>
-            </div>
-            <div class="forecast-module">
-              <strong>CastMind</strong>
-              <span>星思：多模态推理驱动的时间序列基础模型</span>
-            </div>
-            <div class="forecast-module">
-              <strong>FutureCast</strong>
-              <span>天星台：情境感知的时间序列预测评估基准</span>
-            </div>
-            <div class="forecast-module">
-              <strong>CastFactory</strong>
-              <span>炼星坊：时间序列预测模型训练框架</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-neocast" href="https://ustc-time-series.github.io/" target="_blank" rel="noopener">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://github.com/ustc-time-series/CastFactory" target="_blank" rel="noopener">CastFactory</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card project-card-wide">
-        <div class="card-accent accent-luban"></div>
-        <div class="card-body">
-          <h3>Agentic Scientific Knowledge Acquisition</h3>
-          <p class="card-desc">
-            面向科研智能体构建从数据底座、检索技能、自主文献检索智能体到过程评测和真实用户服务的完整知识获取栈。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">📚</span>
-              <span>Lewen API 数据底座 · Academic Search 检索 Skill · PaperScout 自主检索 Agent</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔎</span>
-              <span>自然语言学术问答 · 深度检索 · 文献调研 · 证据追踪与知识综合</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🧩</span>
-              <span>PaperArena 过程评测 · 多步推理 · 跨论文整合 · 数据库交互能力诊断</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-luban" href="https://agentr1.github.io/knowledge_memory/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://ustc-ai4science.github.io/Lewen-API/" target="_blank" rel="noopener">Lewen API</a>
-            <a class="card-btn btn-outline" href="https://github.com/ustc-ai4science/academic-search" target="_blank" rel="noopener">Academic Search</a>
-            <a class="card-btn btn-outline" href="https://agentr1.github.io/agent-apps/#paperscout">PaperScout</a>
-            <a class="card-btn btn-outline" href="https://github.com/Melmaphother/PaperArena" target="_blank" rel="noopener">PaperArena</a>
-            <a class="card-btn btn-outline" href="https://lewen.bdaa.pro/" target="_blank" rel="noopener">学术乐问</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card">
+      <div class="project-card" style="display:none">
         <div class="card-accent accent-mechanism"></div>
         <div class="card-body">
           <h3>Agent机理分析</h3>
@@ -1015,7 +952,7 @@
         </div>
       </div>
 
-      <div class="project-card">
+      <div class="project-card" style="display:none">
         <div class="card-accent accent-evaluation"></div>
         <div class="card-body">
           <h3>Agentic评测</h3>
@@ -1051,7 +988,7 @@
       <p>聚焦垂直领域应用研究，探索 AI Agent 在时间序列预测、结构化表格推理及科技文献深度挖掘中的前沿应用。</p>
     </div>
 
-    <div class="project-grid">
+    <div class="project-grid application-grid">
       <!-- Agent 应用 -->
       <div class="project-card project-card-wide">
         <div class="card-accent accent-apps"></div>
@@ -1154,8 +1091,80 @@
         </div>
       </div>
 
-      <!-- CastClaw -->
+      <!-- Agentic Time Series Forecasting -->
       <div class="project-card project-card-wide">
+        <div class="card-accent accent-neocast"></div>
+        <div class="card-body">
+          <h3>Agentic Time Series Forecasting</h3>
+          <p class="card-desc">
+            星思启时序认知之智，铸星坊铸预测之器，智多星谋自主之研，观星阁观未来之势，天星台立评测之尺。
+          </p>
+          <div class="forecast-module-grid">
+            <div class="forecast-module">
+              <strong>CastClaw</strong>
+              <span>观星阁：基于自主交互的时间序列预测智能体</span>
+            </div>
+            <div class="forecast-module">
+              <strong>NeoResearch</strong>
+              <span>智多星：面向时间序列预测的自主科研智能体</span>
+            </div>
+            <div class="forecast-module">
+              <strong>CastMind</strong>
+              <span>星思：多模态推理驱动的时间序列基础模型</span>
+            </div>
+            <div class="forecast-module">
+              <strong>FutureCast</strong>
+              <span>天星台：情境感知的时间序列预测评估基准</span>
+            </div>
+            <div class="forecast-module">
+              <strong>CastFactory</strong>
+              <span>炼星坊：时间序列预测模型训练框架</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-neocast" href="https://ustc-time-series.github.io/" target="_blank" rel="noopener">查看主页 →</a>
+            <a class="card-btn btn-outline" href="https://ustc-time-series.github.io/cast-claw/" target="_blank" rel="noopener">CastClaw</a>
+            <a class="card-btn btn-outline" href="https://ustc-time-series.github.io/cast-factory/" target="_blank" rel="noopener">CastFactory</a>
+            <a class="card-btn btn-outline" href="https://ustc-time-series.github.io/future-cast/" target="_blank" rel="noopener">FutureCast</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agentic Scientific Knowledge Acquisition -->
+      <div class="project-card project-card-wide">
+        <div class="card-accent accent-luban"></div>
+        <div class="card-body">
+          <h3>Agentic Scientific Knowledge Acquisition</h3>
+          <p class="card-desc">
+            面向科研智能体构建从数据底座、检索技能、自主文献检索智能体到过程评测和真实用户服务的完整知识获取栈。
+          </p>
+          <div class="card-meta">
+            <div class="meta-row">
+              <span class="meta-icon">📚</span>
+              <span>Lewen API 数据底座 · Academic Search 检索 Skill · PaperScout 自主检索 Agent</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🔎</span>
+              <span>自然语言学术问答 · 深度检索 · 文献调研 · 证据追踪与知识综合</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-icon">🧩</span>
+              <span>PaperArena 过程评测 · 多步推理 · 跨论文整合 · 数据库交互能力诊断</span>
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-luban" href="https://agentr1.github.io/knowledge_memory/">查看主页 →</a>
+            <a class="card-btn btn-outline" href="https://ustc-ai4science.github.io/Lewen-API/" target="_blank" rel="noopener">Lewen API</a>
+            <a class="card-btn btn-outline" href="https://github.com/ustc-ai4science/academic-search" target="_blank" rel="noopener">Academic Search</a>
+            <a class="card-btn btn-outline" href="https://agentr1.github.io/agent-apps/#paperscout">PaperScout</a>
+            <a class="card-btn btn-outline" href="https://github.com/Melmaphother/PaperArena" target="_blank" rel="noopener">PaperArena</a>
+            <a class="card-btn btn-outline" href="https://lewen.bdaa.pro/" target="_blank" rel="noopener">学术乐问</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CastClaw -->
+      <div class="project-card project-card-wide" style="display:none">
         <div class="card-accent accent-castclaw"></div>
         <div class="card-body">
           <h3>CastClaw</h3>
@@ -1189,7 +1198,7 @@
       </div>
 
       <!-- NeoResearch -->
-      <div class="project-card project-card-wide">
+      <div class="project-card project-card-wide" style="display:none">
         <div class="card-accent accent-neocast"></div>
         <div class="card-body">
           <h3>NeoResearch</h3>
@@ -1217,7 +1226,7 @@
       </div>
 
       <!-- TabClaw -->
-      <div class="project-card project-card-wide">
+      <div class="project-card project-card-wide" style="display:none">
         <div class="card-accent accent-tabclaw"></div>
         <div class="card-body">
           <h3>TabClaw</h3>
@@ -1251,7 +1260,7 @@
       </div>
 
       <!-- LubanHub -->
-      <div class="project-card project-card-wide">
+      <div class="project-card project-card-wide" style="display:none">
         <div class="card-accent accent-luban"></div>
         <div class="card-body">
           <h3>学术鲁班 Hub</h3>
