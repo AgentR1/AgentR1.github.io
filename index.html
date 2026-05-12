@@ -411,7 +411,7 @@
     }
     .self-learning-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 22px;
       flex: 1;
@@ -478,6 +478,11 @@
       border: 1px solid #d7e6f2;
       background: linear-gradient(180deg, #fbfdff 0%, #f2f8fd 100%);
     }
+    .self-learning-card-platform {
+      grid-column: 1 / -1;
+      border-color: #c5ddf0;
+      background: linear-gradient(180deg, #fbfdff 0%, #edf6fc 100%);
+    }
     .app-domain-label {
       display: inline-flex;
       align-self: flex-start;
@@ -542,24 +547,6 @@
       font-size: 0.84rem;
       color: #4f6056;
       line-height: 1.75;
-    }
-    .app-domain-points {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .app-domain-point {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #f1faf4;
-      border: 1px solid #d2ead9;
-      color: #2d6a43;
-      font-size: 0.73rem;
-      font-weight: 600;
-      line-height: 1.2;
     }
     .app-domain-meta {
       margin-top: 10px;
@@ -755,14 +742,14 @@
         <div class="card-body">
           <h3>大模型自主交互学习机制及方法</h3>
           <p class="card-desc">
-            大模型自主交互学习旨在探索大模型如何通过与环境、同行模型和人类专家的多源交互，主动获取反馈信号、形成可学习轨迹、沉淀任务经验，并结合强化学习、蒸馏学习、偏好优化和记忆增强等机制，实现认知能力的持续学习与演化。
+            大模型自主交互学习旨在研究大模型如何通过与环境、同行模型和人类专家的多源交互，实现认知能力的持续学习与演化。该方向重点关注环境交互探索、同行模型互学习和人类专家交互学习三类机制，分别通过主动试错与反馈获取、模型协作与知识蒸馏、专家反馈与领域知识注入，提升大模型的自主探索、协同学习和持续进化能力。
           </p>
           <div class="self-learning-grid">
             <div class="self-learning-card">
               <div class="self-learning-header">
                 <span class="self-learning-icon">🧭</span>
                 <div>
-                  <div class="self-learning-project">向环境交互</div>
+                  <div class="self-learning-project">与环境自主交互</div>
                   <p class="self-learning-desc">在开放任务环境中自主探索、执行行动并接收反馈，形成可学习轨迹与策略经验。</p>
                 </div>
               </div>
@@ -771,7 +758,7 @@
               <div class="self-learning-header">
                 <span class="self-learning-icon">🔁</span>
                 <div>
-                  <div class="self-learning-project">向同行模型交互</div>
+                  <div class="self-learning-project">与同行模型自主交互</div>
                   <p class="self-learning-desc">通过模型间讨论、批判、修正与蒸馏，获取多样推理轨迹、解题策略和偏好信号。</p>
                 </div>
               </div>
@@ -780,16 +767,16 @@
               <div class="self-learning-header">
                 <span class="self-learning-icon">💬</span>
                 <div>
-                  <div class="self-learning-project">向人类专家交互</div>
+                  <div class="self-learning-project">与人类专家自主交互</div>
                   <p class="self-learning-desc">主动识别知识缺口并向专家提问，将专家反馈转化为可复用的领域知识与任务经验。</p>
                 </div>
               </div>
             </div>
-            <div class="self-learning-card">
+            <div class="self-learning-card self-learning-card-platform">
               <div class="self-learning-header">
                 <span class="self-learning-icon">🛠️</span>
                 <div>
-                  <div class="self-learning-project">大模型能力增强开发平台研发</div>
+                  <div class="self-learning-project">大模型能力增强平台研发</div>
                   <p class="self-learning-desc">构建交互环境、轨迹采集、奖励建模、模型训练与评测诊断的一体化研发平台。</p>
                 </div>
               </div>
@@ -1012,11 +999,6 @@
               <div>
                   <p class="app-domain-project">预测、监测与时序决策</p>
                   <p class="app-domain-desc">面向销量、负荷、传感器和工业运行等真实时间序列场景，重点解决多步预测、异常识别、趋势变化解释与决策辅助问题。</p>
-                  <div class="app-domain-points">
-                    <span class="app-domain-point">多步预测</span>
-                    <span class="app-domain-point">异常检测</span>
-                    <span class="app-domain-point">变化趋势解释</span>
-                  </div>
                   <p class="app-domain-meta">代表项目：Cast-R1 · AnomaMind · GeoMind</p>
                 </div>
               </div>
@@ -1041,11 +1023,6 @@
               <div>
                   <p class="app-domain-project">表格理解、分析与推理</p>
                   <p class="app-domain-desc">面向企业报表、科研数据表和多源结构化数据，重点研究表格问答、指标推理、信息发现与复杂分析过程中的 Agent 交互能力。</p>
-                  <div class="app-domain-points">
-                    <span class="app-domain-point">表格问答</span>
-                    <span class="app-domain-point">指标推理</span>
-                    <span class="app-domain-point">数据洞察生成</span>
-                  </div>
                   <p class="app-domain-meta">代表项目：TableMind</p>
                 </div>
               </div>
@@ -1070,11 +1047,6 @@
               <div>
                   <p class="app-domain-project">检索、追踪与研究综述</p>
                   <p class="app-domain-desc">面向科研选题、论文检索和研究脉络梳理场景，重点支持高价值文献发现、研究问题追踪、线索组织与综述写作辅助。</p>
-                  <div class="app-domain-points">
-                    <span class="app-domain-point">论文检索</span>
-                    <span class="app-domain-point">研究线索追踪</span>
-                    <span class="app-domain-point">综述辅助</span>
-                  </div>
                   <p class="app-domain-meta">代表项目：PaperScout</p>
                 </div>
               </div>
