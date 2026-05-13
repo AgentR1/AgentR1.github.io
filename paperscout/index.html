@@ -85,75 +85,6 @@
       padding: 62px 0 50px;
       text-align: center;
     }
-    .hero-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid #edd4d0;
-      background: #fff8f7;
-      color: #9f2f23;
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-    .hero-mark {
-      width: min(100%, 430px);
-      margin: 24px auto 20px;
-      padding: 22px 20px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, #ffffff, #fff4f2);
-      border: 1px solid #ead8d3;
-      box-shadow: 0 14px 36px rgba(192, 57, 43, 0.10);
-    }
-    .hero-rows {
-      display: grid;
-      grid-template-columns: 1fr 48px 1fr;
-      gap: 12px;
-      align-items: center;
-    }
-    .hero-col {
-      background: #fff;
-      border: 1px solid #ece8e5;
-      border-radius: 18px;
-      padding: 14px 12px;
-    }
-    .hero-col strong {
-      display: block;
-      font-size: 0.82rem;
-      color: #111;
-      margin-bottom: 6px;
-    }
-    .hero-col span {
-      display: block;
-      font-size: 0.76rem;
-      color: #666;
-      line-height: 1.55;
-    }
-    .hero-arrow {
-      height: 2px;
-      background: linear-gradient(90deg, #d9b1ab, #c0392b);
-      position: relative;
-      border-radius: 999px;
-    }
-    .hero-arrow::after {
-      content: "";
-      position: absolute;
-      right: -1px;
-      top: 50%;
-      width: 10px;
-      height: 10px;
-      border-top: 2px solid #c0392b;
-      border-right: 2px solid #c0392b;
-      transform: translateY(-50%) rotate(45deg);
-    }
-    .hero-note {
-      margin-top: 14px;
-      font-size: 0.8rem;
-      color: #7b645f;
-    }
     header h1 {
       font-size: 2rem;
       font-weight: 800;
@@ -538,19 +469,6 @@
         grid-template-columns: 106px 1fr 1fr;
         font-size: 0.82rem;
       }
-      .hero-rows { grid-template-columns: 1fr; }
-      .hero-arrow {
-        width: 2px;
-        height: 24px;
-        margin: 0 auto;
-        background: linear-gradient(180deg, #d9b1ab, #c0392b);
-      }
-      .hero-arrow::after {
-        right: 50%;
-        top: auto;
-        bottom: -1px;
-        transform: translateX(50%) rotate(135deg);
-      }
     }
 
     @media (max-width: 640px) {
@@ -564,21 +482,6 @@
 
 <header>
   <div class="container">
-    <div class="hero-kicker">Agentic RL for Academic Search</div>
-    <div class="hero-mark" aria-hidden="true">
-      <div class="hero-rows">
-        <div class="hero-col">
-          <strong>Paper Search</strong>
-          <span>Search / Expand 多轮交替，检索路径随上下文动态调整。</span>
-        </div>
-        <div class="hero-arrow"></div>
-        <div class="hero-col">
-          <strong>PSPO</strong>
-          <span>把一次完整交互视作原子动作，做 sequence-level policy optimization。</span>
-        </div>
-      </div>
-      <div class="hero-note">从固定 workflow，转向可学习的 sequential decision making。</div>
-    </div>
     <h1>PaperScout：用 <span class="highlight">PSPO</span> 训练的学术论文搜索 Agent</h1>
     <p class="subtitle">
       将 Academic Paper Search 重写为多轮决策问题，让 Agent 自主决定何时 <code>Search</code>、何时 <code>Expand</code>；
