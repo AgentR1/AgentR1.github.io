@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agentic AI 研究方向 | USTC-AGI</title>
+  <base href="../" />
+  <title>研究方向 | Agentic AI</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <meta name="theme-color" content="#c0392b" />
-  <meta name="description" content="中国科学技术大学认知智能全国重点实验室 AGI 研究组：Coding-based Agentic AI（Table Mining）、Agentic RL、垂直领域智能体应用等方向工作介绍。" />
+  <meta name="description" content="USTC-AGI Agentic AI 研究方向：自主交互学习、训练框架、强化学习、知识增强与运行时系统。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -756,17 +757,20 @@
       .container { padding: 0 16px; }
       .team-grid { grid-template-columns: 1fr; }
     }
+
+    body.subpage header { cursor: default; }
+    body.subpage header:hover { background: linear-gradient(160deg, #ffffff 55%, #fff4f2 100%); }
   </style>
 </head>
-<body>
+<body class="subpage">
 
 <!-- ═══════════════════ TOP NAV ═══════════════════ -->
-<nav class="top-nav" aria-label="首页顶部导航">
+<nav class="top-nav" aria-label="页面顶部导航">
   <div class="container">
-    <a class="nav-brand" id="nav-refresh" href="#hero-header" aria-label="点击刷新当前页面">USTC-AGI <span>Agentic AI</span></a>
+    <a class="nav-brand" href="./">USTC-AGI <span>Agentic AI</span></a>
     <div class="nav-links">
-      <a href="#hero-header">首页</a>
-      <a href="research-tracks/">研究方向</a>
+      <a href="./">首页</a>
+      <a href="research-tracks/" aria-current="page">研究方向</a>
       <a href="papers/">论文列表</a>
       <a href="application-research/">应用研究</a>
       <a href="team/">团队成员</a>
@@ -776,10 +780,10 @@
 </nav>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header id="hero-header" role="button" tabindex="0" aria-label="点击刷新当前页面">
+<header id="hero-header">
   <div class="container">
-    <h1><span class="highlight">LLMs and Agentic AI</span> 研究方向工作介绍</h1>
-    <p class="header-sub">致力于突破自主智能边界，引领人机协同未来。</p>
+    <h1><span class="highlight">Agentic AI</span> 研究方向</h1>
+    <p class="header-sub">围绕大模型自主交互学习、训练框架、强化学习、知识增强与运行时系统，构建面向科研与产业场景的 Agentic AI 技术体系。</p>
   </div>
 </header>
 
@@ -1056,296 +1060,6 @@
       </div>
 
     </div>
-
-    <hr class="divider" />
-
-    <div class="section-intro section-anchor" id="application-systems">
-      <h2>Agentic AI应用研究</h2>
-      <p>聚焦垂直领域应用研究，探索 AI Agent 在时间序列预测、结构化表格推理及科技文献深度挖掘中的前沿应用。</p>
-    </div>
-
-    <div class="project-grid application-grid">
-      <!-- Agent 应用 -->
-      <div class="project-card project-card-wide">
-        <div class="card-accent accent-apps"></div>
-        <div class="card-body">
-          <h3>领域应用研究</h3>
-          <div class="app-domain-grid">
-            <div class="app-domain-card">
-              <span class="app-domain-label">时间序列分析</span>
-              <div class="app-domain-visual visual-timeseries" aria-hidden="true">
-                <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
-                  <polyline points="18,82 52,70 84,74 116,56 150,64 184,44 214,58 248,30 282,42 306,24"
-                    fill="none" stroke="#c0392b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                  <polyline points="18,94 52,88 84,84 116,82 150,78 184,74 214,70 248,62 282,56 306,48"
-                    fill="none" stroke="#6f6a66" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
-                  <circle cx="248" cy="30" r="5" fill="#c0392b"/>
-                  <circle cx="306" cy="24" r="5" fill="#c0392b"/>
-                </svg>
-              </div>
-              <div class="app-domain-header">
-              <span class="app-domain-icon">📈</span>
-              <div>
-                  <p class="app-domain-project">预测、分类、异常检测</p>
-                  <p class="app-domain-desc">面向销量、负荷、传感器和工业运行等真实时间序列场景，重点解决多步预测、异常识别、趋势变化解释与决策辅助问题。</p>
-                </div>
-              </div>
-            </div>
-            <div class="app-domain-card">
-              <span class="app-domain-label">表格数据挖掘</span>
-              <div class="app-domain-visual visual-table" aria-hidden="true">
-                <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="24" y="20" width="272" height="78" rx="10" fill="#ffffff" stroke="#e7b8b0" stroke-width="2"/>
-                  <rect x="24" y="20" width="272" height="20" rx="10" fill="#fdecea"/>
-                  <line x1="92" y1="20" x2="92" y2="98" stroke="#ead9d5" stroke-width="2"/>
-                  <line x1="168" y1="20" x2="168" y2="98" stroke="#ead9d5" stroke-width="2"/>
-                  <line x1="236" y1="20" x2="236" y2="98" stroke="#ead9d5" stroke-width="2"/>
-                  <line x1="24" y1="58" x2="296" y2="58" stroke="#ead9d5" stroke-width="2"/>
-                  <line x1="24" y1="78" x2="296" y2="78" stroke="#ead9d5" stroke-width="2"/>
-                  <rect x="99" y="45" width="62" height="26" rx="6" fill="#f8ddd8"/>
-                  <rect x="175" y="65" width="54" height="20" rx="6" fill="#f8ddd8"/>
-                </svg>
-              </div>
-              <div class="app-domain-header">
-              <span class="app-domain-icon">📊</span>
-              <div>
-                  <p class="app-domain-project">表格推理与操控</p>
-                  <p class="app-domain-desc">面向企业报表、科研数据表和多源结构化数据，重点研究表格问答、指标推理、信息发现与复杂分析过程中的 Agent 交互能力。</p>
-                </div>
-              </div>
-            </div>
-            <div class="app-domain-card">
-              <span class="app-domain-label">科技文献挖掘</span>
-              <div class="app-domain-visual visual-literature" aria-hidden="true">
-                <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="34" y="28" width="72" height="56" rx="8" fill="#ffffff" stroke="#e7b8b0" stroke-width="2"/>
-                  <rect x="62" y="20" width="72" height="56" rx="8" fill="#fff8f6" stroke="#e7b8b0" stroke-width="2"/>
-                  <rect x="90" y="34" width="72" height="56" rx="8" fill="#fdecea" stroke="#e7b8b0" stroke-width="2"/>
-                  <line x1="104" y1="50" x2="146" y2="50" stroke="#a3483f" stroke-width="3" stroke-linecap="round"/>
-                  <line x1="104" y1="61" x2="152" y2="61" stroke="#a3483f" stroke-width="3" stroke-linecap="round"/>
-                  <line x1="104" y1="72" x2="138" y2="72" stroke="#a3483f" stroke-width="3" stroke-linecap="round"/>
-                  <circle cx="236" cy="48" r="22" fill="none" stroke="#c0392b" stroke-width="5"/>
-                  <line x1="252" y1="64" x2="276" y2="88" stroke="#c0392b" stroke-width="6" stroke-linecap="round"/>
-                  <circle cx="236" cy="48" r="9" fill="#f8ddd8"/>
-                </svg>
-              </div>
-              <div class="app-domain-header">
-              <span class="app-domain-icon">📚</span>
-              <div>
-                  <p class="app-domain-project">科技文献数据挖掘与知识发现</p>
-                  <p class="app-domain-desc">面向科研选题、论文检索和研究脉络梳理场景，重点支持高价值文献发现、研究问题追踪、线索组织与综述写作辅助。</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-apps" href="agent-apps/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://github.com/Xiaoyu-Tao/Cast-R1-TS" target="_blank" rel="noopener">Cast-R1</a>
-            <a class="card-btn btn-outline" href="https://github.com/Xiaoyu-Tao/AnomaMind-TS" target="_blank" rel="noopener">AnomaMind</a>
-            <a class="card-btn btn-outline" href="https://github.com/lennendd/TableMind" target="_blank" rel="noopener">TableMind</a>
-            <a class="card-btn btn-outline" href="paperscout/">PaperScout</a>
-            <a class="card-btn btn-outline" href="geomind/">GeoMind</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Time Series Analysis -->
-      <div class="project-card project-card-wide">
-        <div class="card-accent accent-neocast"></div>
-        <div class="card-body">
-          <h3>Time Series Analysis</h3>
-          <p class="card-desc">
-            星思启时序认知之智，铸星坊铸预测之器，智多星谋自主之研，观星阁观未来之势，天星台立评测之尺。
-          </p>
-          <div class="forecast-module-grid">
-            <div class="forecast-module">
-              <strong>CastMind</strong>
-              <span>星思：多模态推理驱动的时间序列基础模型</span>
-            </div>
-            <div class="forecast-module">
-              <strong>NeoResearch</strong>
-              <span>智多星：面向时间序列预测的自主科研智能体</span>
-            </div>
-            <div class="forecast-module">
-              <strong>CastClaw</strong>
-              <span>观星阁：基于自主交互的时间序列预测智能体</span>
-            </div>
-            <div class="forecast-module">
-              <strong>FutureCast</strong>
-              <span>天星台：情境感知的时间序列预测评估基准</span>
-            </div>
-            <div class="forecast-module">
-              <strong>CastFactory</strong>
-              <span>炼星坊：时间序列预测模型训练框架</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-neocast" href="https://ustc-time-series.github.io/" target="_blank" rel="noopener">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://ustc-time-series.github.io/cast-claw/" target="_blank" rel="noopener">CastClaw</a>
-            <a class="card-btn btn-outline" href="https://ustc-time-series.github.io/future-cast/" target="_blank" rel="noopener">FutureCast</a>
-            <a class="card-btn btn-outline" href="https://ustc-time-series.github.io/cast-factory/" target="_blank" rel="noopener">CastFactory</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scientific Knowledge Acquisition -->
-      <div class="project-card project-card-wide">
-        <div class="card-accent accent-luban"></div>
-        <div class="card-body">
-          <h3>Scientific Knowledge Acquisition</h3>
-          <p class="card-desc">
-            面向科研智能体构建从数据底座、检索技能、自主文献检索智能体到过程评测和真实用户服务的完整知识获取栈。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">📚</span>
-              <span>Lewen API 数据底座 · Academic Search 检索 Skill · PaperScout 自主检索 Agent</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔎</span>
-              <span>自然语言学术问答 · 深度检索 · 文献调研 · 证据追踪与知识综合</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🧩</span>
-              <span>PaperArena 过程评测 · 多步推理 · 跨论文整合 · 数据库交互能力诊断</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-luban" href="https://agentr1.github.io/knowledge_memory/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://ustc-ai4science.github.io/Lewen-API/" target="_blank" rel="noopener">Lewen API</a>
-            <a class="card-btn btn-outline" href="https://github.com/ustc-ai4science/academic-search" target="_blank" rel="noopener">Academic Search</a>
-            <a class="card-btn btn-outline" href="https://agentr1.github.io/agent-apps/#paperscout">PaperScout</a>
-            <a class="card-btn btn-outline" href="https://github.com/Melmaphother/PaperArena" target="_blank" rel="noopener">PaperArena</a>
-            <a class="card-btn btn-outline" href="https://lewen.bdaa.pro/" target="_blank" rel="noopener">学术乐问</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- CastClaw -->
-      <div class="project-card project-card-wide" style="display:none">
-        <div class="card-accent accent-castclaw"></div>
-        <div class="card-body">
-          <h3>CastClaw</h3>
-          <p class="card-desc">
-            面向时间序列预测研究的人机协同智能体框架。CastClaw 通过 Planner、Forecaster、Critic 三个专属智能体编排完整预测流程，并在关键节点引入人类确认，将数据分析、特征工程与经典时序模型能力封装为可扩展的运行时工具箱。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">📈</span>
-              <span>多智能体协同 · 人机高效协作 · Agentic Workflow</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🧰</span>
-              <span>运行时工具箱：实验执行沙盒 · 数据分析工具 · 特征分析 · 经典时序模型</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🗂️</span>
-              <span>Skill 持续沉淀 · 面向真实预测工作流的研究工作台</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-castclaw" href="https://ustc-time-series.github.io/cast-claw/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://github.com/ustc-time-series/CastClaw" target="_blank" rel="noopener">
-              <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px">
-                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-              </svg>
-              GitHub
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- NeoResearch -->
-      <div class="project-card project-card-wide" style="display:none">
-        <div class="card-accent accent-neocast"></div>
-        <div class="card-body">
-          <h3>NeoResearch</h3>
-          <p class="card-desc">
-            面向时间序列预测小模型研发的自主研究智能体系统。NeoResearch 将研究假设、模块级 CandidateRecipe、受控实验、结果归因与研究记忆串成闭环，帮助研究员在固定数据、评估、预算和代码协议下持续发现更稳、更小、更可复现的预测模型。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🧪</span>
-              <span>Forecast Research Operating System · 假设生成 · 受控实验 · keep / discard 闭环</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🧩</span>
-              <span>CandidateRecipe DSL · action registry · preprocessing / embedding / backbone / fusion / head 搜索</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🧠</span>
-              <span>TaskFingerprint · Champion / Challenger · 研究记忆 · Blind Test 治理</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-neocast" href="neocast/">Coming Soon</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- TabClaw -->
-      <div class="project-card project-card-wide" style="display:none">
-        <div class="card-accent accent-tabclaw"></div>
-        <div class="card-body">
-          <h3>TabClaw</h3>
-          <p class="card-desc">
-            面向表格数据的本地对话式 AI Agent。上传 CSV / Excel 后用自然语言描述需求，TabClaw 先展示执行计划、多表并行派遣专属 Agent、跨会话持久记忆偏好，并将每次交互蒸馏为可复用技能——无需 SQL，无需编程，对话即可完成复杂表格分析。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">📋</span>
-              <span>Plan Mode · Multi-Agent 并行分析 · 技能自动蒸馏 · 持久记忆</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">⚡</span>
-              <span>支持任意 OpenAI 兼容端点：OpenAI · DeepSeek · SiliconFlow · Ollama（本地）</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">👥</span>
-              <span>Shuo Yu &nbsp;·&nbsp; Daoyu Wang &nbsp;·&nbsp; Qingchuan Li &nbsp;·&nbsp; Xiaoyu Tao &nbsp;·&nbsp; Qingyang Mao &nbsp;·&nbsp; Yitong Zhou</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-tabclaw" href="tab-claw/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://github.com/fishsure/TabClaw" target="_blank" rel="noopener">
-              <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px">
-                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-              </svg>
-              GitHub
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- LubanHub -->
-      <div class="project-card project-card-wide" style="display:none">
-        <div class="card-accent accent-luban"></div>
-        <div class="card-body">
-          <h3>学术鲁班 Hub</h3>
-          <p class="card-desc">
-            面向科技文献挖掘的 Skill 集锦。学术鲁班 Hub 将文献检索、文献阅读与写作辅助封装为一组即插即用的原子 Skill，研究者可在 Claude Code 环境中按需调用，快速完成从选题调研到论文写作的完整科研辅助流程。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🔍</span>
-              <span>文献检索：arXiv · Semantic Scholar · PubMed 多源检索与筛选</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📖</span>
-              <span>文献阅读：精读摘要 · 方法提炼 · 实验对比 · 批判性分析</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">✍️</span>
-              <span>写作辅助：Related Work 生成 · 论文润色 · 投稿意见回复</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-luban" href="https://luban.bdaa.pro/" target="_blank" rel="noopener">查看主页 →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </main>
 
@@ -1360,41 +1074,6 @@
     </p>
   </div>
 </footer>
-
-<script>
-  const navRefresh = document.getElementById('nav-refresh');
-  const heroHeader = document.getElementById('hero-header');
-
-  const refreshPage = () => {
-    document.body.classList.add('page-refreshing');
-    window.setTimeout(() => {
-      window.location.reload();
-    }, 120);
-  };
-
-  if (navRefresh) {
-    navRefresh.addEventListener('click', (event) => {
-      event.preventDefault();
-      refreshPage();
-    });
-    navRefresh.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        refreshPage();
-      }
-    });
-  }
-
-  if (heroHeader) {
-    heroHeader.addEventListener('click', refreshPage);
-    heroHeader.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        refreshPage();
-      }
-    });
-  }
-</script>
 
 </body>
 </html>

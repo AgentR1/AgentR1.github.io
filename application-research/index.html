@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agentic AI 研究方向 | USTC-AGI</title>
+  <base href="../" />
+  <title>应用研究 | Agentic AI</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <meta name="theme-color" content="#c0392b" />
-  <meta name="description" content="中国科学技术大学认知智能全国重点实验室 AGI 研究组：Coding-based Agentic AI（Table Mining）、Agentic RL、垂直领域智能体应用等方向工作介绍。" />
+  <meta name="description" content="USTC-AGI Agentic AI 应用研究：时间序列预测、结构化表格推理及科技文献深度挖掘。" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -756,19 +757,22 @@
       .container { padding: 0 16px; }
       .team-grid { grid-template-columns: 1fr; }
     }
+
+    body.subpage header { cursor: default; }
+    body.subpage header:hover { background: linear-gradient(160deg, #ffffff 55%, #fff4f2 100%); }
   </style>
 </head>
-<body>
+<body class="subpage">
 
 <!-- ═══════════════════ TOP NAV ═══════════════════ -->
-<nav class="top-nav" aria-label="首页顶部导航">
+<nav class="top-nav" aria-label="页面顶部导航">
   <div class="container">
-    <a class="nav-brand" id="nav-refresh" href="#hero-header" aria-label="点击刷新当前页面">USTC-AGI <span>Agentic AI</span></a>
+    <a class="nav-brand" href="./">USTC-AGI <span>Agentic AI</span></a>
     <div class="nav-links">
-      <a href="#hero-header">首页</a>
+      <a href="./">首页</a>
       <a href="research-tracks/">研究方向</a>
       <a href="papers/">论文列表</a>
-      <a href="application-research/">应用研究</a>
+      <a href="application-research/" aria-current="page">应用研究</a>
       <a href="team/">团队成员</a>
       <a href="https://github.com/AgentR1" target="_blank" rel="noopener">GitHub</a>
     </div>
@@ -776,289 +780,16 @@
 </nav>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header id="hero-header" role="button" tabindex="0" aria-label="点击刷新当前页面">
+<header id="hero-header">
   <div class="container">
-    <h1><span class="highlight">LLMs and Agentic AI</span> 研究方向工作介绍</h1>
-    <p class="header-sub">致力于突破自主智能边界，引领人机协同未来。</p>
+    <h1><span class="highlight">Agentic AI</span> 应用研究</h1>
+    <p class="header-sub">聚焦垂直领域应用研究，探索 AI Agent 在时间序列预测、结构化表格推理及科技文献深度挖掘中的前沿应用。</p>
   </div>
 </header>
 
 <!-- ═══════════════════ MAIN ═══════════════════ -->
 <main>
   <div class="container">
-    <div class="section-intro section-anchor" id="research-tracks">
-      <h2>研究方向</h2>
-      <p>围绕大模型自主交互学习、训练框架、强化学习、知识增强、运行时系统与应用落地，构建面向科研与产业场景的 Agentic AI 技术体系。</p>
-    </div>
-
-    <div class="project-grid">
-
-      <!-- 大模型自主交互学习 -->
-      <div class="project-card project-card-wide">
-        <div class="card-accent accent-selflearn"></div>
-        <div class="card-body">
-          <h3>大模型自主交互学习机制及方法</h3>
-          <p class="card-desc">
-            大模型自主交互学习旨在研究大模型如何通过与环境、工具、同行模型和人类专家的多源交互，提升任务求解、知识获取和持续进化能力。该方向重点关注 Training-based 交互学习与 Training-free 交互增强两类路径，分别从模型能力优化和运行时能力增强两个层面，推动大模型从静态生成走向自主探索、协同学习和动态适应。
-          </p>
-          <div class="self-learning-grid">
-            <div class="self-learning-path">Training-based：自主交互驱动的模型能力增强</div>
-            <p class="self-learning-path-note">以反馈为信号，在策略空间中完成交互经验学习与能力内化。</p>
-            <div class="self-learning-card">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🧭</span>
-                <div>
-                  <div class="self-learning-project">环境探索学习</div>
-                  <p class="self-learning-desc">在开放任务环境、工具环境和沙盒环境中自主探索、执行行动并接收反馈，形成可学习轨迹、策略经验和奖励信号。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-card">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🔁</span>
-                <div>
-                  <div class="self-learning-project">同行模型学习</div>
-                  <p class="self-learning-desc">通过模型间讨论、批判、修正、蒸馏和偏好比较，获取多样化推理轨迹、解题策略和协作学习信号。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-card">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">💬</span>
-                <div>
-                  <div class="self-learning-project">人类反馈学习</div>
-                  <p class="self-learning-desc">主动识别知识缺口并向专家提问，将专家反馈转化为领域知识、偏好信号和高质量训练数据。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-path">Training-free：自主交互驱动的大模型智能体</div>
-            <p class="self-learning-path-note">以语言为接口，在情境空间中完成运行时认知与能力调控。</p>
-            <div class="self-learning-card self-learning-card-free">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🧠</span>
-                <div>
-                  <div class="self-learning-project">经验记忆交互</div>
-                  <p class="self-learning-desc">通过历史经验沉淀、记忆检索与交互式更新，支持经验复用、跨任务迁移和持续迭代，在不更新参数的情况下提升长期任务处理能力。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-card self-learning-card-free">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🤝</span>
-                <div>
-                  <div class="self-learning-project">人类专家交互</div>
-                  <p class="self-learning-desc">通过多轮澄清、需求确认、大模型启发式主动提问和反馈修正，动态补充任务情境，提升复杂任务求解质量。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-card self-learning-card-free">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🔎</span>
-                <div>
-                  <div class="self-learning-project">科学知识交互</div>
-                  <p class="self-learning-desc">通过科学文献检索、知识库查询、证据追踪和结果验证等交互机制，增强模型的科学知识获取、理解、组织与应用能力。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-card self-learning-card-platform">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🛠️</span>
-                <div>
-                  <div class="self-learning-project">大模型能力增强平台研发</div>
-                  <p class="self-learning-desc">构建交互环境、轨迹采集、奖励建模、工具调用、模型训练、记忆管理与评测诊断的一体化平台，支撑两类路径的统一闭环。</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-selflearn" href="autonomous-learning/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="knowledge_memory/">科学知识交互</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Agent Training Framework -->
-      <div class="project-card">
-        <div class="card-accent accent-training"></div>
-        <div class="card-body">
-          <h3>AgenticRL训练框架</h3>
-          <p class="card-desc">
-            面向大模型智能体训练的数据自动化收集、自主管理与通用训练优化框架。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🎯</span>
-              <span>Agent-R1 · Claw-R1 · 端到端 RL · Process Rewards</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔧</span>
-              <span>PPO / GRPO / REINFORCE++ · Runtime RL · 零代码侵入</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📄</span>
-              <span>Agent-R1 项目 · Claw-R1 项目</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-training" href="agent-training/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="agent-r1/">Agent-R1 </a>
-            <a class="card-btn btn-outline" href="claw-r1/">Claw-R1 </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Agentic RL Algorithms -->
-      <div class="project-card">
-        <div class="card-accent accent-rlalgo"></div>
-        <div class="card-body">
-          <h3>AgenticRL基础算法</h3>
-          <p class="card-desc">
-            重点关注交互轨迹表示、优势计算与信用分配、奖励机制设计，以及长程规划与交互执行中的优化难题。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🧮</span>
-              <span>StepPO · PSPO · Step-level / Sequence-level 交互轨迹表示</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔁</span>
-              <span>Step-level credit assignment · 长轨迹优化 · 时序决策建模</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🚀</span>
-              <span>奖励机制设计 · 过程奖励塑形 · Agentic RL 方法脉络</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-rlalgo" href="agentic-rl/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="steppo/">StepPO </a>
-            <a class="card-btn btn-outline" href="paperscout/">PSPO </a>
-            <a class="card-btn btn-outline" href="geomind/#magrpo">MA-GRPO </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Retrieval-based Agentic AI（Agentic RAG） -->
-      <div class="project-card">
-        <div class="card-accent accent-rag"></div>
-        <div class="card-body">
-          <h3>Retrieval-based Agentic AI</h3>
-          <p class="card-desc">
-            KDD Cup、Paper Search 与 DeepResearch 的系列RAG工作介绍。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🥈</span>
-              <span>KDD Cup 2024 CRAG 银牌 · Task 2&3 第二名</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📚</span>
-              <span>Paper Search · 科技文献检索 · 结构化证据获取</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🗞️</span>
-              <span>DeepResearch · 多步检索 · 报告生成</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-rag" href="agentic-rag/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="crag-kdd-cup/">KDD Cup亚军 </a>
-            <a class="card-btn btn-outline" href="knowledge_memory/">Paper Search</a>
-            <a class="card-btn btn-outline" href="mind2report/">DeepResearch</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Coding-based Agentic AI（Table Mining） -->
-      <div class="project-card">
-        <div class="card-accent accent-runtime"></div>
-        <div class="card-body">
-          <h3>Coding-based Agentic AI</h3>
-          <p class="card-desc">
-            代码生成、沙箱执行与结构化表格数据推理的系列Coding  Agent工作介绍。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🎯</span>
-              <span>Coding Generation · Data Agent · TableMind</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔧</span>
-              <span>Coding Sandbox · Tool Use · Execution Feedback</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📄</span>
-              <span>TableMind · 表格理解 · 数据分析代码生成</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-runtime" href="agent-runtime/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="https://github.com/ustc-table-mining/TableMind" target="_blank" rel="noopener">TableMind</a>
-            <a class="card-btn btn-outline" href="https://arxiv.org/abs/2603.07528" target="_blank" rel="noopener">TableMind++</a>
-            <a class="card-btn btn-outline" href="tab-claw/">TabClaw</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Time Series Analysis -->
-      <div class="project-card" style="display:none">
-        <div class="card-accent accent-mechanism"></div>
-        <div class="card-body">
-          <h3>Agent机理分析</h3>
-          <p class="card-desc">
-            围绕 LLM Agent 的行为形成机制、推理决策链路与能力涌现规律展开研究，关注训练、推理、工具使用与记忆反思之间的协同关系。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🧠</span>
-              <span>行为机理 · 多步推理路径 · 决策过程解析</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔬</span>
-              <span>任务分解 · 工具调用 · 记忆与反思协同机制</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📐</span>
-              <span>可解释性分析 · 诊断评测 · 能力边界研究</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <span class="card-btn btn-outline btn-disabled">内容建设中</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card" style="display:none">
-        <div class="card-accent accent-evaluation"></div>
-        <div class="card-body">
-          <h3>Agentic评测</h3>
-          <p class="card-desc">
-            面向复杂任务场景构建 Agent 评测体系，关注真实环境中的任务完成质量、可靠性、覆盖度与过程诊断，支撑训练、推理与应用研究的统一分析。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">📏</span>
-              <span>任务质量 · 可靠性 · 覆盖度 · 过程一致性</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🧪</span>
-              <span>开放环境评测 · 长程任务诊断 · 多维基准设计</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📊</span>
-              <span>QRC-Eval · HLE / GAIA · 可解释性分析与误差归因</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <span class="card-btn btn-outline btn-disabled">内容建设中</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <hr class="divider" />
-
     <div class="section-intro section-anchor" id="application-systems">
       <h2>Agentic AI应用研究</h2>
       <p>聚焦垂直领域应用研究，探索 AI Agent 在时间序列预测、结构化表格推理及科技文献深度挖掘中的前沿应用。</p>
@@ -1345,7 +1076,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </main>
 
@@ -1360,41 +1090,6 @@
     </p>
   </div>
 </footer>
-
-<script>
-  const navRefresh = document.getElementById('nav-refresh');
-  const heroHeader = document.getElementById('hero-header');
-
-  const refreshPage = () => {
-    document.body.classList.add('page-refreshing');
-    window.setTimeout(() => {
-      window.location.reload();
-    }, 120);
-  };
-
-  if (navRefresh) {
-    navRefresh.addEventListener('click', (event) => {
-      event.preventDefault();
-      refreshPage();
-    });
-    navRefresh.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        refreshPage();
-      }
-    });
-  }
-
-  if (heroHeader) {
-    heroHeader.addEventListener('click', refreshPage);
-    heroHeader.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        refreshPage();
-      }
-    });
-  }
-</script>
 
 </body>
 </html>
