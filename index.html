@@ -328,7 +328,8 @@
     .accent-mechanism,
     .accent-evaluation,
     .accent-rlalgo,
-    .accent-selflearn { background: var(--accent-gradient); }
+    .accent-selflearn,
+    .accent-autoresearch { background: var(--accent-gradient); }
 
     .project-card-wide {
       grid-column: span 2;
@@ -425,6 +426,60 @@
       color: var(--text);
       font-size: 0.82rem;
       line-height: 1.65;
+    }
+    .ar-pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+    .ar-stage {
+      padding: 13px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line-soft);
+      background: var(--surface);
+    }
+    .ar-stage-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+    .ar-stage-title {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .ar-stage-sub {
+      display: block;
+      font-size: 0.76rem;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+    .ar-cycle-row {
+      grid-column: span 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: linear-gradient(90deg, #fff8f6 0%, #fdecea 50%, #fff8f6 100%);
+      border-radius: 7px;
+      border: 1px dashed var(--red-line);
+      font-size: 0.77rem;
+      color: var(--red);
+      font-weight: 600;
+      letter-spacing: 0.01em;
     }
     .app-domain-grid {
       display: grid;
@@ -642,7 +697,8 @@
     .btn-enter-neocast,
     .btn-enter-luban,
     .btn-enter-rlalgo,
-    .btn-enter-selflearn {
+    .btn-enter-selflearn,
+    .btn-enter-autoresearch {
       background: var(--red);
       color: #fff;
       border-color: var(--red);
@@ -656,7 +712,8 @@
     .btn-enter-neocast:hover,
     .btn-enter-luban:hover,
     .btn-enter-rlalgo:hover,
-    .btn-enter-selflearn:hover {
+    .btn-enter-selflearn:hover,
+    .btn-enter-autoresearch:hover {
       background: var(--red-dark);
       border-color: var(--red-dark);
     }
@@ -1000,7 +1057,7 @@
         </div>
       </div>
 
-      <!-- Time Series Analysis -->
+      <!-- 时间序列分析 -->
       <div class="project-card" style="display:none">
         <div class="card-accent accent-mechanism"></div>
         <div class="card-body">
@@ -1061,7 +1118,7 @@
 
     <div class="section-intro section-anchor" id="application-systems">
       <h2>Agentic AI应用研究</h2>
-      <p>聚焦垂直领域应用研究，探索 AI Agent 在时间序列预测、结构化表格推理及科技文献深度挖掘中的前沿应用。</p>
+      <p>聚焦科学智能、电力能源与推荐系统等垂直领域，探索 AI Agent 在真实场景中的知识获取、决策优化与交互式应用能力。</p>
     </div>
 
     <div class="project-grid application-grid">
@@ -1072,7 +1129,7 @@
           <h3>领域应用研究</h3>
           <div class="app-domain-grid">
             <div class="app-domain-card">
-              <span class="app-domain-label">时间序列分析</span>
+              <span class="app-domain-label">科学智能</span>
               <div class="app-domain-visual visual-timeseries" aria-hidden="true">
                 <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
                   <polyline points="18,82 52,70 84,74 116,56 150,64 184,44 214,58 248,30 282,42 306,24"
@@ -1084,15 +1141,15 @@
                 </svg>
               </div>
               <div class="app-domain-header">
-              <span class="app-domain-icon">📈</span>
+              <span class="app-domain-icon">🔬</span>
               <div>
-                  <p class="app-domain-project">预测、分类、异常检测</p>
-                  <p class="app-domain-desc">面向销量、负荷、传感器和工业运行等真实时间序列场景，重点解决多步预测、异常识别、趋势变化解释与决策辅助问题。</p>
+                  <p class="app-domain-project">科学知识获取与发现</p>
+                  <p class="app-domain-desc">面向科学文献、实验数据和领域知识库，重点研究科研问题发现、证据追踪、知识推理与自动化研究辅助。</p>
                 </div>
               </div>
             </div>
             <div class="app-domain-card">
-              <span class="app-domain-label">表格数据挖掘</span>
+              <span class="app-domain-label">电力能源</span>
               <div class="app-domain-visual visual-table" aria-hidden="true">
                 <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
                   <rect x="24" y="20" width="272" height="78" rx="10" fill="#ffffff" stroke="#e7b8b0" stroke-width="2"/>
@@ -1107,15 +1164,15 @@
                 </svg>
               </div>
               <div class="app-domain-header">
-              <span class="app-domain-icon">📊</span>
+              <span class="app-domain-icon">⚡</span>
               <div>
-                  <p class="app-domain-project">表格推理与操控</p>
-                  <p class="app-domain-desc">面向企业报表、科研数据表和多源结构化数据，重点研究表格问答、指标推理、信息发现与复杂分析过程中的 Agent 交互能力。</p>
+                  <p class="app-domain-project">能源预测与运行决策</p>
+                  <p class="app-domain-desc">面向电力负荷、新能源出力、设备状态和调度运行场景，重点研究预测建模、异常识别、风险评估与决策辅助。</p>
                 </div>
               </div>
             </div>
             <div class="app-domain-card">
-              <span class="app-domain-label">科技文献挖掘</span>
+              <span class="app-domain-label">推荐系统</span>
               <div class="app-domain-visual visual-literature" aria-hidden="true">
                 <svg class="app-domain-svg" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
                   <rect x="34" y="28" width="72" height="56" rx="8" fill="#ffffff" stroke="#e7b8b0" stroke-width="2"/>
@@ -1130,10 +1187,10 @@
                 </svg>
               </div>
               <div class="app-domain-header">
-              <span class="app-domain-icon">📚</span>
+              <span class="app-domain-icon">🎯</span>
               <div>
-                  <p class="app-domain-project">科技文献数据挖掘与知识发现</p>
-                  <p class="app-domain-desc">面向科研选题、论文检索和研究脉络梳理场景，重点支持高价值文献发现、研究问题追踪、线索组织与综述写作辅助。</p>
+                  <p class="app-domain-project">个性化推荐与搜索</p>
+                  <p class="app-domain-desc">面向内容、电商、科研资源和个性化服务场景，重点研究偏好建模、多轮交互、排序决策与推荐结果解释。</p>
                 </div>
               </div>
             </div>
@@ -1149,11 +1206,11 @@
         </div>
       </div>
 
-      <!-- Time Series Analysis -->
+      <!-- 时间序列分析 -->
       <div class="project-card project-card-wide">
         <div class="card-accent accent-neocast"></div>
         <div class="card-body">
-          <h3>Time Series Analysis</h3>
+          <h3>时间序列分析</h3>
           <p class="card-desc">
             星思启时序认知之智，铸星坊铸预测之器，智多星谋自主之研，观星阁观未来之势，天星台立评测之尺。
           </p>
@@ -1188,11 +1245,11 @@
         </div>
       </div>
 
-      <!-- Scientific Knowledge Acquisition -->
+      <!-- 科学智能 · Scientific Knowledge Acquisition -->
       <div class="project-card project-card-wide">
         <div class="card-accent accent-luban"></div>
         <div class="card-body">
-          <h3>Scientific Knowledge Acquisition</h3>
+          <h3>科学智能 · Scientific Knowledge Acquisition</h3>
           <p class="card-desc">
             面向科研智能体构建从数据底座、检索技能、自主文献检索智能体到过程评测和真实用户服务的完整知识获取栈。
           </p>
@@ -1217,6 +1274,55 @@
             <a class="card-btn btn-outline" href="https://agentr1.github.io/agent-apps/#paperscout">PaperScout</a>
             <a class="card-btn btn-outline" href="https://github.com/Melmaphother/PaperArena" target="_blank" rel="noopener">PaperArena</a>
             <a class="card-btn btn-outline" href="https://lewen.bdaa.pro/" target="_blank" rel="noopener">学术乐问</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- AutoResearch -->
+      <div class="project-card project-card-wide">
+        <div class="card-accent accent-autoresearch"></div>
+        <div class="card-body">
+          <h3>科学智能 · 数据科学自主研究智能体</h3>
+          <p class="card-desc">
+            Data Science Agent 通过自主环境交互，串联文献调研、数据分析、假设生成、小模型设计、认知推理与评估修正，构建端到端自主 data mining 闭环。以 Time Series Forecasting 为典型验证场景，探索 Agent 驱动的数据科学发现范式。
+          </p>
+          <div class="ar-pipeline-grid">
+            <div class="ar-stage">
+              <span class="ar-stage-num">1</span>
+              <span class="ar-stage-title">文献调研</span>
+              <span class="ar-stage-sub">自主检索相关工作，提炼研究空白与先验知识</span>
+            </div>
+            <div class="ar-stage">
+              <span class="ar-stage-num">2</span>
+              <span class="ar-stage-title">数据分析</span>
+              <span class="ar-stage-sub">探索性数据分析，识别分布规律、模式与关键特征</span>
+            </div>
+            <div class="ar-stage">
+              <span class="ar-stage-num">3</span>
+              <span class="ar-stage-title">假设生成</span>
+              <span class="ar-stage-sub">结合文献与数据洞察，生成可验证的研究假设</span>
+            </div>
+            <div class="ar-stage">
+              <span class="ar-stage-num">4</span>
+              <span class="ar-stage-title">小模型设计</span>
+              <span class="ar-stage-sub">针对假设自主设计轻量模型结构与实验方案</span>
+            </div>
+            <div class="ar-stage">
+              <span class="ar-stage-num">5</span>
+              <span class="ar-stage-title">认知推理</span>
+              <span class="ar-stage-sub">多步推理解读实验结果，判断假设有效性</span>
+            </div>
+            <div class="ar-stage">
+              <span class="ar-stage-num">6</span>
+              <span class="ar-stage-title">评估 · 确认 · 修正</span>
+              <span class="ar-stage-sub">量化评估结果，确认或修正假设，驱动下一轮迭代</span>
+            </div>
+            <div class="ar-cycle-row">
+              ↻ &nbsp; 自主迭代闭环 · 典型验证场景：Time Series Forecasting
+            </div>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-autoresearch" href="https://ustc-time-series.github.io/cast-claw/" target="_blank" rel="noopener">查看主页 →</a>
           </div>
         </div>
       </div>
