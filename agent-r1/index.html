@@ -562,7 +562,7 @@
       <strong>TL;DR：</strong>
       Agent-R1 是面向 Agentic RL 的<strong>统一模块化训练框架</strong>。
       它把每一轮交互建模为 step-level RL transition，并把轨迹表示、上下文构造、环境接口和优化算法解耦，
-      让 PPO、GRPO、Reinforce++、RLOO 等算法可以在同一多轮 Agent 训练底座上比较和扩展。
+      让 GRPO、PPO 等算法可以在同一多轮 Agent 训练底座上比较和扩展。
     </div>
     <h2 class="section-title">项目背景</h2>
     <p>
@@ -705,7 +705,7 @@
         <p>把交互步骤作为训练记录的基本单位，既保存精确 replay，又保留动作、反馈和奖励的语义边界。</p>
       </div>
       <div class="card" style="border-left: 4px solid #c0392b;">
-        <h4>Flexible context rule</h4>
+        <h4>Flexible context management</h4>
         <p>下一观察由环境根据结构化历史生成，使训练可以研究不同 memory/context 策略对学习质量的影响。</p>
       </div>
     </div>
@@ -753,10 +753,65 @@
         <div class="pillar-num">4</div>
         <div class="pillar-text">
           <strong>Flexible Optimization</strong>
-          <span>框架不绑定单一算法，可承载 PPO、GRPO、Reinforce++、RLOO，以及未来的 step-level credit assignment 设计。</span>
+          <span>框架不绑定单一算法，advantage estimation 与 policy objective 分离，当前支持 GRPO、PPO/GAE、RLOO、REINFORCE++、REINFORCE++ Baseline、GiGPO、StepPO 等训练配置。</span>
         </div>
       </li>
     </ul>
+
+    <h3 class="sub-title">当前支持的算法</h3>
+    <p>
+      Agent-R1 将 <code>algorithm.adv_estimator</code> 与 <code>actor_rollout_ref.actor.policy_loss.loss_mode</code>
+      分开配置：前者决定 advantage / return 的估计方式，后者决定策略损失形式。因此，框架可以在同一套环境、rollout 和 step trace
+      上组合不同的信用分配与优化目标，而不是把算法写死在任务流程里。
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>方法</th>
+            <th>信用分配粒度</th>
+            <th>是否需要 Critic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GRPO</td>
+            <td>Trajectory-level</td>
+            <td>否</td>
+          </tr>
+          <tr>
+            <td>PPO / GAE</td>
+            <td>Token-level</td>
+            <td>是</td>
+          </tr>
+          <tr>
+            <td>RLOO</td>
+            <td>Trajectory-level</td>
+            <td>否</td>
+          </tr>
+          <tr>
+            <td>REINFORCE++</td>
+            <td>Token-level</td>
+            <td>否</td>
+          </tr>
+          <tr>
+            <td>REINFORCE++ Baseline</td>
+            <td>Token-level</td>
+            <td>否</td>
+          </tr>
+          <tr>
+            <td>GiGPO</td>
+            <td>Trajectory-level</td>
+            <td>否</td>
+          </tr>
+          <tr>
+            <td>StepPO</td>
+            <td>Step-level</td>
+            <td>是</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <h3 class="sub-title">关键训练机制</h3>
     <div class="card-grid">
@@ -802,7 +857,7 @@
           </svg>
         </div>
         <h4>多算法支持</h4>
-        <p>同一环境和 rollout 配置下比较 GRPO、PPO、Reinforce++、RLOO，让优化器差异更可观察。</p>
+        <p>同一环境和 rollout 配置下比较 GRPO、PPO/GAE、RLOO、REINFORCE++、GiGPO、StepPO 等方法，让优化器差异更可观察。</p>
       </div>
       <div class="card">
         <div class="card-icon" aria-hidden="true">
@@ -882,14 +937,14 @@
     <p>
       论文从两个角度评估 Agent-R1：一是框架能否迁移到不同 Agent 任务，
       二是在固定训练设置下，上下文管理策略是否会影响学习质量。实验使用 Qwen3-4B，
-      覆盖算术推理、检索式多跳问答、具身 household interaction 和模拟在线购物。
+      覆盖算术推理、检索式多跳问答、具身交互场景和模拟在线购物。
     </p>
 
     <h3 class="sub-title">实验设置</h3>
     <ul class="feature-list">
       <li><strong>模型</strong>：Qwen3-4B</li>
       <li><strong>任务</strong>：GSM8K、HotpotQA、ALFWorld、WebShop</li>
-      <li><strong>优化器</strong>：GRPO、PPO、Reinforce++、RLOO</li>
+      <li><strong>实验算法</strong>：GRPO、PPO、REINFORCE++、RLOO</li>
       <li><strong>指标</strong>：GSM8K/HotpotQA 使用 Accuracy，ALFWorld 使用 Seen/Unseen Success Rate，WebShop 使用 Score 与 Success Rate</li>
       <li><strong>控制实验</strong>：在 GSM8K 上固定环境、工具格式、rollout 配置与奖励定义，分别比较优化器和上下文策略</li>
     </ul>
@@ -959,9 +1014,9 @@
     </div>
 
     <p style="margin-top: 18px;">
-      四种 RL 方法在不同任务上均显著优于 training-free ReAct baseline。
+      表中四种代表性 RL 方法在不同任务上均显著优于 training-free ReAct baseline。
       GRPO 在 GSM8K、HotpotQA 与 ALFWorld 上领先，PPO 在 WebShop 上最强，
-      说明 Agent-R1 能在统一框架中保留不同优化器的任务差异，而不是把算法行为“抹平”。
+      说明 Agent-R1 能在统一框架中保留不同优化器的任务差异，而不是把算法行为“抹平”。这张表是实验快照，并不代表框架只支持这些算法。
     </p>
 
     <figure>
