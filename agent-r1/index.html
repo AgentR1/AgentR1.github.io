@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent-R1 — End-to-End RL for LLM Agents</title>
-  <meta name="description" content="Agent-R1 是中国科大认知智能全国重点实验室提出的面向 LLM Agent 的端到端强化学习训练框架，将 MDP 框架延伸至多轮工具调用场景，显著超越 RAG 基线。" />
+  <title>Agent-R1 — A Unified Framework for Agentic RL</title>
+  <meta name="description" content="Agent-R1 是中国科大认知智能全国重点实验室提出的统一、模块化 Agentic RL 框架，以 step-level MDP、结构化轨迹表示和灵活上下文管理支持多轮智能体强化学习。" />
   <style>
     /* ── Reset ─────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,8 +97,8 @@
       transform: scale(0.995);
     }
     .hero-logo {
-      width: min(100%, 420px);
-      aspect-ratio: 1408 / 371;
+      width: min(100%, 560px);
+      aspect-ratio: 2536 / 564;
       overflow: hidden;
       margin: 0 auto 14px;
     }
@@ -107,8 +107,8 @@
       width: 100%;
       height: 100%;
       margin: 0 auto;
-      object-fit: cover;
-      object-position: 50% 44%;
+      object-fit: contain;
+      object-position: center;
     }
     header h1 {
       margin-top: 4px;
@@ -227,6 +227,12 @@
     td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
     tr:nth-child(even) td { background: #fdf9f9; }
     tr:last-child td { border-bottom: none; }
+    .mdp-table col:first-child { width: 180px; }
+    .mdp-table th:first-child,
+    .mdp-table td:first-child {
+      white-space: nowrap;
+      width: 180px;
+    }
     .tag-best {
       display: inline-block;
       background: #c0392b;
@@ -266,7 +272,23 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
     }
-    .card .card-icon { font-size: 1.65rem; margin-bottom: 10px; line-height: 1; }
+    .card .card-icon {
+      width: 42px;
+      height: 42px;
+      margin-bottom: 12px;
+      color: #c0392b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff8f7;
+      border: 1px solid #f0d4d0;
+      border-radius: 8px;
+    }
+    .card .card-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+    }
     .card h4 { font-size: 0.93rem; font-weight: 700; margin-bottom: 7px; color: #111; }
     .card p { font-size: 0.87rem; color: #555; margin: 0; line-height: 1.65; }
 
@@ -315,6 +337,22 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09);
     }
     figcaption { margin-top: 10px; font-size: 0.84rem; color: #777; }
+
+    .figure-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 22px;
+      align-items: start;
+    }
+    .figure-grid figure { margin: 0; }
+    .figure-strip {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      margin: 24px 0 6px;
+    }
+    .figure-strip figure { margin: 0; }
 
     /* ── Feature bullet list ───────────────────────── */
     .feature-list {
@@ -438,12 +476,14 @@
     /* ── Responsive ────────────────────────────────── */
     @media (max-width: 640px) {
       header { padding: 28px 0 34px; }
-      .hero-logo { width: min(100%, 320px); margin-bottom: 12px; }
+      .hero-logo { width: min(100%, 360px); margin-bottom: 12px; }
       header h1 { font-size: 1.45rem; }
       .subtitle { font-size: 0.96rem; line-height: 1.65; }
       .btn-row { margin-top: 20px; }
       section { padding: 48px 0; }
       .card-grid-2 { grid-template-columns: 1fr; }
+      .figure-grid { grid-template-columns: 1fr; }
+      .figure-strip { grid-template-columns: 1fr; }
       .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
       h2.section-title { font-size: 1.25rem; }
       .mdp-grid { grid-template-columns: 100px 1fr 1fr; font-size: 0.82rem; }
@@ -457,12 +497,12 @@
 <header id="top-refresh">
   <div class="container">
     <div class="hero-logo">
-      <img src="assets/logo.png" alt="Agent-R1 logo" />
+      <img src="assets/logo_full.png" alt="Agent-R1 logo" />
     </div>
-    <h1>Agent-R1：<span class="highlight">多轮交互强化学习</span>训练框架</h1>
+    <h1>Agent-R1：<span class="highlight">统一模块化</span> Agentic RL 框架</h1>
     <p class="subtitle">
-      将 MDP 框架系统性延伸至多轮工具调用场景，<br>
-      构建模块化、易扩展的 Agent 强化学习训练框架。
+      以 step-level MDP、结构化轨迹表示与灵活上下文管理，<br>
+      为多轮工具交互 Agent 提供可复用的强化学习训练底座。
     </p>
     <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
 
@@ -474,7 +514,7 @@
         </svg>
         使用文档
       </a>
-      <a class="btn btn-secondary" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">
+      <a class="btn btn-secondary" href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
             0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
@@ -487,7 +527,7 @@
         </svg>
         GitHub
       </a>
-      <a class="btn btn-secondary" href="https://arxiv.org/abs/2511.14460" target="_blank" rel="noopener">
+      <a class="btn btn-secondary" href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
@@ -495,7 +535,7 @@
           <line x1="16" y1="17" x2="8" y2="17"/>
           <polyline points="10 9 9 9 8 9"/>
         </svg>
-        Technical Report
+        Project Page
       </a>
     </div>
   </div>
@@ -506,9 +546,10 @@
   <div class="container">
     <a href="../" class="nav-home">Agentic AI</a>
     <a href="#intro">简介</a>
-    <a href="#problem">核心问题</a>
-    <a href="#mdp">MDP 框架</a>
-    <a href="#framework">训练框架</a>
+    <a href="#problem">核心挑战</a>
+    <a href="#mdp">Step-level MDP</a>
+    <a href="#framework">框架设计</a>
+    <a href="#context">上下文管理</a>
     <a href="#results">实验结果</a>
     <a href="#citation">引用</a>
   </div>
@@ -519,137 +560,153 @@
   <div class="container">
     <div class="tldr">
       <strong>TL;DR：</strong>
-      Agent-R1 将 <strong>MDP 框架系统性延伸</strong>到 LLM Agent 的多轮工具调用场景，
-      构建了一套模块化、易扩展的端到端强化学习训练框架，
-      在多跳问答基准上，<strong>最优 RL 算法比 RAG 基线高出约 3 倍</strong>（EM 0.39 vs 0.13）。
+      Agent-R1 是面向 Agentic RL 的<strong>统一模块化训练框架</strong>。
+      它把每一轮交互建模为 step-level RL transition，并把轨迹表示、上下文构造、环境接口和优化算法解耦，
+      让 PPO、GRPO、Reinforce++、RLOO 等算法可以在同一多轮 Agent 训练底座上比较和扩展。
     </div>
-    <h2 class="section-title">项目简介</h2>
+    <h2 class="section-title">项目背景</h2>
     <p>
-      大语言模型（LLM）越来越多地被用于构建能与环境主动交互的 Agent——通过工具调用、多步推理解决复杂问题。
-      强化学习（RL）被认为是训练此类 Agent 的关键技术，但其有效应用仍处于早期阶段，
-      面临<strong>多轮交互不稳定、奖励信号设计复杂、泛化能力受限</strong>等独特挑战。
+      现代 LLM 基础设施已经形成清晰分层：推理与服务侧由 vLLM、SGLang 等系统提供高吞吐生成、批量解码和结构化执行；
+      训练侧由 DeepSpeed、FSDP、Megatron-LM 等框架支持分布式优化与大规模并行训练。
+      这种模块化基础设施对常规 LLM 开发有效，但强化学习训练需要把<strong>推理侧 rollout</strong> 与
+      <strong>训练侧 optimization</strong> 重新接成一个闭环。
     </p>
     <p>
-      Agent-R1 从概念与实践两个维度系统性地回应了这些挑战：
-      一方面，对 RL 方法论在 LLM Agent 场景下的应用进行梳理与澄清；
-      另一方面，提供一个<strong>灵活、易用的端到端训练框架</strong>，开发者只需定义工具和奖励函数即可快速迁移到新场景。
+      从监督学习到 RL 的变化不只是换一个 loss。监督训练的数据和标签通常预先准备好，而 LLM RL 需要模型先采样生成，
+      再由奖励模型、可验证规则或环境反馈评估，最后把这些轨迹送回优化器。RLHF、RLVR、PPO、GRPO 等方法都依赖这一
+      rollout-reward-replay-update 循环。
+    </p>
+    <p>
+      Agentic RL 又进一步把单轮 prompt-response 扩展成多轮交互：模型需要观察上下文、调用工具、接收环境反馈，
+      并在长期轨迹中持续调整后续动作。因此，框架必须同时处理工具执行、环境状态、轨迹构造、上下文管理和策略优化。
+      这也是 Agent-R1 采用 step-level MDP 的直接动机。
     </p>
 
-    <div class="stat-row">
-      <div class="stat-box">
-        <div class="stat-num">~3×</div>
-        <div class="stat-label">优于 RAG 基线<br>（平均 EM）</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">5</div>
-        <div class="stat-label">支持 RL 算法<br>PPO / GRPO / REINFORCE++ 等</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">3</div>
-        <div class="stat-label">评测基准<br>HotpotQA / 2Wiki / Musique</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">✓</div>
-        <div class="stat-label">多模态支持<br>VLM + 多模态 RL</div>
-      </div>
+    <div class="figure-strip">
+      <figure>
+        <img src="assets/paper-figures/02-agentflow-generation.png" alt="Rollout in agentic RL" />
+        <figcaption>Agentic RL 的 rollout：Agent 持续观察上下文、生成动作，并从工具或环境接收反馈。</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/paper-figures/03-agentflow-learning.png" alt="Optimization in agentic RL" />
+        <figcaption>Agentic RL 的 optimization：交互轨迹被训练循环 replay，并通过 RL objective 更新策略。</figcaption>
+      </figure>
     </div>
+
+    <h3 class="sub-title">项目定位</h3>
+    <p>
+      Agent-R1 从论文中的核心观察出发：把整条轨迹看作一个不断增长的 token 序列，已经不足以描述真实的 Agentic RL。
+      新版 Agent-R1 围绕 <strong>step-level 的轨迹表示</strong> 与
+      <strong>灵活的上下文管理</strong> 重新组织训练抽象。
+      每个交互步骤都保留观察、LLM 动作、环境反馈、奖励和下一观察，使 rollout 与训练保持一致，
+      同时允许环境按任务需要构造下一轮上下文，而不是被固定的 append-only 历史拼接策略束缚。
+    </p>
   </div>
 </section>
 
 <!-- ═══════════════════ CORE PROBLEM ═══════════════════ -->
 <section id="problem">
   <div class="container">
-    <h2 class="section-title">核心问题</h2>
+    <h2 class="section-title">核心挑战</h2>
     <p>
-      将 RL 应用于 LLM Agent 训练时，Agent 场景的独特性带来了与静态任务截然不同的挑战：
+      Agentic RL 的难点不只是把已有 RLVR 算法搬到 Agent 上。多轮工具交互会改变状态和信用分配的基本形态：
     </p>
     <div class="card-grid">
       <div class="card">
-        <div class="card-icon">🔄</div>
-        <h4>多轮序列决策</h4>
-        <p>Agent 需要在多轮交互中保持记忆、做出连贯决策，而非单次生成文本。</p>
+        <div class="card-icon">01</div>
+        <h4>轨迹不再是单条文本</h4>
+        <p>多轮 Agent 行为包含观察、动作、工具反馈和下一观察，简单拼接成一个 token 序列会隐藏交互边界。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🎲</div>
-        <h4>随机环境反馈</h4>
-        <p>工具调用的返回结果具有不确定性，状态转移不再是确定性的，训练更难收敛。</p>
+        <div class="card-icon">02</div>
+        <h4>Rollout 与训练易错位</h4>
+        <p>message trace 重新转文本再 tokenize 会产生 retokenization drift，影响 log-prob、action mask 与动作边界。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🏷️</div>
-        <h4>奖励信号稀疏</h4>
-        <p>任务结果奖励只在最终步给出，难以为中间工具调用提供有效的学习信号。</p>
+        <div class="card-icon">03</div>
+        <h4>上下文不是越长越好</h4>
+        <p>工具输出可能冗长，历史可能无关；下一轮观察应由环境按任务构造，而不只是无界追加历史。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🧩</div>
-        <h4>框架缺口</h4>
-        <p>现有 RLVR 框架多面向静态任务，缺乏对多轮工具交互、过程奖励的系统支持。</p>
+        <div class="card-icon">04</div>
+        <h4>算法与系统耦合过重</h4>
+        <p>优化目标、奖励、workflow、rollout、model serving 和训练后端常被反复重写，难以复用和公平比较。</p>
       </div>
     </div>
+
   </div>
 </section>
 
 <!-- ═══════════════════ MDP FRAMEWORK ═══════════════════ -->
 <section id="mdp" class="alt">
   <div class="container">
-    <h2 class="section-title">MDP 框架扩展</h2>
+    <h2 class="section-title">Step-level MDP</h2>
     <p>
-      Agent-R1 将标准 MDP 框架系统性延伸到 LLM Agent 场景，
-      明确刻画了多轮交互、工具调用、过程奖励等核心差异：
+      Agent-R1 将每一轮交互视为原生 RL transition。环境接口可以写作
+      <code>E(o_t, a_t) = (o_{t+1}, r_t, d_t, e_t)</code>：
+      当前观察 <code>o_t</code> 触发 Agent 动作 <code>a_t</code>，环境返回下一观察、奖励、终止标记和反馈。
+      这个边界让 workflow、工具、环境和优化器都围绕同一个 step-native 抽象通信。
     </p>
 
     <div class="table-wrap">
-      <table>
+      <table class="mdp-table">
+        <colgroup>
+          <col>
+          <col>
+          <col>
+        </colgroup>
         <thead>
           <tr>
             <th>MDP 组件</th>
-            <th>静态 LLM</th>
-            <th>LLM Agent（Agent-R1）</th>
+            <th>Token-level / Message-level 管线</th>
+            <th>Agent-R1</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>状态空间 S</strong></td>
-            <td>当前文本序列（prompt + 已生成 tokens）</td>
-            <td>完整多轮交互历史，包含每轮的 Agent 输出与环境反馈</td>
+            <td><strong>交互单位</strong></td>
+            <td>通常以 token 流或 chat messages 组织，step 边界隐式存在</td>
+            <td>每个 step 显式保存观察、动作、环境反馈、奖励和下一观察</td>
           </tr>
           <tr>
-            <td><strong>动作空间 A</strong></td>
-            <td>从词表中选择下一个 token</td>
-            <td>token 生成，特定序列可触发外部工具调用</td>
+            <td><strong>轨迹重放</strong></td>
+            <td>message trace 可能需要重新文本化和 tokenize，带来边界漂移</td>
+            <td>保留 rollout 时的结构与动作边界，使 replay 与训练保持一致</td>
           </tr>
           <tr>
-            <td><strong>状态转移 P</strong></td>
-            <td>确定性：拼接 token 即得下一状态</td>
-            <td>混合：文本生成确定，工具调用引入随机环境反馈</td>
+            <td><strong>上下文构造</strong></td>
+            <td>常见实现为 append-only 历史拼接</td>
+            <td>由环境定义 <code>C(z_0,...,z_t)</code>，可保留、摘要、裁剪或重排历史</td>
           </tr>
           <tr>
-            <td><strong>奖励函数 R</strong></td>
-            <td>稀疏：仅在生成结束时给出结果奖励</td>
-            <td>密集：结果奖励 + 中间步骤过程奖励（工具调用有效性）</td>
+            <td><strong>信用分配</strong></td>
+            <td>通常偏 token-level，过程奖励和 step 信号需要额外适配</td>
+            <td>同一 substrate 支持 token-level、step-level 或混合信用分配</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <p style="margin-top: 16px;">
-      这一框架扩展是 Agent-R1 的理论基础——只有精确建模 Agent 与环境的交互机制，
-      才能设计出真正适配多轮工具调用场景的 RL 训练方法。
+      在这个表示下，一条 rollout 被写作 <code>τ = {z_t}</code>，
+      其中 <code>z_t = (o_t, a_t, e_t, r_t, o_{t+1})</code>。
+      优化层仍然可以对动作内部 token 计算策略梯度，但奖励、mask 和 advantage 都能精确对齐到真实发生的 Agent 决策。
     </p>
 
-    <h3 class="sub-title">过程奖励（Process Rewards）</h3>
+    <h3 class="sub-title">与现有框架的定位</h3>
     <p>
-      在 Agent 场景中，除任务最终结果奖励 <code>r_f</code> 外，
-      Agent-R1 还为每次工具调用分配<strong>过程奖励 <code>r_p</code></strong>，
-      对成功执行中间步骤给予即时正向反馈，大幅缓解奖励稀疏问题。
+      论文中将 Agent-R1 放在开源 Agentic RL 框架谱系中比较：veRL 与 slime 更偏 token-level，
+      Agent Lightning 已强调 step-level 交互，但上下文管理多为隐式；Agent-R1 同时显式化
+      <strong>step-level MDP abstraction</strong> 与 <strong>flexible context management</strong>。
     </p>
     <div class="card-grid-2" style="margin-top: 16px;">
       <div class="card" style="border-left: 4px solid #e67e22;">
-        <h4>结果奖励 r_f</h4>
-        <p>在终止状态给出，衡量最终任务完成质量，如答案的 Exact Match 得分。</p>
+        <h4>Step-level trajectory</h4>
+        <p>把交互步骤作为训练记录的基本单位，既保存精确 replay，又保留动作、反馈和奖励的语义边界。</p>
       </div>
       <div class="card" style="border-left: 4px solid #c0392b;">
-        <h4>过程奖励 r_p</h4>
-        <p>在每次有效工具调用后给出，衡量中间步骤的执行效果，提供更密集的学习信号。</p>
+        <h4>Flexible context rule</h4>
+        <p>下一观察由环境根据结构化历史生成，使训练可以研究不同 memory/context 策略对学习质量的影响。</p>
       </div>
     </div>
   </div>
@@ -658,31 +715,45 @@
 <!-- ═══════════════════ FRAMEWORK ═══════════════════ -->
 <section id="framework">
   <div class="container">
-    <h2 class="section-title">Agent-R1 训练框架</h2>
+    <h2 class="section-title">Agent-R1 框架设计</h2>
     <p>
-      Agent-R1 将传统单轮 RL 训练框架扩展为支持<strong>多轮交互 Rollout</strong> 的完整系统，
-      核心由 <code>Tool</code> 与 <code>ToolEnv</code> 两个模块构成。
+      Agent-R1 的目标是在算法侧与系统侧之间建立统一接口：算法侧关注 reward、advantage、credit assignment 和 policy objective；
+      系统侧关注 workflow 执行、rollout sampling、model serving 与大规模优化。新版框架用分层抽象把这些能力组织到同一训练基座中。
     </p>
 
     <figure>
-      <img src="assets/framework.png" alt="Agent-R1 Framework" />
-      <figcaption>图 2：Agent-R1 训练轨迹示意图。Agent 在 Rollout 阶段进行多轮推理与工具调用，接收环境反馈，最终用完整轨迹进行 RL 更新。</figcaption>
+      <img src="assets/paper-figures/01-agent-r1-framework.png" alt="Agent-R1 framework" />
+      <figcaption>Agent-R1 框架概览：workflow、环境、轨迹表示与优化模块通过 step-native 交互边界连接。</figcaption>
     </figure>
 
-    <h3 class="sub-title">两大核心模块</h3>
+    <h3 class="sub-title">核心抽象</h3>
     <ul class="pillar-list">
       <li>
         <div class="pillar-num">1</div>
         <div class="pillar-text">
-          <strong>Tool — 原子动作执行器</strong>
-          <span>封装单一能力（API 调用、代码执行、数据库查询等），执行后返回原始结果。标准化接口遵循 JSON Schema 规范，包含名称、描述、参数结构，Agent 可自动识别并调用。</span>
+          <strong>Step-native Environment</strong>
+          <span>环境以 <code>(o_t, a_t) → (o_{t+1}, r_t, d_t, e_t)</code> 的形式驱动多轮交互，统一工具执行、反馈返回、奖励计算和终止判定。</span>
         </div>
       </li>
       <li>
         <div class="pillar-num">2</div>
         <div class="pillar-text">
-          <strong>ToolEnv — 环境状态管理器</strong>
-          <span>负责解析 Agent 输出中的工具调用请求、协调工具执行、更新环境状态、计算奖励信号，并将新状态返回给 Agent。是多轮 RL 循环的核心驱动模块。</span>
+          <strong>Structured Step Trace</strong>
+          <span>每个 step 保留 observation、action、feedback、reward 与 next observation，避免 message 重建造成的 token/边界不一致。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">3</div>
+        <div class="pillar-text">
+          <strong>Layered Interfaces</strong>
+          <span>workflow、environment、rollout、optimization 分层解耦，使不同任务和不同 RL 算法可以共用训练基础设施。</span>
+        </div>
+      </li>
+      <li>
+        <div class="pillar-num">4</div>
+        <div class="pillar-text">
+          <strong>Flexible Optimization</strong>
+          <span>框架不绑定单一算法，可承载 PPO、GRPO、Reinforce++、RLOO，以及未来的 step-level credit assignment 设计。</span>
         </div>
       </li>
     </ul>
@@ -690,24 +761,115 @@
     <h3 class="sub-title">关键训练机制</h3>
     <div class="card-grid">
       <div class="card">
-        <div class="card-icon">🎭</div>
+        <div class="card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3l18 18" />
+            <path d="M10.6 10.6A2 2 0 0 0 13.4 13.4" />
+            <path d="M9.5 5.2A9.6 9.6 0 0 1 12 5c5 0 8.5 4.2 10 7a15.4 15.4 0 0 1-2.1 2.9" />
+            <path d="M6.6 6.7C4.6 8.1 3.1 10.2 2 12c1.5 2.8 5 7 10 7 1.8 0 3.4-.5 4.8-1.2" />
+          </svg>
+        </div>
         <h4>Action Mask</h4>
-        <p>精确区分 Agent 生成内容与环境反馈，确保策略梯度损失只计算在 Agent 实际决策的 token 上，避免向 prompt 或环境输出反向传播错误梯度。</p>
+        <p>只让 Agent 动作 token 进入 policy loss，避免 prompt、工具结果或环境反馈被错误优化。</p>
       </div>
       <div class="card">
-        <div class="card-icon">📐</div>
-        <h4>Advantage Alignment</h4>
-        <p>优势值计算同时融合过程奖励与结果奖励，并与 Action Mask 对齐，确保每一步的信用分配精确对应 Agent 的实际决策行为。</p>
+        <div class="card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18" />
+            <path d="M3 12h18" />
+            <circle cx="12" cy="12" r="3" />
+            <path d="M7 7l-2-2" />
+            <path d="M17 7l2-2" />
+            <path d="M7 17l-2 2" />
+            <path d="M17 17l2 2" />
+          </svg>
+        </div>
+        <h4>Credit Alignment</h4>
+        <p>优势信号可以按 token 或 step 展开，并与动作边界对齐，便于研究更细粒度的信用分配。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🔧</div>
+        <div class="card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 21v-7" />
+            <path d="M4 10V3" />
+            <path d="M12 21v-9" />
+            <path d="M12 8V3" />
+            <path d="M20 21v-5" />
+            <path d="M20 12V3" />
+            <path d="M2 14h4" />
+            <path d="M10 8h4" />
+            <path d="M18 16h4" />
+          </svg>
+        </div>
         <h4>多算法支持</h4>
-        <p>框架原生支持 PPO、GRPO、REINFORCE++、REINFORCE++Baseline 和 RLOO，可灵活切换评估不同 RL 算法在 Agent 场景下的表现。</p>
+        <p>同一环境和 rollout 配置下比较 GRPO、PPO、Reinforce++、RLOO，让优化器差异更可观察。</p>
       </div>
       <div class="card">
-        <div class="card-icon">🖼️</div>
-        <h4>多模态支持</h4>
-        <p>与视觉语言模型（VLM）无缝集成，支持同时处理文本与视觉输入的多模态 Agent 训练场景。</p>
+        <div class="card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l8 4-8 4-8-4 8-4z" />
+            <path d="M4 12l8 4 8-4" />
+            <path d="M4 17l8 4 8-4" />
+          </svg>
+        </div>
+        <h4>上下文策略可插拔</h4>
+        <p>环境可以选择 append-only、sliding-window、summary 等上下文构造规则，并在相同训练设置下评估效果。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CONTEXT MANAGEMENT ═══════════════════ -->
+<section id="context" class="alt">
+  <div class="container">
+    <h2 class="section-title">轨迹表示与上下文管理</h2>
+    <h3 class="sub-title">Step-level 的轨迹表示</h3>
+    <p>
+      在多轮 Agent 训练中，轨迹表示首先要服务于 replay 与 optimization。
+      常见的 message trace 便于 workflow 构建和调试，但它并不保留 rollout 时模型实际生成的精确 token 序列；
+      如果训练时再把 messages 拼回文本并重新 tokenize，就可能移动动作边界，改变 action mask，
+      进而扭曲用于优化的 log-prob。另一类 flat token sequence 能避免重新 tokenize 的问题，
+      但仍把交互当成一条 append-only 序列，step 边界是隐式的。
+    </p>
+    <p>
+      Agent-R1 因此采用结构化的 step trace 作为原生轨迹抽象。
+      每条 rollout 被存成一组 step record，每个 record 显式保存 observation、action、environment feedback、reward 与 next observation。
+      这样既能忠实 replay 原始交互，又能知道哪一段 token 属于一次完整的 Agent 动作、这次动作触发了什么反馈、
+      以及反馈如何改变下一步观察。token-level objective 仍可作用在 step 内部的动作 token 上，
+      step-level reward 或 process supervision 也可以直接对齐到对应 transition。
+    </p>
+
+    <figure>
+      <img src="assets/paper-figures/04-trajectory-representation.png" alt="Trajectory representation" />
+      <figcaption>轨迹表示从 message trace 演进到 token-consistent record，再到结构化 step-level trace。</figcaption>
+    </figure>
+
+    <h3 class="sub-title">灵活的上下文管理</h3>
+    <p>
+      灵活的上下文管理是 Agent-R1 的第二个关键设计点。
+      多轮交互中，工具输出可能很长，中间推理可能对下一步决策并不重要，完整历史也可能超过有效上下文预算。
+      如果框架把下一轮 observation 固定为简单的 append-only 拼接，那么 replay 记录和模型可见上下文会被强行绑定在一起。
+    </p>
+    <p>
+      Agent-R1 将下一步上下文交给环境通过规则 <code>o_{t+1} = C(z_0,...,z_t)</code> 构造。
+      这意味着环境可以保留最新工具结果、摘要早期历史、过滤无关中间步骤，或按照任务需要重组可见上下文；
+      同时，完整 step trace 仍保留在训练记录中，供优化和分析使用。
+      因而，轨迹表示负责保存“真实发生了什么”，上下文管理负责决定“下一步模型应该看到什么”，两者通过同一套 step-level 设计连接。
+    </p>
+
+    <figure>
+      <img src="assets/paper-figures/05-context-management-case.png" alt="Flexible context management case" />
+      <figcaption>上下文管理示例：历史可以被保留、裁剪、摘要或重组，但完整 step trace 仍保留在训练记录中。</figcaption>
+    </figure>
+
+    <div class="card-grid-2">
+      <div class="card">
+        <h4>避免 retokenization drift</h4>
+        <p>message trace 方便调试，但训练时重新拼文本再 tokenize 可能改变动作边界。Agent-R1 用 step trace 保留 rollout 结构。</p>
+      </div>
+      <div class="card">
+        <h4>显式研究 memory policy</h4>
+        <p>上下文构造被暴露为环境规则后，可以比较 append-only、sliding-window 与 LLM summary 等策略对学习的影响。</p>
       </div>
     </div>
   </div>
@@ -718,16 +880,18 @@
   <div class="container">
     <h2 class="section-title">实验结果</h2>
     <p>
-      在多跳问答（Multi-hop QA）任务上进行验证，Agent 使用 wikisearch 工具查询维基百科（~3600 万段落）来回答需要多步推理的问题。
+      论文从两个角度评估 Agent-R1：一是框架能否迁移到不同 Agent 任务，
+      二是在固定训练设置下，上下文管理策略是否会影响学习质量。实验使用 Qwen3-4B，
+      覆盖算术推理、检索式多跳问答、具身 household interaction 和模拟在线购物。
     </p>
 
     <h3 class="sub-title">实验设置</h3>
     <ul class="feature-list">
-      <li><strong>模型</strong>：Qwen2.5-3B-Instruct，NousToolEnv 函数调用格式</li>
-      <li><strong>训练集</strong>：51,200 条样本，均衡采样自 HotpotQA 与 2WikiMultihopQA</li>
-      <li><strong>评测基准</strong>：HotpotQA、2WikiMultihopQA（域内），Musique（域外）</li>
-      <li><strong>评测指标</strong>：Exact Match（EM）</li>
-      <li><strong>奖励</strong>：格式奖励 + 答案 EM 奖励，错误格式给予惩罚</li>
+      <li><strong>模型</strong>：Qwen3-4B</li>
+      <li><strong>任务</strong>：GSM8K、HotpotQA、ALFWorld、WebShop</li>
+      <li><strong>优化器</strong>：GRPO、PPO、Reinforce++、RLOO</li>
+      <li><strong>指标</strong>：GSM8K/HotpotQA 使用 Accuracy，ALFWorld 使用 Seen/Unseen Success Rate，WebShop 使用 Score 与 Success Rate</li>
+      <li><strong>控制实验</strong>：在 GSM8K 上固定环境、工具格式、rollout 配置与奖励定义，分别比较优化器和上下文策略</li>
     </ul>
 
     <h3 class="sub-title" style="margin-top: 28px;">主要结果</h3>
@@ -736,80 +900,90 @@
         <thead>
           <tr>
             <th>方法</th>
-            <th>HotpotQA†</th>
-            <th>2WikiMultihopQA†</th>
-            <th>Musique*</th>
-            <th>平均</th>
+            <th>GSM8K Acc.</th>
+            <th>HotpotQA Acc.</th>
+            <th>ALFWorld SR Seen</th>
+            <th>ALFWorld SR Unseen</th>
+            <th>WebShop Score</th>
+            <th>WebShop SR</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Base Tool Call</td>
-            <td>0.1372</td>
-            <td>0.0891</td>
-            <td>0.0277</td>
-            <td>0.0847</td>
+            <td>ReAct</td>
+            <td>53.1</td>
+            <td>25.8</td>
+            <td>7.14</td>
+            <td>2.98</td>
+            <td>51.58</td>
+            <td>23.8</td>
           </tr>
           <tr>
-            <td>Naive RAG</td>
-            <td>0.1916</td>
-            <td>0.1792</td>
-            <td>0.0277</td>
-            <td>0.1328</td>
+            <td><strong>GRPO</strong> <span class="tag-best">多数最优</span></td>
+            <td class="bold-result">83.3</td>
+            <td class="bold-result">59.4</td>
+            <td class="bold-result">81.29</td>
+            <td class="bold-result">74.58</td>
+            <td>65.83</td>
+            <td>44.2</td>
           </tr>
           <tr>
             <td>PPO</td>
-            <td>0.4136</td>
-            <td>0.5468</td>
-            <td>0.1552</td>
-            <td>0.3719</td>
+            <td>78.1</td>
+            <td class="underline-result">56.7</td>
+            <td>76.42</td>
+            <td>72.38</td>
+            <td class="bold-result">70.18</td>
+            <td class="bold-result">46.0</td>
           </tr>
           <tr>
-            <td><strong>GRPO</strong> <span class="tag-best">最优</span></td>
-            <td class="bold-result">0.4405</td>
-            <td class="bold-result">0.5741</td>
-            <td>0.1485</td>
-            <td class="bold-result">0.3877</td>
-          </tr>
-          <tr>
-            <td>REINFORCE++</td>
-            <td>0.3768</td>
-            <td>0.4796</td>
-            <td>0.1336</td>
-            <td>0.3300</td>
-          </tr>
-          <tr>
-            <td>REINFORCE++Baseline</td>
-            <td>0.3966</td>
-            <td>0.5406</td>
-            <td>0.1485</td>
-            <td>0.3619</td>
+            <td>Reinforce++</td>
+            <td>78.9</td>
+            <td>52.8</td>
+            <td>73.84</td>
+            <td>69.57</td>
+            <td>63.41</td>
+            <td>41.8</td>
           </tr>
           <tr>
             <td>RLOO</td>
-            <td>0.4089</td>
-            <td>0.5641</td>
-            <td>0.1419</td>
-            <td>0.3716</td>
+            <td class="underline-result">81.6</td>
+            <td>55.2</td>
+            <td class="underline-result">79.08</td>
+            <td class="underline-result">73.46</td>
+            <td class="underline-result">68.02</td>
+            <td class="underline-result">45.1</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p style="color:#666; font-size:.88rem; margin-top: 8px;">† 域内数据集；* 域外数据集</p>
 
     <p style="margin-top: 18px;">
-      所有 RL 训练方法均<strong>大幅超越基线</strong>：最弱的 RL 算法（REINFORCE++，平均 EM 0.33）
-      仍比 Naive RAG（0.13）高出约 2.5 倍。GRPO 综合表现最优，
-      PPO 在域外 Musique 数据集上表现突出，展现了良好的泛化能力。
+      四种 RL 方法在不同任务上均显著优于 training-free ReAct baseline。
+      GRPO 在 GSM8K、HotpotQA 与 ALFWorld 上领先，PPO 在 WebShop 上最强，
+      说明 Agent-R1 能在统一框架中保留不同优化器的任务差异，而不是把算法行为“抹平”。
     </p>
 
-    <h3 class="sub-title">消融实验：Action Mask 的重要性</h3>
+    <figure>
+      <img src="assets/paper-figures/06-agent-r1-datasets.png" alt="Agent-R1 dataset training curves" />
+      <figcaption>GRPO 在 GSM8K、HotpotQA、ALFWorld 上的代表性训练曲线。</figcaption>
+    </figure>
+
+    <figure>
+      <img src="assets/paper-figures/07-agent-r1-gsm8k.png" alt="GSM8K optimizer comparison" />
+      <figcaption>GSM8K 上不同 RL 优化器的 reward、accuracy 与 response length 对比。</figcaption>
+    </figure>
+
+    <h3 class="sub-title">上下文策略实验</h3>
     <p>
-      消融实验证明 <strong>Action Mask</strong>（用于损失计算与优势对齐）
-      是 Agent-R1 框架中最关键的设计之一。
-      去掉 loss mask 或 advantage mask 均会导致性能显著下降，
-      说明精确的信用分配对多轮 Agent 训练至关重要。
+      在 GSM8K 的固定 GRPO 设置下，论文比较了 append-only、sliding-window 与 LLM-summarized context。
+      sliding-window 表现最好，append-only 较弱，summary-based context 在小模型设置下表现不佳。
+      这支持了 Agent-R1 的设计主张：上下文管理不是展示细节，而是会直接影响训练质量的环境接口。
     </p>
+    <figure>
+      <img src="assets/paper-figures/08-agent-r1-gsm8k-context.png" alt="GSM8K context management comparison" />
+      <figcaption>不同上下文管理策略对 GSM8K 训练的影响。</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -818,14 +992,11 @@
   <div class="container">
     <h2 class="section-title">引用</h2>
     <p>如果本项目对您的研究有所帮助，请考虑引用：</p>
-    <div class="citation-box">@misc{cheng2025agentr1trainingpowerfulllm,
-      title={Agent-R1: Training Powerful LLM Agents with End-to-End Reinforcement Learning}, 
-      author={Mingyue Cheng and Jie Ouyang and Shuo Yu and Ruiran Yan and Yucong Luo and Zirui Liu and Daoyu Wang and Qi Liu and Enhong Chen},
-      year={2025},
-      eprint={2511.14460},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2511.14460}, 
+    <div class="citation-box">@misc{cheng2026agentr1unifiedmodular,
+      title={Agent-R1: A Unified and Modular Framework for Agentic Reinforcement Learning},
+      author={Mingyue Cheng and Shuo Yu and Daoyu Wang and Qingchuan Li and Jie Ouyang and Yucong Luo and Yitong Zhou and Qi Liu and Enhong Chen},
+      year={2026},
+      url={https://github.com/AgentR1/Agent-R1},
 }</div>
 
     <h2 class="section-title" style="margin-top: 48px;">致谢</h2>
@@ -844,8 +1015,8 @@
 <footer>
   <div class="container">
     <p>
-      &copy; 2025 Agent-R1 Team &middot; AGI Group · State Key Laboratory of Cognitive Intelligence, USTC &middot;
-      <a href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">GitHub</a>
+      &copy; 2026 Agent-R1 Team &middot; AGI Group · State Key Laboratory of Cognitive Intelligence, USTC &middot;
+      <a href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">GitHub</a>
     </p>
     <p style="font-size: 0.78rem; color: #555; margin-top: 6px;">
       Built for the Agentic RL community

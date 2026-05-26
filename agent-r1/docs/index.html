@@ -775,7 +775,7 @@
         <span class="search-kbd">Ctrl K</span>
       </button>
       <a class="topbar-btn" href="../">项目主页</a>
-      <a class="topbar-btn" href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">GitHub</a>
+      <a class="topbar-btn" href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 </div>
@@ -818,6 +818,7 @@
     <div class="sidebar-group">
       <div class="sidebar-group-title">脚本与资源</div>
       <div class="sidebar-links">
+        <a class="sidebar-link" href="#supported-datasets-algorithms">数据集与算法</a>
         <a class="sidebar-link" href="#scripts-and-configs">脚本与配置</a>
         <a class="sidebar-link" href="#faq">常见问题</a>
         <a class="sidebar-link" href="#resources">补充资源</a>
@@ -903,18 +904,20 @@
       <article class="doc-block" id="environment-checklist" data-title="环境准备">
         <h3>环境准备</h3>
         <p>
-          第一次使用 Agent-R1，不建议直接把注意力放在复杂 Agent 任务上，先把训练栈跑通更重要。
-          你真正需要确认的是四件事：Python 环境、<code>verl</code> 训练栈、模型路径、以及 GPU/显存条件。
+          第一次使用 Agent-R1，不建议直接把注意力放在复杂 Agent 任务上，先把当前主线的
+          <code>AgentEnvLoop + ToolEnv</code> 训练闭环跑通更重要。你真正需要确认的是四件事：
+          兼容的 <code>verl</code> 源码环境、模型路径、数据路径，以及 GPU/显存条件。
         </p>
         <ul>
-          <li>Python 与依赖环境要和项目要求一致，尤其是 <code>verl==0.7.0</code> 相关依赖。</li>
-          <li>基础模型路径需要先能被训练脚本读到，否则后续问题都会被“模型找不到”掩盖。</li>
+          <li>先按 <code>verl</code> 官方安装方式准备环境，但使用包含 AgentFlow、async rollout、reward-loop 与 <code>verl.trainer.config</code> package-data API 的近期源码版本。</li>
+          <li>Agent-R1 本身不需要作为独立包额外安装；在同一个环境里 clone 仓库后，从仓库根目录直接运行脚本即可。</li>
+          <li>基础模型路径需要先能被训练脚本读到。默认示例使用 <code>Qwen/Qwen3-4B-Instruct-2507</code>，也可以通过 Hydra override 换成本地路径。</li>
           <li>数据集路径、输出目录和缓存目录最好一开始就设成绝对路径，减少路径歧义。</li>
-          <li>如果你用的是已有环境，先做一次最小化 smoke test，而不是一上来跑完整 Agent 任务。</li>
+          <li>如果你用的是已有环境，先跑 GSM8K-tool sanity check，而不是一上来跑 HotpotQA、ALFWorld 或 WebShop。</li>
         </ul>
         <div class="callout info">
           <strong>推荐策略</strong>
-          <p>先拿最简单的单步脚本验证环境，再迁移到多步 Agent 交互，这样定位问题会快很多。</p>
+          <p>当前推荐路径是先用工具增强的 GSM8K 跑通主线 Agent 训练闭环，再切到 StepPO 或更大的任务 recipe。</p>
         </div>
       </article>
 
@@ -927,18 +930,33 @@
         <div class="panel">
           <h4>推荐的两阶段路径</h4>
           <p>
-            第一阶段先做基础训练栈的 sanity check，确认环境、模型和数据路径都已经接通；
-            第二阶段再进入 Agent-R1 的多步交互训练流程。
+            第一阶段用 GSM8K-tool 检查环境、模型、数据、rollout engine 和工具循环是否接通；
+            第二阶段切到 StepPO 或多数据集 recipe，验证完整 Agent-R1 训练路径。
           </p>
         </div>
         <div class="code-block">
-          <pre><code><span class="comment"># Stage 1: 基础训练栈 sanity check</span>
-<span class="cmd">python3</span> examples/data_preprocess/gsm8k.py --local_save_dir <span class="str">~/data/gsm8k</span>
-<span class="cmd">bash</span> examples/run_qwen2.5-3b.sh
-
-<span class="comment"># Stage 2: 主线 Agent-R1 多步训练流程</span>
+          <pre><code><span class="comment"># Stage 1: 准备工具增强 GSM8K 数据</span>
 <span class="cmd">python3</span> examples/data_preprocess/gsm8k_tool.py --local_save_dir <span class="str">~/data/gsm8k_tool</span>
-<span class="cmd">bash</span> examples/run_qwen3-4b_gsm8k_tool.sh</code></pre>
+
+<span class="comment"># Stage 2: 跑通 AgentEnvLoop + ToolEnv 主线训练脚本</span>
+<span class="cmd">bash</span> examples/run_qwen3-4b_gsm8k_tool.sh
+
+<span class="comment"># 可选：切换到 StepPO recipe</span>
+<span class="cmd">bash</span> examples/run_qwen3-4b_gsm8k_tool_steppo.sh</code></pre>
+        </div>
+        <p>
+          <code>examples/run_qwen3-4b_gsm8k_tool.sh</code> 的入口是
+          <code>python3 -m agent_r1.trainer.main_agent_ppo</code>，默认设置
+          <code>algorithm.adv_estimator=grpo</code>、
+          <code>actor_rollout_ref.rollout.agent.default_agent_flow=agent_env_loop</code>、
+          <code>actor_rollout_ref.rollout.agent.max_steps=5</code>。
+          脚本末尾保留 <code>$@</code>，因此可以直接追加 Hydra overrides。
+        </p>
+        <div class="code-block">
+          <pre><code><span class="comment"># 常见 override：换模型路径或 GPU 数</span>
+<span class="cmd">bash</span> examples/run_qwen3-4b_gsm8k_tool.sh \
+  actor_rollout_ref.model.path=<span class="str">/path/to/Qwen3-4B</span> \
+  trainer.n_gpus_per_node=4</code></pre>
         </div>
         <div class="panel-row">
           <div class="panel">
@@ -1199,20 +1217,36 @@
         <h3>任务结构</h3>
         <p>
           在 Agent-R1 里，一个样本通常不只是 <code>prompt</code>。它还可以带上 <code>agent_name</code>、
-          <code>env_kwargs</code> 等字段，让环境在样本级别获得上下文与控制参数。
+          <code>env_kwargs</code> 等字段，让环境在样本级别获得上下文与控制参数。GSM8K-tool 是最小完整例子：
+          每条样本指定 <code>agent_env_loop</code>，并通过 <code>env_kwargs</code> 创建一个带
+          <code>calc_gsm8k_reward</code> 工具的 <code>ToolEnv</code>。
         </p>
+        <div class="code-block">
+          <pre><code>{
+  <span class="str">"data_source"</span>: <span class="str">"openai/gsm8k"</span>,
+  <span class="str">"agent_name"</span>: <span class="str">"agent_env_loop"</span>,
+  <span class="str">"prompt"</span>: [{<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"..."</span>}],
+  <span class="str">"reward_model"</span>: {<span class="str">"style"</span>: <span class="str">"rule"</span>, <span class="str">"ground_truth"</span>: <span class="str">"..."</span>},
+  <span class="str">"env_kwargs"</span>: {
+    <span class="str">"env_type"</span>: <span class="str">"tool"</span>,
+    <span class="str">"tools"</span>: [<span class="str">"calc_gsm8k_reward"</span>],
+    <span class="str">"tool_format"</span>: <span class="str">"hermes"</span>,
+    <span class="str">"tools_kwargs"</span>: {<span class="str">"ground_truth"</span>: <span class="str">"&lt;answer&gt;"</span>}
+  }
+}</code></pre>
+        </div>
         <div class="panel-row-3">
           <div class="panel">
             <h4>输入层</h4>
-            <p>决定用户问题、初始上下文和任务说明是什么。</p>
+            <p>决定用户问题、system prompt、chat template 和初始上下文是什么。</p>
           </div>
           <div class="panel">
             <h4>环境层</h4>
-            <p>决定环境初始状态、工具清单、终止条件和每轮反馈内容。</p>
+            <p>决定 <code>env_type</code>、工具清单、工具格式、终止条件和每轮反馈内容。</p>
           </div>
           <div class="panel">
             <h4>训练层</h4>
-            <p>决定 rollout 如何发生、奖励怎么回传、批量如何组织。</p>
+            <p>决定 rollout flow、最大步数、奖励回传、advantage estimator 和批量组织方式。</p>
           </div>
         </div>
       </article>
@@ -1228,21 +1262,21 @@
             <div class="wf-left"><div class="wf-num">1</div><div class="wf-line"></div></div>
             <div class="wf-body">
               <h4>准备样本</h4>
-              <p>把样本整理成模型需要的 prompt 和环境需要的附加字段，而不是只保留一段纯文本。</p>
+              <p>运行 <code>examples/data_preprocess/gsm8k_tool.py</code> 或任务 recipe，把原始数据转成带 <code>agent_name</code> 与 <code>env_kwargs</code> 的 parquet。</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">2</div><div class="wf-line"></div></div>
             <div class="wf-body">
               <h4>创建环境</h4>
-              <p>根据样本配置实例化 Agent 环境，必要时挂接工具和特定任务逻辑。</p>
+              <p><code>AgentEnvLoop</code> 读取样本里的 <code>env_kwargs</code>，通过 <code>AgentEnv.from_config</code> 创建 <code>ToolEnv</code> 或任务环境。</p>
             </div>
           </div>
           <div class="workflow-item">
             <div class="wf-left"><div class="wf-num">3</div><div class="wf-line"></div></div>
             <div class="wf-body">
               <h4>执行多步 rollout</h4>
-              <p>模型生成、环境解析、工具调用、反馈注入持续循环，直到任务完成或中断。</p>
+              <p>模型生成、环境解析工具调用、执行 <code>BaseTool</code>、注入工具反馈，持续循环直到 <code>done=True</code> 或达到 <code>max_steps</code>。</p>
             </div>
           </div>
           <div class="workflow-item">
@@ -1261,6 +1295,15 @@
           把 Agent-R1 从现有案例迁移到你的新任务时，最有效的方法不是大范围改源码，而是沿着三层结构逐步改：
           数据、环境/工具、训练脚本。
         </p>
+        <div class="code-block">
+          <pre><code>recipe/&lt;task&gt;/
+  base.yaml
+  prepare_&lt;task&gt;_agent_r1.py
+  &lt;task&gt;_agent_flow.py
+  reward_fn.py
+  prompts.py
+  utils.py</code></pre>
+        </div>
         <table class="doc-table">
           <thead>
             <tr>
@@ -1293,28 +1336,224 @@
     <section class="doc-section" id="scripts" data-group-title="脚本与资源">
       <h2>脚本与资源</h2>
 
+      <article class="doc-block" id="supported-datasets-algorithms" data-title="数据集与算法">
+        <h3>支持的数据集与算法</h3>
+        <p>
+          Agent-R1 不是绑定在单个 benchmark 上的训练脚本，而是一套可复用的 Agentic RL 训练框架。
+          当前本地仓库已经包含从数学推理、检索问答到具身环境和网页购物的多类任务 recipe；
+          同一个任务也可以通过不同 <code>algorithm.adv_estimator</code> 与 policy loss 组合切换算法。
+        </p>
+
+        <h4>支持的数据集 / 环境</h4>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>数据集 / 环境</th>
+              <th>任务类型</th>
+              <th>关键入口</th>
+              <th>适合验证什么</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GSM8K Tool</td>
+              <td>工具增强数学推理</td>
+              <td><code>examples/data_preprocess/gsm8k_tool.py</code><br><code>examples/run_qwen3-4b_gsm8k_tool.sh</code></td>
+              <td>最小可运行闭环：dataset、<code>ToolEnv</code>、tool call、reward 与 trainer 是否接通。</td>
+            </tr>
+            <tr>
+              <td>HotpotQA</td>
+              <td>多跳检索问答</td>
+              <td><code>recipe/hotpotqa/</code><br><code>examples/run_hotpotqa_steppo.sh</code></td>
+              <td>检索工具、multi-hop reasoning、长上下文和证据选择。</td>
+            </tr>
+            <tr>
+              <td>Paper Search</td>
+              <td>学术论文搜索</td>
+              <td><code>recipe/paper_search/</code><br><code>examples/run_papersearch_steppo.sh</code></td>
+              <td>真实搜索式 agent workflow、查询展开、文献证据收集。</td>
+            </tr>
+            <tr>
+              <td>ALFWorld</td>
+              <td>文本具身 household interaction</td>
+              <td><code>recipe/alfworld/</code><br><code>examples/run_alfworld_steppo.sh</code></td>
+              <td>长程交互、环境状态变化、成功率型奖励。</td>
+            </tr>
+            <tr>
+              <td>WebShop</td>
+              <td>模拟在线购物</td>
+              <td><code>recipe/webshop/</code><br><code>examples/run_webshop_steppo.sh</code></td>
+              <td>网页式导航、商品检索、决策路径和 score / success rate。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>支持的算法 / 优势估计</h4>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>方法</th>
+              <th>配置入口</th>
+              <th>粒度</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>StepPO</td>
+              <td><code>adv_estimator=gae</code><br><code>loss_mode=gspo</code></td>
+              <td>Step-level + sequence-level policy loss</td>
+              <td>Agent-R1 主推 recipe：用 step-level GAE 做信用分配，再用 GSPO 计算完整 action 的 policy update。</td>
+            </tr>
+            <tr>
+              <td>GRPO</td>
+              <td><code>algorithm.adv_estimator=grpo</code></td>
+              <td>Trajectory / group-relative</td>
+              <td>默认 GSM8K-tool 脚本使用的 sanity check 算法，不依赖 critic。</td>
+            </tr>
+            <tr>
+              <td>PPO / GAE</td>
+              <td><code>algorithm.adv_estimator=gae</code></td>
+              <td>Step-level actor-critic</td>
+              <td>适合显式 value learning 与 step timeline 上的优势估计。</td>
+            </tr>
+            <tr>
+              <td>Token GAE</td>
+              <td><code>algorithm.adv_estimator=token_gae</code></td>
+              <td>Token-level actor-critic</td>
+              <td>作为 token 级信用分配 baseline，便于和 step-level 方法对照。</td>
+            </tr>
+            <tr>
+              <td>RLOO</td>
+              <td><code>algorithm.adv_estimator=rloo</code></td>
+              <td>Trajectory outcome</td>
+              <td>使用 leave-one-out baseline，对多 rollout 采样的任务很自然。</td>
+            </tr>
+            <tr>
+              <td>REINFORCE++</td>
+              <td><code>algorithm.adv_estimator=reinforce_plus_plus</code></td>
+              <td>Token return</td>
+              <td>轻量、无需 critic，常用于和 GRPO / PPO 类方法比较。</td>
+            </tr>
+            <tr>
+              <td>REINFORCE++ Baseline</td>
+              <td><code>algorithm.adv_estimator=reinforce_plus_plus_baseline</code></td>
+              <td>Prompt / trajectory baseline</td>
+              <td>在 REINFORCE++ 基础上加入 prompt-level mean baseline。</td>
+            </tr>
+            <tr>
+              <td>GiGPO</td>
+              <td><code>algorithm.adv_estimator=gigpo</code></td>
+              <td>Trajectory + step group</td>
+              <td>需要 agent flow 提供 <code>anchor_obs</code>，用于 step grouping 相关实验。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <strong>怎么选</strong>
+          <p>
+            只想先跑通环境，用 GSM8K Tool + GRPO；想复现实验主线，优先看 StepPO 脚本；
+            想做算法对比，再切换 <code>grpo</code>、<code>rloo</code>、<code>reinforce_plus_plus</code>、
+            <code>token_gae</code> 等 estimator。
+          </p>
+        </div>
+      </article>
+
       <article class="doc-block" id="scripts-and-configs" data-title="脚本与配置">
         <h3>脚本与配置</h3>
         <p>
           实际使用中，脚本通常承担三类信息：模型与数据路径、训练资源参数、任务相关超参。
-          第一次修改脚本时，优先改“路径和资源”，最后再改“任务逻辑”。
+          第一次修改脚本时，优先改“路径和资源”，最后再改“任务逻辑”。Agent-R1 的示例脚本都支持在命令末尾追加
+          Hydra overrides，因此常见实验不需要复制一份新脚本。
         </p>
         <div class="tag-row">
           <span class="tag hi">model_path</span>
           <span class="tag hi">data_path</span>
-          <span class="tag hi">output_dir</span>
+          <span class="tag hi">agent_flow</span>
           <span class="tag">max_steps</span>
           <span class="tag">rollout</span>
-          <span class="tag">batch size</span>
+          <span class="tag">adv_estimator</span>
+          <span class="tag">loss_mode</span>
         </div>
+        <h4>数据准备入口</h4>
+        <div class="code-block">
+          <pre><code><span class="comment"># GSM8K Tool</span>
+<span class="cmd">python3</span> examples/data_preprocess/gsm8k_tool.py --local_save_dir <span class="str">~/data/gsm8k_tool</span>
+
+<span class="comment"># HotpotQA + retrieval corpus</span>
+<span class="cmd">python3</span> recipe/hotpotqa/prepare_hotpotqa_agent_r1.py \
+  --output_dir data/corpus/hotpotqa \
+  --corpus_output_path data/corpus/hotpotqa_corpus/hpqa_corpus.jsonl
+
+<span class="comment"># Paper Search</span>
+<span class="cmd">python3</span> recipe/paper_search/prepare_paper_search_agent_r1.py \
+  --input_dir recipe/paper_search/inference/datasets/AutoScholarQuery \
+  --output_dir data/pasa
+
+<span class="comment"># ALFWorld / WebShop</span>
+<span class="cmd">python3</span> recipe/alfworld/prepare_alfworld_agent_r1.py \
+  --input_dir alfworld_data/json_2.1.1 \
+  --output_dir data/alfworld
+<span class="cmd">python3</span> recipe/webshop/prepare_webshop_agent_r1.py \
+  --dataset_mode small \
+  --input_dir webshop_data \
+  --output_dir data/webshop</code></pre>
+        </div>
+
+        <h4>常用训练脚本</h4>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>任务</th>
+              <th>主线脚本</th>
+              <th>补充说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GSM8K Tool</td>
+              <td><code>examples/run_qwen3-4b_gsm8k_tool.sh</code><br><code>examples/run_qwen3-4b_gsm8k_tool_steppo.sh</code></td>
+              <td>最小 sanity check；StepPO 脚本会设置 <code>algorithm.adv_estimator=gae</code> 与 <code>loss_mode=gspo</code>。</td>
+            </tr>
+            <tr>
+              <td>HotpotQA</td>
+              <td><code>examples/run_hotpotqa_steppo.sh</code></td>
+              <td>多跳检索问答；baseline 位于 <code>examples/hotpotqa/</code>。</td>
+            </tr>
+            <tr>
+              <td>Paper Search</td>
+              <td><code>examples/run_papersearch_steppo.sh</code></td>
+              <td>学术搜索任务；包含 AutoScholarQuery / RealScholarQuery JSONL 数据入口。</td>
+            </tr>
+            <tr>
+              <td>ALFWorld</td>
+              <td><code>examples/run_alfworld_steppo.sh</code></td>
+              <td>文本具身环境；需要本地 ALFWorld 原始数据。</td>
+            </tr>
+            <tr>
+              <td>WebShop</td>
+              <td><code>examples/run_webshop_steppo.sh</code></td>
+              <td>购物导航任务；准备阶段需要 WebShop 数据和环境资产。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>算法切换</h4>
+        <p>
+          Agent-R1 将 advantage estimator 与 policy loss 解耦。常用 <code>algorithm.adv_estimator</code> 包括
+          <code>gae</code>、<code>token_gae</code>、<code>grpo</code>、<code>rloo</code>、
+          <code>reinforce_plus_plus</code>、<code>reinforce_plus_plus_baseline</code> 和 <code>gigpo</code>。
+          StepPO 组合可理解为 step-level GAE 加 GSPO policy loss。
+        </p>
         <div class="panel-row">
           <div class="panel">
             <h4>最先确认的配置</h4>
-            <p>模型路径、数据路径、输出目录、可用 GPU 与基础依赖版本。</p>
+            <p>模型路径、数据路径、<code>agent_env_loop</code> 是否启用、可用 GPU 与 <code>verl</code> 兼容版本。</p>
           </div>
           <div class="panel">
             <h4>后面再调的配置</h4>
-            <p>步数上限、奖励细节、任务特定超参和更激进的训练效率优化。</p>
+            <p>步数上限、rollout 数量、advantage estimator、policy loss、奖励细节和任务特定超参。</p>
           </div>
         </div>
       </article>
@@ -1327,11 +1566,15 @@
         </div>
         <div class="panel">
           <h4>Q: 为什么我应该先跑最小任务，而不是直接上复杂 Agent 场景？</h4>
-          <p>A: 因为环境、路径、依赖和模型加载问题会先把你挡住，最小任务能帮你快速判断闭环是否已经接通。</p>
+          <p>A: 因为环境、路径、依赖和模型加载问题会先把你挡住。GSM8K-tool 最小闭环能同时检查数据、工具环境、rollout engine 和训练入口。</p>
         </div>
         <div class="panel">
           <h4>Q: 迁移新任务时最值得先读哪部分？</h4>
-          <p>A: 先看 Step-level MDP，再看分层抽象和任务结构，这样你会更清楚自己该改数据、环境还是脚本。</p>
+          <p>A: 先看 Step-level MDP，再看分层抽象和任务结构；然后对照 <code>recipe/hotpotqa</code>、<code>recipe/alfworld</code> 或 <code>recipe/webshop</code> 的目录模式。</p>
+        </div>
+        <div class="panel">
+          <h4>Q: 如何临时换模型或缩小资源？</h4>
+          <p>A: 直接在脚本末尾追加 Hydra override，例如 <code>actor_rollout_ref.model.path=/path/to/model</code>、<code>trainer.n_gpus_per_node=1</code> 或调小 batch size。</p>
         </div>
       </article>
 
@@ -1354,7 +1597,7 @@
             </tr>
             <tr>
               <td>GitHub 仓库</td>
-              <td><a href="https://github.com/0russwest0/Agent-R1" target="_blank" rel="noopener">https://github.com/0russwest0/Agent-R1</a></td>
+              <td><a href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">https://github.com/AgentR1/Agent-R1</a></td>
             </tr>
             <tr>
               <td>Technical Report</td>

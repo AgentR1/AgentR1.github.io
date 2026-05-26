@@ -3,6 +3,12 @@
 
 # Local project clones (do not upload)
 Agent-R1/
+!agent-r1/
+!agent-r1/assets/
+agent-r1/assets/*
+!agent-r1/assets/logo_full.png
+!agent-r1/assets/paper-figures/
+!agent-r1/assets/paper-figures/**
 Claw-R1/
 TabClaw/
 Mind2Report/
