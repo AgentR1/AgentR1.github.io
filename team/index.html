@@ -160,6 +160,17 @@
     .member-body {
       padding: 28px;
     }
+    .member-group-title {
+      font-size: 1.04rem;
+      font-weight: 800;
+      color: #111;
+      margin: 0 0 12px;
+    }
+    .member-grid + .member-group-title {
+      border-top: 1px solid #eeeeea;
+      margin-top: 26px;
+      padding-top: 22px;
+    }
     .member-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -280,9 +291,10 @@
     <section class="member-shell" aria-labelledby="team-title">
       <div class="member-header">
         <h2 id="team-title">团队成员</h2>
-        <p>指导教师与核心成员</p>
+        <p>指导教师、核心成员与学生成员</p>
       </div>
       <div class="member-body">
+        <h3 class="member-group-title">指导教师与核心成员</h3>
         <div class="member-grid">
           <a class="member-card" href="http://staff.ustc.edu.cn/~qiliuql/" target="_blank" rel="noopener">
             <div class="member-avatar">刘</div>
@@ -299,6 +311,38 @@
           <div class="member-card-static">
             <div class="member-avatar">陈</div>
             <div class="member-name">陈恩红</div>
+          </div>
+        </div>
+
+        <h3 class="member-group-title" id="student-members">学生成员</h3>
+        <div class="member-grid">
+          <div class="member-card-static">
+            <div class="member-avatar">S</div>
+            <div class="member-name">Shuo Yu</div>
+          </div>
+          <div class="member-card-static">
+            <div class="member-avatar">D</div>
+            <div class="member-name">Daoyu Wang</div>
+          </div>
+          <div class="member-card-static">
+            <div class="member-avatar">Q</div>
+            <div class="member-name">Qingchuan Li</div>
+          </div>
+          <div class="member-card-static">
+            <div class="member-avatar">Y</div>
+            <div class="member-name">Yitong Zhou</div>
+          </div>
+          <div class="member-card-static">
+            <div class="member-avatar">Y</div>
+            <div class="member-name">Yucong Luo</div>
+          </div>
+          <div class="member-card-static">
+            <div class="member-avatar">J</div>
+            <div class="member-name">Jie Ouyang</div>
+          </div>
+          <div class="member-card-static">
+            <div class="member-avatar">X</div>
+            <div class="member-name">Xiaoyu Tao</div>
           </div>
         </div>
       </div>
