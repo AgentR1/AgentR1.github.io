@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大模型推理与智能体机理分析 | Agentic AI</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <meta name="theme-color" content="#c0392b" />
+  <meta name="description" content="大模型推理与智能体机理分析：研究大模型思维链推理机理与大模型智能体机理，解析推理链路、任务分解、工具调用、记忆与反思等关键过程。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --ink: #111111;
+      --ink-soft: #2b2b2b;
+      --text: #55504d;
+      --muted: #706966;
+      --page: #f8f7f5;
+      --paper: #ffffff;
+      --surface: #fbfaf8;
+      --surface-red: #fff5f3;
+      --line: #e8e1dd;
+      --line-soft: #f0e7e3;
+      --red: #c0392b;
+      --red-dark: #9f2f24;
+      --red-muted: #a3483f;
+      --red-line: #e7b8b0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                   "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: var(--page);
+      color: var(--ink-soft);
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: justify;
+      text-justify: inter-ideograph;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--red); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      width: 100%;
+      max-width: min(960px, 100vw);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background: linear-gradient(160deg, #ffffff 52%, #fff4f2 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 64px 0 50px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, filter .16s ease;
+    }
+    header:hover { filter: saturate(1.02); }
+    header:active { transform: scale(0.996); }
+    body.page-refreshing header {
+      opacity: 0.72;
+      transform: scale(0.992);
+    }
+
+    .cat-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: var(--surface-red);
+      border: 1px solid var(--red-line);
+      border-radius: 999px;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+    }
+    header h1 {
+      font-size: clamp(1.55rem, 4vw, 2.18rem);
+      font-weight: 800;
+      line-height: 1.32;
+      color: var(--ink);
+      max-width: 860px;
+      margin: 0 auto;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    header h1 .highlight { color: var(--red); }
+    .subtitle {
+      margin: 14px auto 0;
+      font-size: 1.02rem;
+      color: var(--text);
+      max-width: 760px;
+      line-height: 1.75;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .affiliation {
+      margin-top: 12px;
+      font-size: 0.89rem;
+      color: #8a8582;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 8px rgba(80, 36, 30, 0.05);
+    }
+    .nav-bar .container {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .nav-bar .container::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      flex-shrink: 0;
+      padding: 13px 18px;
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: var(--text);
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s, background .2s;
+      white-space: nowrap;
+    }
+    .nav-bar a:hover {
+      color: var(--red);
+      border-bottom-color: var(--red);
+      background: var(--surface-red);
+      text-decoration: none;
+    }
+    .nav-home {
+      font-weight: 800;
+      color: var(--red) !important;
+      border-right: 1px solid var(--line);
+    }
+
+    section {
+      padding: 64px 0;
+      scroll-margin-top: 52px;
+    }
+    section.alt { background: var(--paper); }
+    section + section { border-top: 1px solid var(--line); }
+    h2.section-title {
+      font-size: 1.42rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--red);
+      display: inline-block;
+      line-height: 1.35;
+    }
+    h3.sub-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin: 30px 0 10px;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    h1, h2, h3, h4, p, li,
+    .subtitle,
+    .affiliation,
+    .tldr,
+    .card,
+    .stack-layer,
+    .stat-box {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .tldr {
+      background: var(--surface-red);
+      border-left: 4px solid var(--red);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 22px;
+      font-size: 1.01rem;
+      color: var(--ink-soft);
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+    .tldr strong { color: var(--red-dark); }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin: 24px 0 6px;
+    }
+    .stat-box {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(80, 36, 30, 0.04);
+    }
+    .stat-num {
+      font-size: clamp(1.02rem, 2.1vw, 1.34rem);
+      font-weight: 800;
+      color: var(--red);
+      line-height: 1.25;
+    }
+    .stat-label {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.55;
+    }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 20px;
+    }
+    .tag-cloud span {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 22px 20px;
+      box-shadow: 0 2px 8px rgba(80, 36, 30, 0.04);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(80, 36, 30, 0.10);
+    }
+    .card .card-icon {
+      font-size: 1.55rem;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .card h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 7px;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: var(--text);
+      margin: 0;
+      line-height: 1.68;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .feature-list li {
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+    }
+    .feature-list li::before {
+      content: "▸";
+      color: var(--red);
+      position: absolute;
+      left: 0;
+      top: 1px;
+    }
+
+    .stack {
+      margin-top: 24px;
+      padding: 22px 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ffffff, #fff7f5);
+      border: 1px solid var(--red-line);
+      box-shadow: 0 12px 30px rgba(80, 36, 30, 0.08);
+    }
+    .stack-flow {
+      display: grid;
+      gap: 10px;
+    }
+    .stack-layer {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      gap: 14px;
+      align-items: center;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: left;
+    }
+    .stack-layer.emphasis {
+      background: var(--surface-red);
+      border-color: var(--red-line);
+    }
+    .layer-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border-radius: 999px;
+      background: var(--paper);
+      border: 1px solid var(--red-line);
+      color: var(--red-dark);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .stack-layer strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+    .stack-layer span {
+      display: block;
+      color: var(--text);
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+    .stack-note {
+      margin-top: 14px;
+      color: var(--red-muted);
+      font-size: 0.82rem;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    footer {
+      background: #1c1c1c;
+      color: #999;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.84rem;
+    }
+    footer a { color: #e87b6e; }
+    footer p + p { margin-top: 6px; }
+
+    @media (max-width: 760px) {
+      body { text-align: left; }
+      .container { padding: 0 18px; }
+      header { padding: 44px 0 40px; }
+      header h1 {
+        font-size: 1.36rem;
+        max-width: 330px;
+      }
+      .nav-bar a { padding: 11px 14px; font-size: 0.82rem; }
+      section { padding: 50px 0; }
+      h2.section-title {
+        display: block;
+        width: fit-content;
+        max-width: 100%;
+        font-size: 1.24rem;
+      }
+      .stat-row,
+      .card-grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .stack {
+        padding: 16px 14px;
+        border-radius: 14px;
+      }
+      .stack-layer {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .layer-index {
+        justify-self: start;
+        padding: 0 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header id="top-refresh">
+  <div class="container">
+    <div class="cat-badge">Mechanism Analysis</div>
+    <h1><span class="highlight">大模型推理</span>与智能体机理分析</h1>
+    <p class="subtitle">
+      研究大模型思维链推理机理与大模型智能体机理，解析从问题理解、任务分解、推理链路、工具调用到记忆与反思的行为形成过程。
+    </p>
+    <p class="affiliation">中国科学技术大学 · 认知智能全国重点实验室</p>
+  </div>
+</header>
+
+<nav class="nav-bar" aria-label="页面导航">
+  <div class="container">
+    <a href="../" class="nav-home">首页</a>
+    <a href="#overview">方向概览</a>
+    <a href="#reasoning">思维链推理机理</a>
+    <a href="#agent-mechanism">智能体机理</a>
+    <a href="#diagnosis">诊断分析</a>
+  </div>
+</nav>
+
+<section id="overview" class="alt">
+  <div class="container">
+    <div class="tldr">
+      <strong>研究定位：</strong>
+      大模型推理与智能体机理分析关注“大模型为什么能推理、何时会推错、智能体如何形成可执行行为”。
+      该方向从思维链推理过程、智能体行动闭环和过程诊断评测三条线索出发，为训练方法、推理策略和 Agent 系统设计提供可解释依据。
+    </div>
+
+    <h2 class="section-title">方向概览</h2>
+    <p>
+      随着大模型从问答生成走向复杂任务求解，研究重点不再只是最终答案是否正确，还需要理解中间推理链路如何组织、任务如何分解、工具调用如何影响后续决策、记忆与反思如何改变长期行为。
+      本方向面向大模型思维链推理机理与大模型智能体机理，系统分析模型在多步推理、规划执行、环境反馈和能力边界上的行为规律。
+    </p>
+    <p>
+      目标是在可观测的轨迹、过程信号和评测结果之间建立联系：既解释链式推理中的中间步骤、验证与纠错机制，也解释 Agent 在任务分解、工具调用、记忆更新和反思修正中的行为形成机制。
+    </p>
+
+    <div class="stat-row" aria-label="研究主线">
+      <div class="stat-box">
+        <div class="stat-num">Reasoning</div>
+        <div class="stat-label">思维链推理<br>分解 · 推导 · 验证</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">Agent</div>
+        <div class="stat-label">智能体机理<br>规划 · 工具 · 记忆</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">Diagnosis</div>
+        <div class="stat-label">过程诊断<br>轨迹 · 归因 · 边界</div>
+      </div>
+    </div>
+
+    <div class="tag-cloud" aria-label="研究关键词">
+      <span>大模型思维链推理机理</span>
+      <span>大模型智能体机理</span>
+      <span>推理链路</span>
+      <span>任务分解</span>
+      <span>工具调用</span>
+      <span>记忆与反思</span>
+      <span>过程诊断</span>
+      <span>能力边界</span>
+    </div>
+  </div>
+</section>
+
+<section id="reasoning">
+  <div class="container">
+    <h2 class="section-title">大模型思维链推理机理</h2>
+    <p>
+      思维链推理机理研究大模型如何把输入问题转化为中间状态、推理步骤和候选结论，以及这些步骤如何影响最终答案。
+      重点关注链式推理是否真正承载问题求解过程、哪些步骤贡献了关键约束、错误如何沿推理链路传播，以及验证和自我修正机制何时有效。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🧩</div>
+        <h4>问题表征与隐式状态</h4>
+        <p>分析模型如何识别任务条件、约束关系和目标状态，解释问题理解阶段对后续推理路径的影响。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h4>推理链路组织</h4>
+        <p>研究中间步骤的生成顺序、依赖关系和信息传递，刻画多步推理路径的稳定性与可迁移性。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✅</div>
+        <h4>验证与纠错机制</h4>
+        <p>分析模型如何检查中间结论、发现冲突并修正答案，理解自洽采样、反思和过程反馈的有效条件。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">关键问题</h3>
+    <ul class="feature-list">
+      <li>思维链中的哪些步骤真正参与了问题求解，哪些只是表面解释。</li>
+      <li>多步推理路径在不同任务、不同提示和不同模型规模下如何变化。</li>
+      <li>错误推理如何产生、扩散和被纠正，过程反馈怎样转化为能力提升信号。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="agent-mechanism" class="alt">
+  <div class="container">
+    <h2 class="section-title">大模型智能体机理</h2>
+    <p>
+      大模型智能体机理研究模型从“生成回答”走向“规划、行动、观察、修正”的过程机制。
+      该方向关注 Agent 如何进行任务分解、选择工具、解释环境反馈、维护记忆并通过反思调整下一步行动，从而形成长程任务中的稳定行为。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <h4>任务分解与规划</h4>
+        <p>分析复杂任务如何被拆解为可执行子目标，以及规划结构如何影响后续搜索、调用和结果整合。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛠️</div>
+        <h4>工具调用与执行反馈</h4>
+        <p>研究工具选择、参数构造、执行结果读取和失败恢复，解释外部工具如何改变 Agent 的决策链路。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h4>记忆与反思</h4>
+        <p>刻画历史经验、检索记忆和反思摘要如何进入当前上下文，影响跨轮次任务求解与长期行为改进。</p>
+      </div>
+    </div>
+
+    <div class="stack" aria-label="大模型智能体行为闭环">
+      <div class="stack-flow">
+        <div class="stack-layer emphasis">
+          <div class="layer-index">Stage 1</div>
+          <div>
+            <strong>理解任务与形成目标</strong>
+            <span>解析用户意图、环境状态与约束条件，确定当前任务的可执行目标。</span>
+          </div>
+        </div>
+        <div class="stack-layer">
+          <div class="layer-index">Stage 2</div>
+          <div>
+            <strong>规划行动与调用工具</strong>
+            <span>将目标拆解为行动序列，选择检索、代码、数据库、浏览器等外部工具完成中间步骤。</span>
+          </div>
+        </div>
+        <div class="stack-layer">
+          <div class="layer-index">Stage 3</div>
+          <div>
+            <strong>观察反馈与更新状态</strong>
+            <span>读取执行结果、识别失败或冲突，将环境反馈、记忆证据和中间结论合并到当前状态。</span>
+          </div>
+        </div>
+        <div class="stack-layer emphasis">
+          <div class="layer-index">Stage 4</div>
+          <div>
+            <strong>反思修正与持续迭代</strong>
+            <span>通过自我评估、过程诊断和经验沉淀修正后续行为，支撑长程任务中的稳定执行。</span>
+          </div>
+        </div>
+      </div>
+      <div class="stack-note">从推理链路到行动闭环，解释大模型智能体的行为形成与能力边界。</div>
+    </div>
+  </div>
+</section>
+
+<section id="diagnosis">
+  <div class="container">
+    <h2 class="section-title">过程诊断与能力边界分析</h2>
+    <p>
+      机理分析需要把可观测轨迹转化为可解释证据。该方向通过过程数据采集、对比实验、错误归因和诊断评测，分析模型在推理与智能体行为中的稳定性、可控性和失效模式。
+    </p>
+
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h4>轨迹采集与过程标注</h4>
+        <p>记录思维链、工具调用、环境观察、记忆检索和反思修正等过程信号，形成可诊断的行为轨迹。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔬</div>
+        <h4>归因与消融分析</h4>
+        <p>通过提示、工具、记忆和反馈信号的对照实验，定位影响推理质量和 Agent 行为的关键因素。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📐</div>
+        <h4>过程评测与边界刻画</h4>
+        <p>不仅评价最终答案，还评价中间步骤、行动选择、恢复能力和长期一致性，刻画模型能力边界。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔁</div>
+        <h4>反馈闭环与方法改进</h4>
+        <p>将诊断结果反馈到提示策略、训练数据、奖励设计和 Agent 系统架构中，支撑可解释的持续改进。</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">支撑目标</h3>
+    <ul class="feature-list">
+      <li>为大模型推理能力提升提供可解释的过程证据。</li>
+      <li>为智能体系统中的规划、工具、记忆和反思模块提供诊断依据。</li>
+      <li>为 Agentic RL、评测体系和真实场景应用提供机制层面的分析框架。</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      &copy; 2026 大模型推理与智能体机理分析 &middot; AGI Group · State Key Laboratory of Cognitive Intelligence, USTC
+    </p>
+    <p style="font-size: 0.78rem; color: #555;">
+      Mechanism Analysis for Chain-of-Thought Reasoning and LLM Agents.
+    </p>
+  </div>
+</footer>
+
+<script>
+  const topRefresh = document.getElementById("top-refresh");
+
+  if (topRefresh) {
+    topRefresh.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+
+      document.body.classList.add("page-refreshing");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 180);
+    });
+  }
+</script>
+
+</body>
+</html>
