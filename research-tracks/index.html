@@ -334,6 +334,12 @@
     .project-card-wide {
       grid-column: span 2;
     }
+    .agenticrl-module-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
 
     .card-body {
       padding: 26px 26px 24px;
@@ -440,6 +446,12 @@
       gap: 12px;
       margin-bottom: 22px;
       flex: 1;
+    }
+    .self-learning-module-card {
+      grid-column: 1 / -1;
+    }
+    .self-learning-module-card .self-learning-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .app-domain-card {
       display: flex;
@@ -719,6 +731,7 @@
     /* ── Responsive ────────────────────────────────── */
     @media (max-width: 980px) {
       .self-learning-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .self-learning-module-card .self-learning-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 640px) {
@@ -752,9 +765,14 @@
       header h1 { font-size: 1.7rem; }
       .project-grid { grid-template-columns: 1fr; }
       .project-card-wide { grid-column: auto; }
+      .agenticrl-module-row {
+        grid-column: auto;
+        grid-template-columns: 1fr;
+      }
       .forecast-module-grid { grid-template-columns: 1fr; }
       .app-domain-grid { grid-template-columns: 1fr; }
       .self-learning-grid { grid-template-columns: 1fr; }
+      .self-learning-module-card .self-learning-grid { grid-template-columns: 1fr; }
       main { padding: 40px 0 60px; }
       .container { padding: 0 16px; }
       .team-grid { grid-template-columns: 1fr; }
@@ -800,16 +818,12 @@
     <div class="project-grid">
 
       <!-- 大模型自主交互学习 -->
-      <div class="project-card project-card-wide">
+      <div class="project-card self-learning-module-card">
         <div class="card-accent accent-selflearn"></div>
         <div class="card-body">
-          <h3>大模型自主交互学习机制及方法</h3>
-          <p class="card-desc">
-            大模型自主交互学习旨在研究大模型如何通过与环境、工具、同行模型和人类专家的多源交互，提升任务求解、知识获取和持续进化能力。该方向重点关注 Training-based 交互学习与 Training-free 交互增强两类路径，分别从模型能力优化和运行时能力增强两个层面，推动大模型从静态生成走向自主探索、协同学习和动态适应。
-          </p>
+          <h3>人类学习启发的大模型自主学习</h3>
+          <p class="card-desc">探究大模型从模型及人类反馈中进行自主交互学习的机制及方法，以实现能力持续提升。</p>
           <div class="self-learning-grid">
-            <div class="self-learning-path">Training-based：自主学习驱动的大模型能力增强</div>
-            <p class="self-learning-path-note">以反馈为信号，在策略空间中完成交互经验学习与能力内化。</p>
             <div class="self-learning-card">
               <div class="self-learning-header">
                 <span class="self-learning-icon">🧭</span>
@@ -837,8 +851,108 @@
                 </div>
               </div>
             </div>
-            <div class="self-learning-path">Training-free：自主交互驱动的大模型智能体</div>
-            <p class="self-learning-path-note">以语言为接口，在情境空间中完成运行时认知与能力调控。</p>
+          </div>
+          <div class="card-links">
+            <a class="card-btn btn-enter-selflearn" href="autonomous-learning/">查看主页 →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="agenticrl-module-row">
+        <!-- Agent Training Framework -->
+        <div class="project-card">
+          <div class="card-accent accent-training"></div>
+          <div class="card-body">
+            <h3>AgenticRL训练框架</h3>
+            <p class="card-desc">
+              面向大模型智能体训练的数据自动化收集、自主管理与通用训练优化框架。
+            </p>
+            <div class="card-meta">
+              <div class="meta-row">
+                <span class="meta-icon">🎯</span>
+                <span>Agent-R1 · Claw-R1 · 端到端 RL · Process Rewards</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-icon">🔧</span>
+                <span>PPO / GRPO / REINFORCE++ · Runtime RL · 零代码侵入</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-icon">📄</span>
+                <span>Agent-R1 项目 · Claw-R1 项目</span>
+              </div>
+            </div>
+            <div class="card-links">
+              <a class="card-btn btn-enter-training" href="agent-training/">查看主页 →</a>
+              <a class="card-btn btn-outline" href="agent-r1/">Agent-R1 </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agentic RL Algorithms -->
+        <div class="project-card">
+          <div class="card-accent accent-rlalgo"></div>
+          <div class="card-body">
+            <h3>AgenticRL优化算法</h3>
+            <p class="card-desc">
+              重点关注交互轨迹表示、优势计算与信用分配、奖励机制设计，以及长程规划与交互执行中的优化难题。
+            </p>
+            <div class="card-meta">
+              <div class="meta-row">
+                <span class="meta-icon">🧮</span>
+                <span>StepPO · PSPO · Step-level / Sequence-level 交互轨迹表示</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-icon">🔁</span>
+                <span>Step-level credit assignment · 长轨迹优化 · 时序决策建模</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-icon">🚀</span>
+                <span>奖励机制设计 · 过程奖励塑形 · Agentic RL 方法脉络</span>
+              </div>
+            </div>
+            <div class="card-links">
+              <a class="card-btn btn-enter-rlalgo" href="agentic-rl/">查看主页 →</a>
+              <a class="card-btn btn-outline" href="steppo/">StepPO </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- AgenticRL Data Science -->
+        <div class="project-card">
+          <div class="card-accent accent-rlalgo"></div>
+          <div class="card-body">
+            <h3>AgenticRL数据科学</h3>
+            <p class="card-desc">
+              建立交互轨迹质量—模型能力增益关联机理，揭示不同质量特征及其组合对智能体能力形成的作用规律，并据此形成能力增益导向的数据调度方法。
+            </p>
+            <div class="card-meta">
+              <div class="meta-row">
+                <span class="meta-icon">📈</span>
+                <span>交互轨迹质量—模型能力增益关联建模</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-icon">🧩</span>
+                <span>质量特征、特征组合与智能体能力形成规律</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-icon">🗂️</span>
+                <span>能力增益导向的数据选择、调度与训练数据组织方法</span>
+              </div>
+            </div>
+            <div class="card-links">
+              <a class="card-btn btn-enter-rlalgo" href="">查看主页 →</a>
+              <a class="card-btn btn-outline" href="claw-r1/">Claw-R1 </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card self-learning-module-card">
+        <div class="card-accent accent-selflearn"></div>
+        <div class="card-body">
+          <h3>人类反馈与环境交互驱动的大模型持续进化</h3>
+          <p class="card-desc">面向开放复杂任务，探索人类反馈、大模型推理与环境交互协同驱动的持续学习机制，实现智能体系统能力动态演化。</p>
+          <div class="self-learning-grid">
             <div class="self-learning-card self-learning-card-free">
               <div class="self-learning-header">
                 <span class="self-learning-icon">🧠</span>
@@ -866,80 +980,10 @@
                 </div>
               </div>
             </div>
-            <div class="self-learning-card self-learning-card-platform">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🛠️</span>
-                <div>
-                  <div class="self-learning-project">大模型能力增强平台研发</div>
-                  <p class="self-learning-desc">构建交互环境、轨迹采集、奖励建模、工具调用、模型训练、记忆管理与评测诊断的一体化平台，支撑两类路径的统一闭环。</p>
-                </div>
-              </div>
-            </div>
           </div>
           <div class="card-links">
             <a class="card-btn btn-enter-selflearn" href="autonomous-learning/">查看主页 →</a>
             <a class="card-btn btn-outline" href="knowledge_memory/">科学知识交互</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Agent Training Framework -->
-      <div class="project-card">
-        <div class="card-accent accent-training"></div>
-        <div class="card-body">
-          <h3>AgenticRL训练框架</h3>
-          <p class="card-desc">
-            面向大模型智能体训练的数据自动化收集、自主管理与通用训练优化框架。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🎯</span>
-              <span>Agent-R1 · Claw-R1 · 端到端 RL · Process Rewards</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔧</span>
-              <span>PPO / GRPO / REINFORCE++ · Runtime RL · 零代码侵入</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">📄</span>
-              <span>Agent-R1 项目 · Claw-R1 项目</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-training" href="agent-training/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="agent-r1/">Agent-R1 </a>
-            <a class="card-btn btn-outline" href="claw-r1/">Claw-R1 </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Agentic RL Algorithms -->
-      <div class="project-card">
-        <div class="card-accent accent-rlalgo"></div>
-        <div class="card-body">
-          <h3>AgenticRL基础算法</h3>
-          <p class="card-desc">
-            重点关注交互轨迹表示、优势计算与信用分配、奖励机制设计，以及长程规划与交互执行中的优化难题。
-          </p>
-          <div class="card-meta">
-            <div class="meta-row">
-              <span class="meta-icon">🧮</span>
-              <span>StepPO · PSPO · Step-level / Sequence-level 交互轨迹表示</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🔁</span>
-              <span>Step-level credit assignment · 长轨迹优化 · 时序决策建模</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-icon">🚀</span>
-              <span>奖励机制设计 · 过程奖励塑形 · Agentic RL 方法脉络</span>
-            </div>
-          </div>
-          <div class="card-links">
-            <a class="card-btn btn-enter-rlalgo" href="agentic-rl/">查看主页 →</a>
-            <a class="card-btn btn-outline" href="steppo/">StepPO </a>
-            <a class="card-btn btn-outline" href="paperscout/">PSPO </a>
-            <a class="card-btn btn-outline" href="geomind/#magrpo">MA-GRPO </a>
           </div>
         </div>
       </div>
