@@ -453,6 +453,9 @@
     .self-learning-module-card .self-learning-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+    .self-learning-grid.self-learning-two-card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
     .app-domain-card {
       display: flex;
       flex-direction: column;
@@ -921,9 +924,9 @@
         <div class="project-card">
           <div class="card-accent accent-rlalgo"></div>
           <div class="card-body">
-            <h3>AgenticRL数据科学</h3>
+            <h3>AgenticRL数据质量</h3>
             <p class="card-desc">
-              建立交互轨迹质量—模型能力增益关联机理，揭示不同质量特征及其组合对智能体能力形成的作用规律，并据此形成能力增益导向的数据调度方法。
+              研究交互轨迹质量与能力增益的关系，形成面向能力提升的数据调度方法。
             </p>
             <div class="card-meta">
               <div class="meta-row">
@@ -952,31 +955,22 @@
         <div class="card-body">
           <h3>人类反馈与环境交互驱动的大模型持续进化</h3>
           <p class="card-desc">面向开放复杂任务，探索人类反馈、大模型推理与环境交互协同驱动的持续学习机制，实现智能体系统能力动态演化。</p>
-          <div class="self-learning-grid">
+          <div class="self-learning-grid self-learning-two-card-grid">
+            <div class="self-learning-card self-learning-card-free">
+              <div class="self-learning-header">
+                <span class="self-learning-icon">🤝</span>
+                <div>
+                  <div class="self-learning-project">人类反馈建模与主动对齐学习</div>
+                  <p class="self-learning-desc">如何从少量反馈中高效学习？真实科研或教育场景中，专家反馈成本很高，不可能大量标注。如何让模型主动向人提问？不是被动等人纠错，而是在不确定、冲突、缺信息时主动寻求反馈。</p>
+                </div>
+              </div>
+            </div>
             <div class="self-learning-card self-learning-card-free">
               <div class="self-learning-header">
                 <span class="self-learning-icon">🧠</span>
                 <div>
                   <div class="self-learning-project">经验记忆交互</div>
                   <p class="self-learning-desc">通过历史经验沉淀、记忆检索与交互式更新，支持经验复用、跨任务迁移和持续迭代，在不更新参数的情况下提升长期任务处理能力。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-card self-learning-card-free">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🤝</span>
-                <div>
-                  <div class="self-learning-project">人类专家交互</div>
-                  <p class="self-learning-desc">通过多轮澄清、需求确认、大模型启发式主动提问和反馈修正，动态补充任务情境，提升复杂任务求解质量。</p>
-                </div>
-              </div>
-            </div>
-            <div class="self-learning-card self-learning-card-free">
-              <div class="self-learning-header">
-                <span class="self-learning-icon">🔎</span>
-                <div>
-                  <div class="self-learning-project">科学知识交互</div>
-                  <p class="self-learning-desc">通过科学文献检索、知识库查询、证据追踪和结果验证等交互机制，增强模型的科学知识获取、理解、组织与应用能力。</p>
                 </div>
               </div>
             </div>
