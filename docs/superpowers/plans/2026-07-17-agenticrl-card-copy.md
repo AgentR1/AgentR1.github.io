@@ -17,7 +17,7 @@
 - Modify: `research-tracks/index.html:869`
 - Create: `docs/superpowers/plans/2026-07-17-agenticrl-card-copy.md`
 
-- [ ] **Step 1: Run the desired-copy assertion before editing**
+- [x] **Step 1: Run the desired-copy assertion before editing**
 
 Run:
 
@@ -51,7 +51,7 @@ NODE
 
 Expected: FAIL with `index.html missing: AgenticRL训练系统`.
 
-- [ ] **Step 2: Replace the card copy on both pages**
+- [x] **Step 2: Replace the card copy on both pages**
 
 Use the following exact content while preserving the existing HTML wrappers and icons:
 
@@ -75,7 +75,7 @@ AgenticRL数据工程
 代表项目：Claw-R1
 ```
 
-- [ ] **Step 3: Run the desired-copy assertion after editing**
+- [x] **Step 3: Run the desired-copy assertion after editing**
 
 Run:
 
@@ -109,7 +109,7 @@ NODE
 
 Expected: exit code 0 with no output.
 
-- [ ] **Step 4: Verify obsolete copy is gone and both pages match**
+- [x] **Step 4: Verify obsolete copy is gone and both pages match**
 
 Run:
 
@@ -120,7 +120,7 @@ git diff --check -- index.html research-tracks/index.html docs/superpowers/plans
 
 Expected: `rg` exits 1 with no matches; `git diff --check` exits 0 with no output.
 
-- [ ] **Step 5: Stage only the intended files and inspect the staged diff**
+- [x] **Step 5: Stage only the intended files and inspect the staged diff**
 
 Run:
 
