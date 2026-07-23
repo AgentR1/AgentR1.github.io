@@ -3,19 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <meta name="theme-color" content="#0b5fc6" />
   <title>论文列表 | Agentic AI</title>
   <meta name="description" content="USTC-AGI Agentic AI 方向论文列表，展示当前页面涉及的代表性论文。" />
+  <link rel="canonical" href="https://agentr1.github.io/papers/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="USTC-AGI Agentic AI" />
+  <meta property="og:title" content="Agentic AI Publications 论文列表" />
+  <meta property="og:description" content="USTC-AGI Agentic AI 方向代表性论文，支持按研究标签与关键词筛选。" />
+  <meta property="og:url" content="https://agentr1.github.io/papers/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Agentic AI Publications 论文列表" />
+  <meta name="twitter:description" content="USTC-AGI Agentic AI 方向代表性论文，支持按研究标签与关键词筛选。" />
   <style>
     :root {
-      --accent: #c0392b;
-      --accent-dark: #a93226;
-      --accent-light: #fff3f2;
-      --text: #1a1a1a;
-      --text-muted: #5b5b5b;
-      --border: #e6e6e2;
-      --bg: #f7f7f5;
+      --accent: #0b5fc6;
+      --accent-dark: #083f7f;
+      --accent-light: #edf7fc;
+      --text: #17324d;
+      --text-muted: #4c6176;
+      --border: #d5e3eb;
+      --bg: #f4f7f9;
       --card: #ffffff;
-      --shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+      --shadow: 0 10px 28px rgba(6, 31, 69, 0.06);
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
               "PingFang SC", "Hiragino Sans GB", sans-serif;
     }
@@ -31,11 +42,32 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      text-align: justify;
-      text-justify: inter-ideograph;
+      text-align: left;
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    :focus-visible {
+      outline: 3px solid rgba(11, 95, 198, 0.25);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: fixed;
+      top: 10px;
+      left: 12px;
+      z-index: 999;
+      padding: 9px 14px;
+      border-radius: 8px;
+      background: #061f45;
+      color: #fff;
+      font-weight: 700;
+      transform: translateY(-160%);
+      transition: transform .18s ease;
+    }
+    .skip-link:focus {
+      color: #fff;
+      text-decoration: none;
+      transform: translateY(0);
+    }
 
     .container {
       max-width: 1180px;
@@ -50,8 +82,8 @@
       background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid #e8e8e8;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid #d5e3eb;
+      box-shadow: 0 2px 12px rgba(6, 31, 69, 0.05);
     }
     .top-nav .container {
       display: flex;
@@ -64,7 +96,7 @@
       flex-shrink: 0;
       font-size: 0.92rem;
       font-weight: 800;
-      color: #111;
+      color: #061f45;
       letter-spacing: 0.01em;
       white-space: nowrap;
     }
@@ -85,23 +117,28 @@
       border: 1px solid transparent;
       font-size: 0.84rem;
       font-weight: 600;
-      color: #555;
+      color: #4c6176;
       transition: color .18s, background .18s, border-color .18s, transform .18s;
     }
     .nav-links a.nav-primary {
       color: #fff;
       background: var(--accent);
       border-color: var(--accent);
-      box-shadow: 0 6px 14px rgba(192, 57, 43, 0.16);
+      box-shadow: 0 6px 14px rgba(11, 95, 198, 0.16);
     }
     .nav-links a:hover,
     .nav-links a:active,
     .nav-links a.nav-primary:hover {
       color: var(--accent);
       background: var(--accent-light);
-      border-color: #f1d2ce;
+      border-color: #b7d9ec;
       text-decoration: none;
       transform: translateY(-1px);
+    }
+    .nav-links a[aria-current="page"] {
+      color: var(--accent);
+      background: var(--accent-light);
+      border-color: #b7d9ec;
     }
     .nav-links a.nav-primary:hover {
       color: #fff;
@@ -110,33 +147,21 @@
     }
 
     header {
-      background: linear-gradient(160deg, #ffffff 50%, #fff5f4 100%);
-      border-bottom: 1px solid #e8e8e8;
+      background: linear-gradient(160deg, #ffffff 50%, #edf7fc 100%);
+      border-bottom: 1px solid #d5e3eb;
       padding: 72px 0 56px;
       text-align: center;
-      cursor: pointer;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-    header:hover {
-      background: linear-gradient(160deg, #fffdfd 50%, #ffeceb 100%);
-    }
-    header:active {
-      transform: scale(0.997);
-    }
-    header:focus-visible {
-      outline: 3px solid rgba(192, 57, 43, 0.2);
-      outline-offset: -6px;
     }
     header h1 {
       font-size: 2.3rem;
       font-weight: 800;
       line-height: 1.25;
-      color: #111;
+      color: #061f45;
     }
     header .header-sub {
       margin-top: 14px;
       font-size: 0.97rem;
-      color: #666;
+      color: #5b7187;
       line-height: 1.75;
     }
 
@@ -157,12 +182,12 @@
     .publication-header {
       padding: 28px 28px 18px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #ffffff 0%, #fffaf9 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
     }
     .publication-header h2 {
       font-size: 1.5rem;
       font-weight: 800;
-      color: #111;
+      color: #061f45;
       margin-bottom: 8px;
     }
     .publication-header p {
@@ -172,7 +197,7 @@
     .pub-note {
       margin-top: 10px;
       font-size: 0.9rem;
-      color: #666;
+      color: #5b7187;
     }
     .label-group {
       display: flex;
@@ -183,6 +208,75 @@
     .filter-panel {
       margin-top: 18px;
     }
+    .search-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .search-field {
+      display: grid;
+      flex: 1;
+      gap: 7px;
+      max-width: 640px;
+    }
+    .search-label {
+      color: #17324d;
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+    .search-control {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      color: #5b7187;
+      font-size: 1rem;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .search-control input {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px 10px 40px;
+      border: 1px solid #b7d9ec;
+      border-radius: 11px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 0.91rem;
+      line-height: 1.45;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .search-control input::placeholder {
+      color: #5b7187;
+    }
+    .search-control input:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(11, 95, 198, 0.12);
+    }
+    .search-clear {
+      min-height: 44px;
+      padding: 9px 14px;
+      border: 1px solid #b7d9ec;
+      border-radius: 11px;
+      background: #fff;
+      color: #35698f;
+      font: inherit;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: color .18s, background .18s, border-color .18s;
+    }
+    .search-clear:hover {
+      color: var(--accent);
+      background: var(--accent-light);
+      border-color: #8fc3df;
+    }
     .filter-panel .label-group {
       margin-top: 0;
     }
@@ -192,9 +286,9 @@
       gap: 7px;
       padding: 7px 13px;
       border-radius: 999px;
-      border: 1px solid #ead4cf;
+      border: 1px solid #b7d9ec;
       background: #fff;
-      color: #8f3d2c;
+      color: #35698f;
       font-family: var(--font);
       font-size: 0.78rem;
       font-weight: 800;
@@ -204,19 +298,19 @@
       transition: background .18s, border-color .18s, color .18s, box-shadow .18s, transform .18s;
     }
     .paper-filter:hover {
-      background: #fff7f4;
-      border-color: #dca59d;
+      background: #edf7fc;
+      border-color: #8fc3df;
       transform: translateY(-1px);
     }
     .paper-filter:focus-visible {
-      outline: 3px solid rgba(192, 57, 43, 0.18);
+      outline: 3px solid rgba(11, 95, 198, 0.18);
       outline-offset: 2px;
     }
     .paper-filter.is-active {
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
-      box-shadow: 0 8px 18px rgba(192, 57, 43, 0.18);
+      box-shadow: 0 8px 18px rgba(11, 95, 198, 0.18);
     }
     .filter-count {
       display: inline-flex;
@@ -227,7 +321,7 @@
       padding: 0 7px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(192, 57, 43, 0.18);
+      border: 1px solid rgba(11, 95, 198, 0.18);
       color: inherit;
       font-size: 0.72rem;
       line-height: 1;
@@ -238,7 +332,7 @@
     }
     .filter-status {
       margin-top: 12px;
-      color: #666;
+      color: #5b7187;
       font-size: 0.86rem;
       line-height: 1.6;
     }
@@ -247,9 +341,9 @@
       align-items: center;
       padding: 5px 12px;
       border-radius: 999px;
-      border: 1px solid #ead4cf;
-      background: #fff7f4;
-      color: #8f3d2c;
+      border: 1px solid #b7d9ec;
+      background: #edf7fc;
+      color: #35698f;
       font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.01em;
@@ -257,16 +351,14 @@
       vertical-align: middle;
     }
     .paper-labels {
-      display: inline-flex;
+      display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-left: 8px;
-      vertical-align: middle;
+      margin: 8px 0 6px;
     }
     .publication-body {
       padding: 8px 28px 30px;
-      text-align: justify;
-      text-justify: inter-ideograph;
+      text-align: left;
     }
     .pub-year-heading {
       font-size: 1.03rem;
@@ -278,13 +370,54 @@
       line-height: 1.3;
     }
     .pub-list {
-      padding-left: 24px;
+      display: grid;
+      gap: 12px;
+      padding-left: 0;
+      list-style: none;
+      counter-reset: paper-item;
       font-size: 0.95rem;
-      line-height: 1.85;
+      line-height: 1.75;
       color: var(--text);
     }
     .pub-list li {
-      margin-bottom: 10px;
+      position: relative;
+      counter-increment: paper-item;
+      margin: 0;
+      padding: 18px 20px 18px 54px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: #fff;
+      box-shadow: 0 5px 16px rgba(6, 31, 69, 0.035);
+      overflow-wrap: anywhere;
+      transition: border-color .18s, box-shadow .18s, transform .18s;
+    }
+    .pub-list li::before {
+      content: counter(paper-item);
+      position: absolute;
+      top: 19px;
+      left: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 25px;
+      height: 25px;
+      border: 1px solid #b7d9ec;
+      border-radius: 50%;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .pub-list li:hover {
+      border-color: #b7d9ec;
+      box-shadow: 0 9px 24px rgba(6, 31, 69, 0.07);
+      transform: translateY(-1px);
+    }
+    .pub-list strong {
+      color: #061f45;
+      font-size: 1rem;
+      line-height: 1.6;
     }
     .pub-year-heading[hidden],
     .pub-list[hidden],
@@ -298,31 +431,41 @@
     .pub-list a:hover {
       text-decoration: underline;
     }
+    .empty-state {
+      margin: 26px 0 4px;
+      padding: 26px 20px;
+      border: 1px dashed #b7d9ec;
+      border-radius: 13px;
+      background: #f8fbfd;
+      color: #4c6176;
+      text-align: center;
+      font-weight: 700;
+    }
     .pub-link-disabled {
       display: inline-flex;
       align-items: center;
       padding: 1px 7px;
       border-radius: 999px;
-      border: 1px solid #e9e9e6;
-      background: #f6f6f4;
-      color: #8a8a8a;
+      border: 1px solid #e6f0f5;
+      background: #f8fbfd;
+      color: #5b7187;
       font-size: 0.78rem;
       font-weight: 600;
       vertical-align: middle;
     }
 
     footer {
-      background: #1c1c1c;
-      color: #999;
+      background: #061f45;
+      color: #a9c7db;
       text-align: center;
       padding: 28px 24px;
       font-size: 0.84rem;
     }
-    footer a { color: #e87b6e; }
+    footer a { color: #8fd9ff; }
     footer .footer-funding {
       margin-top: 12px;
       font-size: 0.82rem;
-      color: #888;
+      color: #8eb4cc;
       line-height: 1.6;
     }
 
@@ -350,16 +493,46 @@
         padding-left: 18px;
         padding-right: 18px;
       }
+      .search-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+      .search-field {
+        max-width: none;
+      }
+      .search-clear {
+        align-self: flex-start;
+        min-height: 40px;
+      }
       .pub-list {
-        padding-left: 20px;
+        gap: 10px;
+      }
+      .pub-list li {
+        padding: 16px 15px 16px 48px;
+      }
+      .pub-list li::before {
+        top: 17px;
+        left: 13px;
       }
       .container {
         padding: 0 16px;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
   </style>
 </head>
 <body>
+
+<a class="skip-link" href="#main-content">跳到论文列表</a>
 
 <nav class="top-nav" aria-label="首页顶部导航">
   <div class="container">
@@ -367,7 +540,7 @@
     <div class="nav-links">
       <a href="../index.html#hero-header">首页</a>
       <a href="../index.html#research-tracks">研究方向</a>
-      <a href="../papers/">论文列表</a>
+      <a href="../papers/" aria-current="page">论文列表</a>
       <a href="../index.html#application-systems">应用研究</a>
       <a href="../team/">团队成员</a>
       <a href="https://github.com/AgentR1" target="_blank" rel="noopener">GitHub</a>
@@ -375,8 +548,7 @@
   </div>
 </nav>
 
-<header id="hero-header" role="button" tabindex="0" aria-label="点击刷新当前页面"
-        onclick="location.reload()">
+<header id="hero-header">
   <div class="container">
     <h1>Agentic AI Publications 论文列表</h1>
     <p class="header-sub">
@@ -386,41 +558,57 @@
   </div>
 </header>
 
-<main>
+<main id="main-content" tabindex="-1">
   <div class="container">
     <section id="paper-list" class="publication-shell" aria-labelledby="paper-list-title">
       <div class="publication-header">
         <h2 id="paper-list-title">论文列表</h2>
         <p>按研究重点整理当前页面涉及的代表性论文，并补充统一的 Label 分类。</p>
         <div class="filter-panel">
-          <div class="label-group" aria-label="按论文标签筛选">
-            <button class="paper-filter is-active" type="button" data-filter="all" aria-pressed="true">
+          <div class="search-row">
+            <label class="search-field" for="paper-search">
+              <span class="search-label">搜索论文</span>
+              <span class="search-control">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input
+                  id="paper-search"
+                  type="search"
+                  placeholder="输入标题、作者、会议或关键词"
+                  autocomplete="off"
+                  aria-describedby="paper-filter-status"
+                />
+              </span>
+            </label>
+            <button class="search-clear" id="paper-search-clear" type="button" hidden>清除搜索</button>
+          </div>
+          <div class="label-group" role="group" aria-label="按论文标签筛选">
+            <button class="paper-filter is-active" type="button" data-filter="all" aria-pressed="true" aria-controls="publication-results">
               全部 <span class="filter-count" data-filter-count="all">15</span>
             </button>
-            <button class="paper-filter" type="button" data-filter="Slow-thinking Reasoning" aria-pressed="false">
+            <button class="paper-filter" type="button" data-filter="Slow-thinking Reasoning" aria-pressed="false" aria-controls="publication-results">
               Slow-thinking Reasoning <span class="filter-count" data-filter-count="Slow-thinking Reasoning">6</span>
             </button>
-            <button class="paper-filter" type="button" data-filter="Agent Runtime" aria-pressed="false">
+            <button class="paper-filter" type="button" data-filter="Agent Runtime" aria-pressed="false" aria-controls="publication-results">
               Agent Runtime <span class="filter-count" data-filter-count="Agent Runtime">5</span>
             </button>
-            <button class="paper-filter" type="button" data-filter="Agentic RL" aria-pressed="false">
+            <button class="paper-filter" type="button" data-filter="Agentic RL" aria-pressed="false" aria-controls="publication-results">
               Agentic RL <span class="filter-count" data-filter-count="Agentic RL">6</span>
             </button>
-            <button class="paper-filter" type="button" data-filter="Agentic AI Applications" aria-pressed="false">
+            <button class="paper-filter" type="button" data-filter="Agentic AI Applications" aria-pressed="false" aria-controls="publication-results">
               Agentic AI Applications <span class="filter-count" data-filter-count="Agentic AI Applications">13</span>
             </button>
           </div>
-          <p class="filter-status" id="paper-filter-status" aria-live="polite">显示全部 15 篇论文</p>
+          <p class="filter-status" id="paper-filter-status" role="status" aria-live="polite">显示全部 15 篇论文</p>
         </div>
       </div>
 
-      <div class="publication-body">
+      <div class="publication-body" id="publication-results">
         <h3 class="pub-year-heading">📘 Research Papers</h3>
         <ol class="pub-list">
           <li>
             Daoyu Wang, Qingchuan Li, Mingyue Cheng, Jie Ouyang, Shuo Yu, Qi Liu, Enhong Chen,
             <strong>StepPO: Step-Aligned Policy Optimization for Agentic Reinforcement Learning</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agentic RL</span></span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span></span>
             (Preprint)
             [<a href="https://arxiv.org/abs/2604.18401" target="_blank" rel="noopener">PDF</a>]
             [<a href="../steppo/">Project</a>]
@@ -428,7 +616,7 @@
           <li>
             Mingyue Cheng, Jie Ouyang, Shuo Yu, Ruiran Yan, Yucong Luo, Zirui Liu, Daoyu Wang, Qi Liu, Enhong Chen,
             <strong>Agent-r1: Training powerful llm agents with end-to-end reinforcement learning</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agentic RL</span><span class="paper-label">Agent Runtime</span></span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agent Runtime</span></span>
             (Preprint)
             [<a href="https://arxiv.org/abs/2511.14460" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/AgentR1/Agent-R1" target="_blank" rel="noopener">Code</a>]
@@ -437,7 +625,7 @@
           <li>
             Tingyue Pan, Jie Ouyang, Mingyue Cheng, Qingchuan Li, Zirui Liu, Mingfan Pan, Shuo Yu, Qi Liu,
             <strong>PaperScout: An Autonomous Agent for Academic Paper Search with Process-Aware Sequence-Level Policy Optimization</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/abs/2601.10029" target="_blank" rel="noopener">PDF</a>]
             [<a href="../agent-apps/#paperscout">Project</a>]
@@ -445,7 +633,7 @@
           <li>
             Xiaoyu Tao, Mingyue Cheng, Chuang Jiang, Tian Gao, Huanjian Zhang, Yaguo Liu,
             <strong>Cast-R1: Learning Tool-Augmented Sequential Decision Policies for Time Series Forecasting</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2602.13802" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/Xiaoyu-Tao/Cast-R1-TS" target="_blank" rel="noopener">Code</a>]
@@ -453,7 +641,7 @@
           <li>
             Xiaoyu Tao, Mingyue Cheng*, Ze Guo, Shuo Yu, Yaguo Liu, Qi Liu, Shijin Wang,
             <strong>MemCast: Memory-Driven Time Series Forecasting with Experience-Conditioned Reasoning</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2602.03164" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/ustc-time-series/MemCast" target="_blank" rel="noopener">Code</a>]
@@ -461,7 +649,7 @@
           <li>
             Yitong Zhou, Yucong Luo, Mingyue Cheng*, Jiahao Wang, Daoyu Wang, Tingyue Pan, Jintao Zhang, Qi Liu,
             <strong>Time Series Forecasting as Reasoning: A Slow-Thinking Approach with Reinforced LLMs</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2506.10630" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/ustc-time-series/Time-R1" target="_blank" rel="noopener">Code</a>]
@@ -469,14 +657,14 @@
           <li>
             Xiaoyu Tao, Yuchong Wu, Mingyue Cheng, Ze Guo, Tian Gao,
             <strong>AnomaMind: Agentic Time Series Anomaly Detection with Tool-Augmented Reasoning</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2602.13807" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Xiaohan Zhang, Tian Gao, Mingyue Cheng*, Bokai Pan, Ze Guo, Yaguo Liu, Xiaoyu Tao,
             <strong>AlphaCast: A Human Wisdom-LLM Intelligence Co-Reasoning Framework for Interactive Time Series Forecasting</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2511.08947" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/ustc-time-series/AlphaCast" target="_blank" rel="noopener">Code</a>]
@@ -484,7 +672,7 @@
           <li>
             Chuang Jiang, Mingyue Cheng*, Xiaoyu Tao, Qingyang Mao, Jie Ouyang and Qi Liu,
             <strong>TableMind: An Autonomous Programmatic Agent for Tool-Augmented Table Reasoning</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>ACM WSDM2026</em>: 260–270, Feb 2026.
             [<a href="https://arxiv.org/pdf/2509.06278" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/lennendd/TableMind-Repo" target="_blank" rel="noopener">Code</a>]
@@ -492,28 +680,28 @@
           <li>
             Qingyang Mao, Qi Liu, Zhi Li, Mingyue Cheng, Zheng Zhang, Rui Li,
             <strong>PoTable: Programming Standardly on Table-based Reasoning Like a Human Analyst</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>IEEE TKDE Accepted</em>.
             [<a href="https://arxiv.org/pdf/2412.04272" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Shuo Yu, Mingyue Cheng*, Daoyu Wang, Qi Liu, Zirui Liu, Ze Guo, Xiaoyu Tao,
             <strong>MemWeaver: A Hierarchical Memory from Textual Interactive Behaviors for Personalized Generation</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>ACM WWW2026</em>.
             [<a href="https://arxiv.org/abs/2510.07713" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Zhiding Liu, Ben Chen, Mingyue Cheng*, Enhong Chen, Li Li, Chenyi Lei*, Wenwu Ou, Han Li and Kun Gai,
             <strong>Towards Context-aware Reasoning-enhanced Generative Searching in E-commerce</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Slow-thinking Reasoning</span><span class="paper-label">Agentic AI Applications</span></span>
             <em>ACM WWW2026</em>.
             [<a href="https://arxiv.org/pdf/2510.16925" target="_blank" rel="noopener">PDF</a>]
           </li>
           <li>
             Daoyu Wang, Mingyue Cheng*, Shuo Yu, Zirui Liu, Ze Guo, Qi Liu,
             <strong>PaperArena: An Evaluation Benchmark for Tool-Augmented Agentic Reasoning on Scientific Literature</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2510.10909" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/Melmaphother/PaperArena" target="_blank" rel="noopener">Code</a>]
@@ -525,7 +713,7 @@
           <li>
             Mingyue Cheng, Daoyu Wang, Shuo Yu, Qingchuan Li, Jie Ouyang, Yucong Luo, Yiju Zhang, Qi Liu, Enhong Chen,
             <strong>A Comprehensive Survey of the LLM-Based Agent: The Contextual Cognition Perspective</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic RL</span><span class="paper-label">Agentic AI Applications</span></span>
             (Survey Preprint)
             [<a href="https://www.preprints.org/manuscript/202604.0935" target="_blank" rel="noopener">Preprint</a>]
             [<a href="https://doi.org/10.20944/preprints202604.0935.v1" target="_blank" rel="noopener">DOI</a>]
@@ -533,12 +721,13 @@
           <li>
             Mingyue Cheng, Yucong Luo, Jie Ouyang, Qi Liu*, Huijie Liu, Li Li, Shuo Yu, Bohou Zhang, Jiawei Cao, Jie Ma, Daoyu Wang, Enhong Chen,
             <strong>A Survey on Knowledge-Oriented Retrieval-Augmented Generation</strong>.
-            <span class="paper-labels" hidden aria-hidden="true"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
+            <span class="paper-labels"><span class="paper-label">Agent Runtime</span><span class="paper-label">Agentic AI Applications</span></span>
             (Preprint)
             [<a href="https://arxiv.org/pdf/2503.10677" target="_blank" rel="noopener">PDF</a>]
             [<a href="https://github.com/USTCAGI/Awesome-Papers-Retrieval-Augmented-Generation" target="_blank" rel="noopener">Code</a>]
           </li>
         </ol>
+        <p class="empty-state" id="paper-empty-state" hidden>没有匹配的论文，请调整关键词或研究标签。</p>
       </div>
     </section>
   </div>
@@ -560,11 +749,16 @@
     const buttons = Array.from(document.querySelectorAll(".paper-filter"));
     const papers = Array.from(document.querySelectorAll(".pub-list li"));
     const status = document.getElementById("paper-filter-status");
+    const searchInput = document.getElementById("paper-search");
+    const clearButton = document.getElementById("paper-search-clear");
+    const emptyState = document.getElementById("paper-empty-state");
     const sections = Array.from(document.querySelectorAll(".publication-body .pub-list")).map((list) => ({
       list,
       heading: list.previousElementSibling,
       items: Array.from(list.querySelectorAll("li")),
     }));
+    let activeFilter = "all";
+    let searchQuery = "";
 
     const getLabels = (paper) =>
       Array.from(paper.querySelectorAll(".paper-labels .paper-label"))
@@ -572,16 +766,30 @@
         .filter(Boolean);
 
     const labelMap = new Map(papers.map((paper) => [paper, getLabels(paper)]));
-    const countFor = (filter) =>
-      filter === "all"
-        ? papers.length
-        : papers.filter((paper) => labelMap.get(paper).includes(filter)).length;
+    const searchTextMap = new Map(
+      papers.map((paper) => [
+        paper,
+        paper.textContent.toLocaleLowerCase("zh-CN").replace(/\s+/g, " ").trim(),
+      ]),
+    );
+    const normalizedQuery = () => searchQuery.toLocaleLowerCase("zh-CN").trim();
+    const matchesQuery = (paper) => {
+      const query = normalizedQuery();
+      return !query || searchTextMap.get(paper).includes(query);
+    };
+    const matchesFilter = (paper, filter = activeFilter) =>
+      filter === "all" || labelMap.get(paper).includes(filter);
 
-    buttons.forEach((button) => {
-      const filter = button.dataset.filter;
-      const count = button.querySelector("[data-filter-count]");
-      if (count) count.textContent = countFor(filter);
-    });
+    const updateFilterCounts = () => {
+      buttons.forEach((button) => {
+        const filter = button.dataset.filter;
+        const count = button.querySelector("[data-filter-count]");
+        if (!count) return;
+        count.textContent = papers.filter(
+          (paper) => matchesQuery(paper) && matchesFilter(paper, filter),
+        ).length;
+      });
+    };
 
     const updateSections = () => {
       sections.forEach(({ list, heading, items }) => {
@@ -593,35 +801,81 @@
       });
     };
 
-    const applyFilter = (filter) => {
+    const updateStatus = (visibleCount) => {
+      if (!status) return;
+      const query = searchQuery.trim();
+
+      if (query && activeFilter !== "all") {
+        status.textContent = `显示 ${visibleCount} 篇「${activeFilter}」中匹配“${query}”的论文`;
+      } else if (query) {
+        status.textContent = `显示 ${visibleCount} 篇匹配“${query}”的论文`;
+      } else if (activeFilter !== "all") {
+        status.textContent = `显示 ${visibleCount} 篇「${activeFilter}」论文`;
+      } else {
+        status.textContent = `显示全部 ${visibleCount} 篇论文`;
+      }
+    };
+
+    const applyFilters = () => {
       let visibleCount = 0;
 
       papers.forEach((paper) => {
-        const isVisible = filter === "all" || labelMap.get(paper).includes(filter);
+        const isVisible = matchesFilter(paper) && matchesQuery(paper);
         paper.hidden = !isVisible;
         if (isVisible) visibleCount += 1;
       });
 
       buttons.forEach((button) => {
-        const isActive = button.dataset.filter === filter;
+        const isActive = button.dataset.filter === activeFilter;
         button.classList.toggle("is-active", isActive);
         button.setAttribute("aria-pressed", String(isActive));
       });
 
       updateSections();
-      if (status) {
-        status.textContent =
-          filter === "all"
-            ? `显示全部 ${visibleCount} 篇论文`
-            : `显示 ${visibleCount} 篇「${filter}」论文`;
-      }
+      updateFilterCounts();
+      updateStatus(visibleCount);
+
+      if (clearButton) clearButton.hidden = !searchQuery.trim();
+      if (emptyState) emptyState.hidden = visibleCount !== 0;
     };
 
     buttons.forEach((button) => {
-      button.addEventListener("click", () => applyFilter(button.dataset.filter));
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        applyFilters();
+      });
     });
 
-    applyFilter("all");
+    const clearSearch = () => {
+      if (!searchInput) return;
+      searchInput.value = "";
+      searchQuery = "";
+      applyFilters();
+      searchInput.focus();
+    };
+
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        searchQuery = searchInput.value;
+        applyFilters();
+      });
+      searchInput.addEventListener("search", () => {
+        searchQuery = searchInput.value;
+        applyFilters();
+      });
+      searchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && searchInput.value) {
+          event.preventDefault();
+          clearSearch();
+        }
+      });
+    }
+
+    if (clearButton) {
+      clearButton.addEventListener("click", clearSearch);
+    }
+
+    applyFilters();
   })();
 </script>
 

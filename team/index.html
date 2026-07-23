@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <meta name="theme-color" content="#0b5fc6" />
   <title>团队成员 | Agentic AI</title>
   <meta name="description" content="USTC-AGI Agentic AI 方向团队成员页面。" />
   <style>
     :root {
-      --accent: #c0392b;
-      --accent-dark: #a93226;
-      --accent-light: #fff3f2;
-      --text: #1a1a1a;
-      --text-muted: #5b5b5b;
-      --border: #e6e6e2;
-      --bg: #f7f7f5;
-      --shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+      --accent: #0b5fc6;
+      --accent-dark: #083f7f;
+      --accent-light: #edf7fc;
+      --text: #17324d;
+      --text-muted: #4c6176;
+      --border: #d5e3eb;
+      --bg: #f4f7f9;
+      --shadow: 0 10px 28px rgba(6, 31, 69, 0.06);
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
               "PingFang SC", "Hiragino Sans GB", sans-serif;
     }
@@ -49,8 +51,8 @@
       background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid #e8e8e8;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid #d5e3eb;
+      box-shadow: 0 2px 12px rgba(6, 31, 69, 0.05);
     }
     .top-nav .container {
       display: flex;
@@ -63,7 +65,7 @@
       flex-shrink: 0;
       font-size: 0.92rem;
       font-weight: 800;
-      color: #111;
+      color: #061f45;
       letter-spacing: 0.01em;
       white-space: nowrap;
     }
@@ -86,46 +88,46 @@
       border: 1px solid transparent;
       font-size: 0.84rem;
       font-weight: 600;
-      color: #555;
+      color: #4c6176;
       transition: color .18s, background .18s, border-color .18s, transform .18s;
     }
     .nav-links a:hover {
       color: var(--accent);
       background: var(--accent-light);
-      border-color: #f2d2ce;
+      border-color: #b7d9ec;
       text-decoration: none;
       transform: translateY(-1px);
     }
 
     header {
-      background: linear-gradient(160deg, #ffffff 55%, #fff5f4 100%);
-      border-bottom: 1px solid #e8e8e8;
+      background: linear-gradient(160deg, #ffffff 55%, #edf7fc 100%);
+      border-bottom: 1px solid #d5e3eb;
       padding: 72px 0 56px;
       text-align: center;
       cursor: pointer;
       transition: background 0.2s ease, transform 0.2s ease;
     }
     header:hover {
-      background: linear-gradient(160deg, #fffdfd 55%, #ffeceb 100%);
+      background: linear-gradient(160deg, #ffffff 55%, #dceef8 100%);
     }
     header:active {
       transform: scale(0.997);
     }
     header:focus-visible {
-      outline: 3px solid rgba(192, 57, 43, 0.2);
+      outline: 3px solid rgba(11, 95, 198, 0.2);
       outline-offset: -6px;
     }
     header h1 {
       font-size: 2.3rem;
       font-weight: 800;
       line-height: 1.25;
-      color: #111;
+      color: #061f45;
     }
     header h1 .highlight { color: var(--accent); }
     .header-sub {
       margin-top: 14px;
       font-size: 0.97rem;
-      color: #666;
+      color: #5b7187;
       line-height: 1.75;
     }
 
@@ -145,12 +147,12 @@
     .member-header {
       padding: 28px 28px 18px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #ffffff 0%, #fffaf9 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
     }
     .member-header h2 {
       font-size: 1.5rem;
       font-weight: 800;
-      color: #111;
+      color: #061f45;
       margin-bottom: 8px;
     }
     .member-header p {
@@ -163,11 +165,11 @@
     .member-group-title {
       font-size: 1.04rem;
       font-weight: 800;
-      color: #111;
+      color: #061f45;
       margin: 0 0 12px;
     }
     .member-grid + .member-group-title {
-      border-top: 1px solid #eeeeea;
+      border-top: 1px solid #e6f0f5;
       margin-top: 26px;
       padding-top: 22px;
     }
@@ -179,13 +181,13 @@
     .member-card,
     .member-card-static {
       background: #fff;
-      border: 1px solid #e8e8e8;
+      border: 1px solid #d5e3eb;
       border-radius: 12px;
       padding: 16px 18px;
       display: flex;
       align-items: center;
       gap: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      box-shadow: 0 2px 6px rgba(6,31,69,0.04);
     }
     .member-card {
       text-decoration: none;
@@ -193,13 +195,13 @@
     .member-card:hover {
       text-decoration: none;
       transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      box-shadow: 0 8px 20px rgba(6,31,69,0.08);
     }
     .member-avatar {
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      background: linear-gradient(135deg,#003087,#2471a3);
+      background: linear-gradient(135deg,#061f45,#0b5fc6);
       color: #fff;
       font-size: 0.98rem;
       font-weight: 700;
@@ -211,21 +213,21 @@
     .member-name {
       font-size: 0.98rem;
       font-weight: 700;
-      color: #111;
+      color: #061f45;
     }
 
     footer {
-      background: #1c1c1c;
-      color: #999;
+      background: #061f45;
+      color: #a9c7db;
       text-align: center;
       padding: 28px 24px;
       font-size: 0.84rem;
     }
-    footer a { color: #e87b6e; }
+    footer a { color: #8fd9ff; }
     footer .footer-funding {
       margin-top: 12px;
       font-size: 0.82rem;
-      color: #888;
+      color: #8eb4cc;
       line-height: 1.6;
     }
 
